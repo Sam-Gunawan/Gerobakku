@@ -1,0 +1,34 @@
+services:
+  # PostgreSQL Database Container
+  db: 
+    image: postgres:16-alpine
+    container_name: gerobakku-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: gerobakku_admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: gerobakku_db
+    ports:
+      - "5434:5432"
+      
+  # Python Backend Container
+  backend:
+    container_name: gerobakku-backend
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  # Angular Frontend Container
+  frontend:
+    container_name: gerobakku-frontend
+    build: ./frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
