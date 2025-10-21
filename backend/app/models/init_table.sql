@@ -7,11 +7,11 @@ CREATE TABLE gerobakku."users" (
   "email" varchar(255),
   "password_hash" varchar(255),
   "full_name" varchar(255),
-  "phone_number" int,
+  "phone_number" varchar(25),
   "created_at" timestamp
 );
 
-CREATE TABLE gerobakku."customer" (
+CREATE TABLE gerobakku."customers" (
   "customer_id" int PRIMARY KEY,
   "user_id" int,
   "category_preference" int
