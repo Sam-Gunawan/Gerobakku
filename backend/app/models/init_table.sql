@@ -1,6 +1,8 @@
 CREATE SCHEMA IF NOT EXISTS gerobakku;
 
-CREATE TABLE gerobakku.users (
+create extension postgis with schema extensions;
+
+CREATE TABLE gerobakku."users" (
   "user_id" int PRIMARY KEY,
   "email" varchar(255),
   "password_hash" varchar(255),
@@ -9,7 +11,7 @@ CREATE TABLE gerobakku.users (
   "created_at" timestamp
 );
 
-CREATE TABLE gerobakku.customer (
+CREATE TABLE gerobakku."customer" (
   "customer_id" int PRIMARY KEY,
   "user_id" int,
   "category_preference" int
@@ -36,7 +38,7 @@ CREATE TABLE gerobakku."stores" (
   "is_halal" boolean,
   "open_time" int,
   "close_time" int,
-
+  "current_location"  geography(Point, 4326);
   "created_at" timestamp,
   "store_image_url" varchar(255)
 );
