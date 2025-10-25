@@ -1,0 +1,12 @@
+<div class="dashboard-container">
+  <div class="map-placeholder">
+    Map Background
+    <div class="target-icon-placeholder" [style.bottom]="getTargetIconBottom()">
+      🎯
+    </div>
+  </div>
+
+  <app-header></app-header>
+
+  <app-bottom-sheet (heightChange)="onBottomSheetHeightChange($event)"></app-bottom-sheet>
+</div>

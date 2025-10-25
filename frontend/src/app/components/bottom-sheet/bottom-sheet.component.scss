@@ -1,0 +1,108 @@
+:host {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  display: block;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-sheet {
+  width: 100%;
+  background-color: var(--gerobakku-sheet-background, #ffffff);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.2);
+  overflow: hidden; // **Crucial**: Hides content overflowing the current height
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.dragging {
+    transition: none;
+  }
+}
+
+.top-bar {
+  position: relative;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 0;
+  cursor: grab; // Indicate the whole bar is draggable (except button)
+  touch-action: none; // Apply touch action here
+}
+
+.handle-bar {
+  width: 50px;
+  height: 5px;
+  background-color: var(--gerobakku-handle, #ccc);
+  border-radius: 2.5px;
+  // margin removed
+  // cursor: grab; // Moved cursor to top-bar
+  // touch-action: none; // Moved touch action to top-bar
+}
+
+.toggle-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 15px;
+  background: none;
+  border: none;
+  cursor: pointer; // Overrides grab cursor from top-bar
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  touch-action: manipulation; // Ensure button remains clickable
+
+  svg {
+    width: 36px;
+    height: 36px;
+    fill: #666;
+  }
+}
+
+.sheet-content {
+  padding: 0px 20px 20px 20px;
+  height: calc(100% - 40px); // Adjust based on top-bar height
+  overflow-y: auto; // Only scroll vertically if needed
+  overflow-x: hidden; // Prevent horizontal scroll
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Placeholder styles - Adjusted size slightly */
+.placeholder-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px; // Further reduced gap
+  margin-bottom: 15px;
+}
+
+.placeholder-item {
+  height: 75px; // Keep slightly smaller
+  background-color: var(--gerobakku-placeholder-bg, #eee);
+  border: 1px solid var(--gerobakku-placeholder-border, #ccc);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #aaa;
+  position: relative;
+  border-radius: 8px;
+  font-size: 0.8em; // Optional: add text if needed later
+}
+
+.advertisement-placeholder {
+  height: 50px; // Keep slightly smaller
+  background-color: var(--gerobakku-placeholder-bg, #f0f0f0);
+  border: 1px solid var(--gerobakku-placeholder-border, #bbb);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--gerobakku-text-muted, #999);
+  font-size: 0.9rem;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}

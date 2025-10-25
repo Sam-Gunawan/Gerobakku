@@ -1,1 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+  --gerobakku-background: #f8f9fa; /* Light grey background */
+  --gerobakku-header-search: #343a40; /* Dark grey for search */
+  --gerobakku-sheet-background: #ffffff; /* White for sheet */
+  --gerobakku-placeholder-bg: #eeeeee; /* Light grey for placeholders */
+  --gerobakku-placeholder-border: #cccccc; /* Medium grey for borders */
+  --gerobakku-handle: #cccccc; /* Handle color */
+  --gerobakku-text-muted: #6c757d; /* Muted text */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* Prevent body scrolling */
+  font-family: sans-serif; /* Basic font */
+}
+
+* {
+  box-sizing: border-box;
+}

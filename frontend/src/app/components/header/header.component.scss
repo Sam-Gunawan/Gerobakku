@@ -1,0 +1,61 @@
+// :host styles remain the same
+:host {
+  position: absolute;
+  top: 40px;
+  left: 15px;
+  right: 15px;
+  height: 50px;
+  z-index: 1000;
+  display: block;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+.logo-placeholder {
+  width: 45px;
+  height: 45px;
+  background-color: #ffffff; // White background
+  border-radius: 50%;        // Circular
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); // Add shadow like image
+  margin-right: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  // You can add content inside later (e.g., an <img> tag)
+}
+
+// .search-container styles remain the same
+.search-container {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--gerobakku-header-search, #343a40);
+  border-radius: 10px;
+  height: 100%;
+  padding: 0 15px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); // Add shadow like image
+}
+
+.search-icon {
+  margin-right: 10px;
+  color: #ccc;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 1rem;
+  background: transparent;
+  color: #ffffff;
+
+  &::placeholder {
+    color: #aaa;
+  }
+}

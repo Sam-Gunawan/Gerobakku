@@ -1,0 +1,49 @@
+.dashboard-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.map-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+  font-size: 1.5rem;
+  z-index: 1;
+}
+
+.target-icon-placeholder {
+    position: absolute;
+    // bottom: 270px; /* Removed fixed bottom value */
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.9); // Slightly less transparent
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 500; /* Ensure it's above map, below sheet handle potentially */
+    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Match sheet transition */
+}
+
+app-header {
+  z-index: 1010; // Ensure header is above target icon
+  display: block;
+}
+
+app-bottom-sheet {
+  z-index: 1000; // Sheet itself
+  display: block;
+}
