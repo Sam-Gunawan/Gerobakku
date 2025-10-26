@@ -5,7 +5,7 @@
   width: 100%;
   z-index: 1000;
   display: block;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent; // Prevent tap highlight globally for host
 }
 
 .bottom-sheet {
@@ -14,23 +14,25 @@
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.2);
-  overflow: hidden; // **Crucial**: Hides content overflowing the current height
+  overflow: hidden; // ** CRUCIAL for hiding content when minimized **
   transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
+  // Disable transition during active drag
   &.dragging {
     transition: none;
   }
 }
 
+// Container for handle and button for alignment
 .top-bar {
-  position: relative;
-  height: 40px;
+  position: relative; // Context for absolute positioned button
+  height: 40px;      // Fixed height for reliable alignment
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center; // Vertically center handle
+  justify-content: center; // Horizontally center handle
   padding: 5px 0;
   cursor: grab; // Indicate the whole bar is draggable (except button)
-  touch-action: none; // Apply touch action here
+  touch-action: none; // Prevent default scroll/zoom on this area
 }
 
 .handle-bar {
@@ -38,66 +40,66 @@
   height: 5px;
   background-color: var(--gerobakku-handle, #ccc);
   border-radius: 2.5px;
-  // margin removed
-  // cursor: grab; // Moved cursor to top-bar
-  // touch-action: none; // Moved touch action to top-bar
+  // Centered by parent flexbox
 }
 
 .toggle-button {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 15px;
-  background: none;
+  top: 50%; // Center vertically within top-bar
+  transform: translateY(-50%); // Precise vertical centering
+  right: 10px; // Padding from the right edge
+  background: transparent; // Use transparent background
   border: none;
-  cursor: pointer; // Overrides grab cursor from top-bar
-  padding: 10px;
+  cursor: pointer; // Override grab cursor
+  padding: 10px;    // Generous tap/click area
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
-  touch-action: manipulation; // Ensure button remains clickable
+  touch-action: manipulation; // Allow click interaction
 
   svg {
-    width: 36px;
-    height: 36px;
-    fill: #666;
+    width: 38px;  // Slightly larger icon
+    height: 38px;
+    fill: #555; // Darker grey icon
   }
 }
 
 .sheet-content {
-  padding: 0px 20px 20px 20px;
-  height: calc(100% - 40px); // Adjust based on top-bar height
-  overflow-y: auto; // Only scroll vertically if needed
-  overflow-x: hidden; // Prevent horizontal scroll
+  padding: 5px 15px 20px 15px; // Adjust padding
+  height: calc(100% - 40px); // Calculate height based on top-bar
+  overflow-y: auto; // Allow vertical scroll ONLY when content exceeds height
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Placeholder styles - Adjusted size slightly */
+/* Placeholder styles - Adjusted size for initial view */
 .placeholder-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px; // Further reduced gap
+  grid-template-columns: repeat(2, 1fr); // Keep 2 columns
+  gap: 10px;
   margin-bottom: 15px;
 }
 
 .placeholder-item {
-  height: 75px; // Keep slightly smaller
-  background-color: var(--gerobakku-placeholder-bg, #eee);
-  border: 1px solid var(--gerobakku-placeholder-border, #ccc);
+  height: 70px; // *** REDUCED HEIGHT ***
+  background-color: var(--gerobakku-placeholder-bg, #f4f4f4); // Slightly lighter bg
+  border: 1px solid var(--gerobakku-placeholder-border, #ddd); // Slightly lighter border
   display: flex;
   justify-content: center;
   align-items: center;
   color: #aaa;
   position: relative;
-  border-radius: 8px;
-  font-size: 0.8em; // Optional: add text if needed later
+  border-radius: 10px; // Slightly more rounded
+  font-size: 0.85em;
+  text-align: center;
+  padding: 5px;
 }
 
 .advertisement-placeholder {
-  height: 50px; // Keep slightly smaller
-  background-color: var(--gerobakku-placeholder-bg, #f0f0f0);
-  border: 1px solid var(--gerobakku-placeholder-border, #bbb);
+  height: 50px; // *** REDUCED HEIGHT ***
+  background-color: var(--gerobakku-placeholder-bg, #f8f8f8); // Even lighter bg
+  border: 1px solid var(--gerobakku-placeholder-border, #e0e0e0); // Even lighter border
   display: flex;
   justify-content: center;
   align-items: center;

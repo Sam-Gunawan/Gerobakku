@@ -22,20 +22,19 @@
 
 .target-icon-placeholder {
     position: absolute;
-    // bottom: 270px; /* Removed fixed bottom value */
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    background-color: rgba(255, 255, 255, 0.9); // Slightly less transparent
+    right: 15px; // Slightly less padding from edge
+    width: 45px; // Slightly larger tap target
+    height: 45px;
+    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    font-size: 24px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25); // Slightly stronger shadow
+    font-size: 26px; // Slightly larger icon
     cursor: pointer;
-    z-index: 500; /* Ensure it's above map, below sheet handle potentially */
-    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Match sheet transition */
+    z-index: 500;
+    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 app-header {
