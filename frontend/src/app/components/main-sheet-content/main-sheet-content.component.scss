@@ -1,0 +1,40 @@
+/* Styles specific to the main sheet content placeholders */
+.placeholder-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gerobakku-spacing-s);
+  margin-bottom: var(--gerobakku-spacing-m);
+}
+
+.placeholder-item {
+  height: 55px; // *** FURTHER REDUCED HEIGHT ***
+  background-color: var(--gerobakku-placeholder-bg-dark);
+  border: 1px solid var(--gerobakku-placeholder-border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--gerobakku-text-muted);
+  border-radius: var(--gerobakku-border-radius-m);
+  font-size: var(--gerobakku-font-size-s);
+  text-align: center;
+  padding: var(--gerobakku-spacing-xs);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--gerobakku-placeholder-bg-medium);
+  }
+}
+
+.advertisement-placeholder {
+  height: 80px; // *** INCREASED HEIGHT ***
+  background-color: var(--gerobakku-placeholder-bg-light);
+  border: 1px solid var(--gerobakku-placeholder-border-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--gerobakku-text-muted);
+  font-size: var(--gerobakku-font-size-m);
+  border-radius: var(--gerobakku-border-radius-s);
+  margin-bottom: var(--gerobakku-spacing-l);
+}

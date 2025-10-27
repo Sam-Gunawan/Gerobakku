@@ -2,7 +2,7 @@
   position: relative;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow: hidden; // Prevent whole page scroll
 }
 
 .map-placeholder {
@@ -11,38 +11,41 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #e0e0e0;
+  background-color: var(--gerobakku-map-placeholder-bg); // Use variable
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #888;
-  font-size: 1.5rem;
-  z-index: 1;
+  color: var(--gerobakku-map-placeholder-text); // Use variable
+  font-size: var(--gerobakku-font-size-l); // Use variable
+  z-index: 1; // Base layer
+  // Placeholder: Map library integration will replace this
 }
 
 .target-icon-placeholder {
     position: absolute;
-    right: 15px; // Slightly less padding from edge
-    width: 45px; // Slightly larger tap target
-    height: 45px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
+    right: var(--gerobakku-spacing-m); // Use variable
+    width: var(--gerobakku-button-tap-area); // Use variable for size
+    height: var(--gerobakku-button-tap-area); // Use variable for size
+    background-color: rgba(255, 255, 255, 0.9); // Keep specific RGBA for transparency
+    border-radius: var(--gerobakku-border-radius-round); // Use variable
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.25); // Slightly stronger shadow
-    font-size: 26px; // Slightly larger icon
+    box-shadow: 0 2px 5px var(--gerobakku-shadow-color-medium); // Use variable
+    font-size: 26px; // Icon size (can be variable too if needed)
     cursor: pointer;
-    z-index: 500;
-    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 500; // Above map, below sheet generally
+    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Match sheet transition
+    // Placeholder: Add click handler for map centering
 }
 
+// Ensure child components stack correctly
 app-header {
-  z-index: 1010; // Ensure header is above target icon
-  display: block;
+  z-index: 1010; // Header above target icon and sheet
+  display: block; // Ensures it takes space if needed (though absolutely positioned)
 }
 
 app-bottom-sheet {
-  z-index: 1000; // Sheet itself
+  z-index: 1000; // Sheet container itself
   display: block;
 }
