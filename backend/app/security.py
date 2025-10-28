@@ -87,12 +87,11 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User not found."
         )
-    
-    email = row[1]  # Assuming email is the 2nd column
-    is_verified = row[6]  # Assuming is_verified is the 7th column
 
     return {
-        "user_id": uid,
-        "email": email,
-        "is_verified": is_verified
+        "user_id": row[0],
+        "email": row[1],
+        "full_name": row[3],
+        "created_at": row[4],
+        "is_verified": row[5]
     }
