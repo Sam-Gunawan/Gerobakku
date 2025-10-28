@@ -1,51 +1,73 @@
 from typing import Optional
 from ..database import create_cursor, database_pool
 
-def insert_user(email, password_hash, full_name, phone_number):
+def insert_user(email, password_hash, full_name):
 	sql = """
-	INSERT INTO gerobakku.users (email, password_hash, full_name, phone_number, created_at)
-	VALUES (%s, %s, %s, %s, NOW())
-	RETURNING email, created_at;
+		INSERT INTO gerobakku.users (email, password_hash, full_name, created_at)
+		VALUES (%s, %s, %s, NOW())
+		RETURNING email, created_at;
 	"""
 
+	output = {
+		"success": False,
+		"data": None,
+		"error": None,
+	}
+
 	if not database_pool:
-		return {"success": False, "error": "No database pool available", "data": None}
+		output["error"] = "No database pool available"
+		return output
 
 	try:
 		cursor = create_cursor(database_pool)
 		if not cursor:
-			return {"success": False, "error": "Failed to create cursor", "data": None}
-		cursor.execute(sql, (email, password_hash, full_name, phone_number))
+			output["error"] = "Failed to create cursor"
+			return output
+		
+		cursor.execute(sql, (email, password_hash, full_name))
+		
 		# fetch the returning values
 		result = cursor.fetchone()
 		cursor.connection.commit()
-		return {"success": True, "data": result, "error": None}
+
+		output["success"] = True
+		output["data"] = result
+		return output
+	
 	except Exception as e:
-		return {"success": False,  "data": None, "error": str(e)}
+		output["success"] = False
+		output["data"] = None
+		output["error"] = str(e)
+		return output
 
 
 def get_user():
 	if not database_pool:
 		return []
+	
 	sql = "SELECT * FROM gerobakku.users;"
+	
 	try:
 		cursor = create_cursor(database_pool)
 		if not cursor:
 			return []
+		
 		cursor.execute(sql)
 		return cursor.fetchall()
+	
 	except Exception as e:
 		print(f"Error fetching users: {e}")
 		return []
 
 def get_user_by_id(user_id: str) -> Optional[tuple]:
 	"""
-	Return row as (user_id, email, password_hash, full_name, created_at, category_preference, is_verified) or None.
+	Return row as (user_id, email, password_hash, full_name, created_at, is_verified) or None.
 	"""
 	if not database_pool:
 		return None
 
-	sql = "SELECT * FROM gerobakku.users WHERE user_id = %s;"
+	sql = "SELECT user_id, email, password_hash, full_name, created_at, is_verified FROM gerobakku.users WHERE user_id = %s;"
+	
 	try:
 		cursor = create_cursor(database_pool)
 		if not cursor:
@@ -58,12 +80,13 @@ def get_user_by_id(user_id: str) -> Optional[tuple]:
 	
 def get_user_by_email(email: str) -> Optional[tuple]:
 	"""
-	Return row as (user_id, email, password_hash, full_name, created_at, category_preference, is_verified) or None.
+	Return row as (user_id, email, password_hash, full_name, created_at, is_verified) or None.
 	"""
 	if not database_pool:
 		return None
 
-	sql = "SELECT * FROM gerobakku.users WHERE email = %s;"
+	sql = "SELECT user_id, email, password_hash, full_name, created_at, is_verified FROM gerobakku.users WHERE email = %s;"
+	
 	try:
 		cursor = create_cursor(database_pool)
 		if not cursor:
