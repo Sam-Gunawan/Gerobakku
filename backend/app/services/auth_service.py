@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
-from ..schemas.user_schema import LoginResponse, User
+from ..schemas.auth_schema import LoginResponse
+from ..schemas.user_schema import User
 from ..repositories.user_repo import get_user_by_id, insert_user, get_user_by_email
 from ..security import (
     hash_password,
@@ -48,6 +49,22 @@ def service_register(email: str, password: str, full_name: str):
         token_type="bearer",
         user=registered_user
     )
+
+def service_verify_email(token: str):
+    payload = decode_token(token)
+    if payload.get("type") != "verify":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token type for email verification.")
+
+    user_id = payload.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token payload.")
+
+    # TODO
+    user = get_user_by_id(user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
+    
+    return None
 
 def service_login(email: str, password: str) -> LoginResponse:
     user = get_user_by_email(email)
