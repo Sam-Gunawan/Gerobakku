@@ -2,10 +2,15 @@ from typing import Optional
 from ..database import create_cursor, database_pool
 
 def insert_user(email, password_hash, full_name):
+	"""
+	Inserts user to the database on registration.
+	Returns the user information on successful insertion.
+	"""
+
 	sql = """
 		INSERT INTO gerobakku.users (email, password_hash, full_name, created_at)
 		VALUES (%s, %s, %s, NOW())
-		RETURNING email, created_at;
+		RETURNING user_id, email, full_name, created_at, is_verified;
 	"""
 
 	output = {
@@ -27,11 +32,11 @@ def insert_user(email, password_hash, full_name):
 		cursor.execute(sql, (email, password_hash, full_name))
 		
 		# fetch the returning values
-		result = cursor.fetchone()
+		row = cursor.fetchone()
 		cursor.connection.commit()
 
 		output["success"] = True
-		output["data"] = result
+		output["data"] = row
 		return output
 	
 	except Exception as e:
