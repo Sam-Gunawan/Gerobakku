@@ -1,4 +1,4 @@
-import psycopg2
+from psycopg_pool import ConnectionPool
 from dotenv import load_dotenv
 import os
 
@@ -6,83 +6,101 @@ import os
 load_dotenv()
 
 
-
-def connect_to_db():
-	# Fetch variables
+def init_db_pool():
+	# Initialize and return a psycopg_pool.ConnectionPool or None on failure
 	USER = os.getenv("DB_USER")
 	PASSWORD = os.getenv("DB_PASS")
 	HOST = os.getenv("DB_HOST")
 	PORT = os.getenv("DB_PORT")
 	DBNAME = os.getenv("DB_DATABASE")
-    
+
+	if not (USER and PASSWORD and HOST and PORT and DBNAME):
+		print("Database environment variables are not fully set.")
+		return None
+
+	# Build a DSN accepted by psycopg
+	conninfo = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}"
+
 	try:
-		connection = psycopg2.connect(
-			user=USER,
-			password=PASSWORD,
-			host=HOST,
-			port=PORT,
-			dbname=DBNAME
-		)
-		cursor = connection.cursor()
-		print("Connection successful!")
-		return connection, cursor
+		pool = ConnectionPool(conninfo, min_size=1, max_size=19)
+		# quick smoke test
+		cursor = create_cursor(pool)
+		if cursor:
+			cursor.execute("SELECT 1")
+			_ = cursor.fetchone()
+		print("Connection pool created and tested successfully.")
+		return pool
 	except Exception as e:
-		print(f"Failed to connect: {e}")
-		# Return a pair so unpacking doesn't fail in callers
-		return None, None
+		print(f"Failed to create connection pool: {e}")
+		return None
 
-def close_database(database_connection, database_cursor):
-    # Close the database connection and cursor.
+def create_cursor(pool):
+	if not pool:
+		return None
+	try:
+		return pool.connection().cursor()
+	except Exception as e:
+		print(f"Error creating cursor: {e}")
+		return None
 
-    if database_cursor:
-        try:
-            database_cursor.close()
-        except Exception as e:
-            print(f"Error closing cursor: {e}")
-    if database_connection:
-        try:
-            database_connection.close()
-        except Exception as e:
-            print(f"Error closing connection: {e}")
-    database_connection = None
-    database_cursor = None
+def close_database(pool):
+	# Close the connection pool.
+	if not pool:
+		return
+	try:
+		pool.close()
+	except Exception as e:
+		print(f"Error closing pool: {e}")
 
-def insert_user(email, password_hash, full_name, phone_number):
+
+def insert_user(pool, email, password_hash, full_name, phone_number):
 	sql = """
 	INSERT INTO gerobakku.users (email, password_hash, full_name, phone_number, created_at)
 	VALUES (%s, %s, %s, %s, NOW())
 	RETURNING email, created_at;
 	"""
 
-	# Ensure database connection/cursor are available
-	if not database_connection or not database_cursor:
-		return {"success": False, "error": "No database connection", "data": None}
+	if not pool:
+		return {"success": False, "error": "No database pool available", "data": None}
 
 	try:
-		# single execute only
-		database_cursor.execute(sql, (email, password_hash, full_name, phone_number))
-		database_connection.commit()
-		return {"success": True, "data": database_cursor.fetchone(), "error": None}
+		cursor = create_cursor(pool)
+		if not cursor:
+			return {"success": False, "error": "Failed to create cursor", "data": None}
+		cursor.execute(sql, (email, password_hash, full_name, phone_number))
+		# fetch the returning values
+		result = cursor.fetchone()
+		cursor.connection.commit()
+		return {"success": True, "data": result, "error": None}
 	except Exception as e:
-		if database_connection:
-			database_connection.rollback()
-		return {"success": False, "error": str(e), "data": None}
+		return {"success": False,  "data": None, "error": str(e)}
 
 
+def get_user(pool):
+	if not pool:
+		return []
+	sql = "SELECT * FROM gerobakku.users;"
+	try:
+		cursor = create_cursor(pool)
+		if not cursor:
+			return []
+		cursor.execute(sql)
+		return cursor.fetchall()
+	except Exception as e:
+		print(f"Error fetching users: {e}")
+		return []
 
-# create connection and cursor after the function is defined
-database_connection, database_cursor = connect_to_db()
+
+# create connection pool after the function is defined
+database_pool = init_db_pool()
 
 
+# close_database(database_pool)
 
-# # Test
-# if database_connection and database_cursor:
-#     res = insert_user('htest@example.com', 'hashed_pw_citra_456', 'Citra Lestari', '+6281345678901')
+
+# Example usage (commented out for import-safety)
+# if database_pool:
+#     res = insert_user(database_pool, 'htest@example.com', 'hashed_pw_citra_456', 'Citra Lestari', '+6281345678901')
 #     print(res)
-
-#     # Close the cursor and connection
-    
-#     close_database(database_connection, database_cursor)
-# else:
-#     print("Skipping example insert because database connection failed.")
+#     close_database(database_pool)
 
