@@ -5,7 +5,6 @@ import os
 # Load environment variables from .env
 load_dotenv()
 
-
 def init_db_pool():
 	# Initialize and return a psycopg_pool.ConnectionPool or None on failure
 	USER = os.getenv("DB_USER")
