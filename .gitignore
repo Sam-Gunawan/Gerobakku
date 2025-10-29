@@ -1,3 +1,7 @@
+# Python specific
+/__pycache__/
+*.pyc
+
 # Angular specific
 /dist/
 /out-tsc/
