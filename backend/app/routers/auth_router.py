@@ -24,7 +24,7 @@ async def register(body: RegisterRequest):
         full_name=body.full_name
     )
 
-    return response.user
+    return response
 
 # Email verification, /auth/verify-email
 @router.post("/verify-email", status_code=status.HTTP_200_OK)

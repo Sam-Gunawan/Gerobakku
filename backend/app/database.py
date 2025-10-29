@@ -1,12 +1,22 @@
 from psycopg_pool import ConnectionPool
+from contextlib import contextmanager
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env
-load_dotenv()
+load_dotenv()  # Load environment variables from .env file
+database_pool: ConnectionPool | None = None
 
 def init_db_pool():
-	# Initialize and return a psycopg_pool.ConnectionPool or None on failure
+	"""
+	Create the global connection pool if it doesn't exist yet.
+	Safe to call multiple times; will only create once.
+	"""
+
+	global database_pool
+
+	if database_pool is not None:
+		return database_pool
+
 	USER = os.getenv("DB_USER")
 	PASSWORD = os.getenv("DB_PASS")
 	HOST = os.getenv("DB_HOST")
@@ -21,42 +31,73 @@ def init_db_pool():
 	conninfo = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}"
 
 	try:
-		pool = ConnectionPool(conninfo, min_size=1, max_size=19)
+		database_pool = ConnectionPool(conninfo, min_size=1, max_size=19)
+		
 		# quick smoke test
-		cursor = create_cursor(pool)
-		if cursor:
-			cursor.execute("SELECT 1")
-			_ = cursor.fetchone()
-		print("Connection pool created and tested successfully.")
-		return pool
+		with database_pool.connection() as conn:
+			with conn.cursor() as cur:
+				cur.execute("SELECT 1;")
+				cur.fetchone()
+		print("Connection pool created successfully.")
+
 	except Exception as e:
 		print(f"Failed to create connection pool: {e}")
-		return None
+		database_pool = None
+	
+@contextmanager
+def get_cursor(commit: bool = False):
+	"""
+	Usage in repo layer:
 
-def create_cursor(pool):
-	if not pool:
-		return None
-	try:
-		return pool.connection().cursor()
-	except Exception as e:
-		print(f"Error creating cursor: {e}")
-		return None
+	from ..database import get_cursor
 
-def close_database(pool):
-	# Close the connection pool.
-	if not pool:
-		return
-	try:
-		pool.close()
-	except Exception as e:
-		print(f"Error closing pool: {e}")
+	def some_query(...):
+		with get_cursor() as cur:
+			cur.execute("SELECT ...")
+			return cur.fetchall()
+	
+	def some_insert(...):
+		with get_cursor() as cur:
+			cur.execute("INSERT ... RETURNING ...")
+			row = cur.fetchone()
+			return row
+	
+	This:
+	- borrows a connection from the global pool
+	- gives you a cursor to work with
+	- commits or rolls back for you
+	- returns the connection to the pool
 
-# create connection pool after the function is defined
-database_pool = init_db_pool()
+	"""
 
+	if database_pool is None:
+		raise RuntimeError("Database pool not initialized. Have you called init_db_pool()?")
 
-# close_database(database_pool)
+	with database_pool.connection() as conn:
+		with conn.cursor() as cur:
+			try:
+				yield cur
+				if commit:
+					conn.commit()
+			except Exception:
+				conn.rollback()
+				raise
 
+def close_database():
+	"""
+	Close the global database pool and release worker threads.
+	Call this at app shutdown.
+	"""
+	global database_pool
+
+	if database_pool is not None:
+		try:
+			database_pool.close()
+			print("Database pool closed.")
+		except Exception as e:
+			print(f"Error closing pool: {e}")
+		finally:
+			database_pool = None
 
 # Example usage (commented out for import-safety)
 # if database_pool:

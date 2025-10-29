@@ -1,5 +1,5 @@
 from typing import Optional
-from ..database import create_cursor, database_pool
+from ..database import get_cursor
 
 def insert_user(email, password_hash, full_name):
 	"""
@@ -19,26 +19,15 @@ def insert_user(email, password_hash, full_name):
 		"error": None,
 	}
 
-	if not database_pool:
-		output["error"] = "No database pool available"
-		return output
-
 	try:
-		cursor = create_cursor(database_pool)
-		if not cursor:
-			output["error"] = "Failed to create cursor"
+		with get_cursor(commit=True) as cur:
+			cur.execute(sql, (email, password_hash, full_name))
+			row = cur.fetchone()
+			
+			output["success"] = True
+			output["data"] = row
 			return output
 		
-		cursor.execute(sql, (email, password_hash, full_name))
-		
-		# fetch the returning values
-		row = cursor.fetchone()
-		cursor.connection.commit()
-
-		output["success"] = True
-		output["data"] = row
-		return output
-	
 	except Exception as e:
 		output["success"] = False
 		output["data"] = None
@@ -46,19 +35,13 @@ def insert_user(email, password_hash, full_name):
 		return output
 
 
-def get_user():
-	if not database_pool:
-		return []
-	
+def get_all_users():
 	sql = "SELECT * FROM gerobakku.users;"
 	
 	try:
-		cursor = create_cursor(database_pool)
-		if not cursor:
-			return []
-		
-		cursor.execute(sql)
-		return cursor.fetchall()
+		with get_cursor() as cur:
+			cur.execute(sql)
+			return cur.fetchall()
 	
 	except Exception as e:
 		print(f"Error fetching users: {e}")
@@ -68,17 +51,13 @@ def get_user_by_id(user_id: str) -> Optional[tuple]:
 	"""
 	Return row as (user_id, email, password_hash, full_name, created_at, is_verified) or None.
 	"""
-	if not database_pool:
-		return None
-
 	sql = "SELECT user_id, email, password_hash, full_name, created_at, is_verified FROM gerobakku.users WHERE user_id = %s;"
 	
 	try:
-		cursor = create_cursor(database_pool)
-		if not cursor:
-			return None
-		cursor.execute(sql, (user_id,))
-		return cursor.fetchone()
+		with get_cursor() as cur:
+			cur.execute(sql, (user_id,))
+			return cur.fetchone()
+
 	except Exception as e:
 		print(f"Error fetching user by ID {user_id}: {e}")
 		return None
@@ -87,17 +66,14 @@ def get_user_by_email(email: str) -> Optional[tuple]:
 	"""
 	Return row as (user_id, email, password_hash, full_name, created_at, is_verified) or None.
 	"""
-	if not database_pool:
-		return None
 
 	sql = "SELECT user_id, email, password_hash, full_name, created_at, is_verified FROM gerobakku.users WHERE email = %s;"
 	
 	try:
-		cursor = create_cursor(database_pool)
-		if not cursor:
-			return None
-		cursor.execute(sql, (email,))
-		return cursor.fetchone()
+		with get_cursor() as cur:
+			cur.execute(sql, (email,))
+			return cur.fetchone()
+
 	except Exception as e:
 		print(f"Error fetching user by email {email}: {e}")
 		return None

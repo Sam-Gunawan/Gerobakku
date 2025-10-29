@@ -4,8 +4,7 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
-
-from backend.app.repositories.user_repo import get_user_by_id
+from .repositories.user_repo import get_user_by_id
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
