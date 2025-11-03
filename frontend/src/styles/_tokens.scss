@@ -3,7 +3,14 @@
    ================================ */
 
 /* ---- SCSS tokens (build-time) ---- */
-$brand-hue: 250;                // violet-blue vibe
+// Gerobakku Theme Tokens
+$brand-main: #FBBE21;   // cheerful satay-cart yellow
+$brand-ink-on-main: #01161E; // dark teal for contrast
+$brand-accent: #124559; // deep teal contrast
+$brand-dark: #01161E;   // almost-black teal
+$brand-light: #FFEFAD;  // soft creamy yellow
+$brand-muted: #598392;  // bluish-gray balance
+
 $radius-2: 12px;                // rounded corners (Gen-Z soft)
 $radius-1: 10px;
 $radius-3: 16px;

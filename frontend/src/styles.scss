@@ -1,30 +1,31 @@
 /* ---- CSS variables (runtime, theme-able) ---- */
 /* Light theme as default */
 @use './styles/tokens' as *;
+@use 'sass:color';
 
 :root {
-  /* brand */
-  --gbk-brand-h: #{$brand-hue};
-  --gbk-brand-s: 85%;
-  --gbk-brand-l: 62%;
-  --gbk-brand: hsl(var(--gbk-brand-h), var(--gbk-brand-s), var(--gbk-brand-l));
-  --gbk-brand-600: hsl(var(--gbk-brand-h), var(--gbk-brand-s), 55%);
-  --gbk-brand-700: hsl(var(--gbk-brand-h), var(--gbk-brand-s), 45%);
+  /* Light Theme */
+  /* Brand */
+  --gbk-brand: #{$brand-main};
+  --gbk-ink-on-brand: #{$brand-ink-on-main};
+  --gbk-brand-600: color-mix(in srgb, #{$brand-main} 90%, #{$brand-accent});
+  --gbk-brand-700: color-mix(in srgb, #{$brand-main} 70%, #{$brand-accent});
+  --gbk-gradient: linear-gradient(135deg, #FBBE21, #FFEFAD);
 
-  /* neutrals */
+  /* Neutrals */
   --gbk-bg: #ffffff;
-  --gbk-bg-alt: #fafafa;
-  --gbk-text: #0f0f0f;
-  --gbk-text-muted: rgba(0, 0, 0, 0.65);
-  --gbk-border: rgba(0, 0, 0, 0.12);
-  --gbk-elev: 0 12px 30px rgba(0, 0, 0, 0.08);
+  --gbk-bg-alt: #FFEFAD; /* light creamy accent background */
+  --gbk-text: #01161E;
+  --gbk-text-muted: rgba(1, 22, 30, 0.7);
+  --gbk-border: rgba(1, 22, 30, 0.1);
+  --gbk-elev: 0 8px 24px rgba(1, 22, 30, 0.08);
 
-  /* states */
+  /* States */
   --gbk-success: #17c964;
   --gbk-danger: #ff4d4f;
-  --gbk-warning: #f5a524;
-  --gbk-focus: 0 0 0 3px color-mix(in oklab, var(--gbk-brand) 30%, transparent);
-
+  --gbk-warning: #FBBE21;
+  --gbk-focus: 0 0 0 3px color-mix(in oklab, var(--gbk-brand) 35%, transparent);
+  
   /* shapes */
   --gbk-radius-1: #{$radius-1};
   --gbk-radius-2: #{$radius-2};
@@ -48,13 +49,18 @@
 
 /* Dark theme */
 @mixin dark-theme-vars {
-  --gbk-bg: #0f0f0f;
-  --gbk-bg-alt: #151515;
-  --gbk-text: #ffffff;
-  --gbk-text-muted: rgba(255, 255, 255, 0.7);
-  --gbk-border: rgba(255, 255, 255, 0.14);
-  --gbk-elev: 0 18px 36px rgba(0, 0, 0, 0.5);
+  --gbk-bg: #01161E;         /* deep teal */
+  --gbk-bg-alt: #124559;     /* slightly lighter teal */
+  --gbk-text: #FFEFAD;       /* warm cream text */
+  --gbk-text-muted: rgba(255, 239, 173, 0.7);
+  --gbk-border: rgba(255, 239, 173, 0.15);
+  --gbk-elev: 0 10px 28px rgba(0, 0, 0, 0.6);
+  --gbk-brand: #FBBE21;      /* yellow stands out nicely */
+  --gbk-brand-600: color-mix(in srgb, #FBBE21 80%, #124559);
+  --gbk-brand-700: color-mix(in srgb, #FBBE21 60%, #124559);
   --gbk-focus: 0 0 0 3px color-mix(in oklab, var(--gbk-brand) 45%, transparent);
+  --gbk-gradient: linear-gradient(135deg, #124559, #598392);
+
 }
 
 /* Apply it to explicit dark theme */
@@ -122,13 +128,21 @@ html, body {
   font-weight: 600;
   font-size: var(--gbk-fs-3);
   color: #fff;
-  background: var(--gbk-brand);
+  background: var(--gbk-ink-on-brand);
   cursor: pointer;
   transition: transform .04s ease, box-shadow .15s ease, background .15s ease;
 
-  &:hover { background: var(--gbk-brand-600); box-shadow: 0 10px 24px color-mix(in oklab, var(--gbk-brand) 30%, transparent); }
+  &:hover { 
+    background: color-mix(in srgb, var(--gbk-ink-on-brand) 55%, black);
+    box-shadow: 0 10px 24px color-mix(in oklab, var(--gbk-brand) 30%, transparent);
+  }
+
   &:active { transform: translateY(1px); }
-  &:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; }
+  &:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
 }
 
 @mixin label {
