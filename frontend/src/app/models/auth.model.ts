@@ -1,8 +1,8 @@
 import { User } from './user.model';
 
 export interface LoginResponse {
-    accessToken: string;
-    tokenType: string;
+    access_token: string;
+    token_type: string;
     user: User;
 }
 
@@ -14,7 +14,7 @@ export interface LoginRequest {
 export interface RegisterRequest {
     email: string;
     password: string;
-    fullName: string;
+    full_name: string;
 }
 
 // TODO: Add email verification request model

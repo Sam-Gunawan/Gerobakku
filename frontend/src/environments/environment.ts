@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://localhost:3000/' // FastAPI base URL
+    apiUrl: 'http://localhost:8000' // FastAPI base URL
 };
