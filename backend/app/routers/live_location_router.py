@@ -1,0 +1,1 @@
+#this is to to define the endpoints for live location updates
