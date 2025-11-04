@@ -1,0 +1,21 @@
+@use '../../../../styles/tokens' as *;
+@use '../../../../styles.scss' as *;
+
+.field {
+  display: grid;
+  gap: var(--gbk-space-3);
+
+  label { @include label; }
+  input { @include input; }
+
+  &.invalid input {
+    border-color: var(--gbk-danger);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--gbk-danger) 35%, transparent);
+  }
+
+  .error { 
+    font-size: var(--gbk-fs-4); 
+    color: var(--gbk-danger); 
+    min-height: 1rem; 
+  }
+}

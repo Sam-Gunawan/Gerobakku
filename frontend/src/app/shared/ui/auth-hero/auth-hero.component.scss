@@ -1,0 +1,30 @@
+@use '../../../../styles/tokens' as *;
+@use '../../../../styles.scss' as *;
+
+.hero {
+  display: none;
+
+  @media (min-width: $bp-md) {
+    display: grid;
+    place-items: center;
+    background: var(--gbk-bg-alt);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 100vh;
+  }
+
+  .hero-inner {
+    max-width: 420px;
+    display: grid;
+    gap: var(--gbk-space-4);
+    text-align: left;
+
+    .hero-title {
+      font-weight: 800;
+      font-size: clamp(28px, 4vw, 40px);
+      letter-spacing: -0.02em;
+    }
+    .hero-desc { @include subtext; }
+  }
+}

@@ -1,0 +1,34 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles.scss' as *;
+
+.title { @include headline-1; margin: 0; }
+.subtitle { @include subtext; margin: 0; }
+
+.form {
+  display: grid;
+  gap: var(--gbk-space-5);
+}
+
+.primary { @include button-primary; }
+
+.error-banner {
+  background: color-mix(in oklab, var(--gbk-danger) 10%, transparent);
+  color: var(--gbk-danger);
+  border: 1px solid color-mix(in oklab, var(--gbk-danger) 40%, transparent);
+  border-radius: var(--gbk-radius-2);
+  padding: var(--gbk-space-4);
+  font-size: var(--gbk-fs-3);
+}
+
+.meta {
+  font-size: var(--gbk-fs-3);
+  color: var(--gbk-text-muted);
+  display: flex;
+  gap: var(--gbk-space-3);
+  a {
+    color: var(--gbk-brand);
+    text-decoration: none;
+    font-weight: 600;
+    &:hover { text-decoration: underline; }
+  }
+}

@@ -1,0 +1,10 @@
+<div class="field" [class.invalid]="isInvalid">
+  <label>{{ label }}</label>
+  <input 
+    [type]="type" 
+    [formControl]="control!" 
+    [placeholder]="placeholder"
+    [autocomplete]="autocomplete"
+  />
+  <small class="error" *ngIf="showError">{{ errorMessage }}</small>
+</div>
