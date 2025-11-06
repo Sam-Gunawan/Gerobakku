@@ -3,12 +3,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from .database import close_database, init_db_pool
 from .routers import auth_router
-# from .routers import live_location_router  # future import for live location router
+from .firebase import init_firebase
+from .routers import live_location_router
+
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: initialize the database pool
     init_db_pool()
+
+    # Initialize Firebase connection
+    init_firebase()
     
     yield
     
@@ -36,3 +42,4 @@ async def read_root():
     return {"Hello": "World"}
 
 app.include_router(auth_router.router)
+app.include_router(live_location_router.router)
