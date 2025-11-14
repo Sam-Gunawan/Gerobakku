@@ -1,0 +1,40 @@
+<app-auth-layout>
+  <h1 class="title">Sign in</h1>
+  <p class="subtitle">Use your email to continue</p>
+
+  <div class="notice" *ngIf="showAuthNotice">Please log in to continue.</div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+    <app-form-field
+      label="Email"
+      type="email"
+      placeholder="you@email.com"
+      [control]="emailCtrl"
+      errorMessage="Valid email required"
+      autocomplete="email"
+    ></app-form-field>
+
+    <app-form-field
+      label="Password"
+      type="password"
+      placeholder="••••••••"
+      [control]="passwordCtrl"
+      errorMessage="Password required"
+      autocomplete="current-password"
+    ></app-form-field>
+
+    <button class="primary" [disabled]="loading || form.invalid" type="submit">
+      <span *ngIf="!loading">Sign in</span>
+      <span *ngIf="loading">Please wait…</span>
+    </button>
+
+    <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
+  </form>
+
+  <div class="meta">
+    <span>No account?</span>
+    <a routerLink="/register">Create one</a>
+  </div>
+
+  <app-auth-hero slot="hero"></app-auth-hero>
+</app-auth-layout>

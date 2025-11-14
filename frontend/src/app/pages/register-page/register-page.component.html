@@ -1,0 +1,51 @@
+<app-auth-layout>
+  <h1 class="title">Create account</h1>
+  <p class="subtitle">Get started with Gerobakku</p>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+    <app-form-field
+      label="Full Name"
+      type="text"
+      placeholder="John Doe"
+      [control]="fullNameCtrl"
+      errorMessage="Full name is required"
+      autocomplete="name"
+    ></app-form-field>
+
+    <app-form-field
+      label="Email"
+      type="email"
+      placeholder="you@email.com"
+      [control]="emailCtrl"
+      errorMessage="Valid email required"
+      autocomplete="email"
+    ></app-form-field>
+
+    <app-form-field
+      label="Password"
+      type="password"
+      placeholder="••••••••"
+      [control]="passwordCtrl"
+      errorMessage="Password must be at least 6 characters"
+      autocomplete="new-password"
+    ></app-form-field>
+
+    <button class="primary" [disabled]="loading || form.invalid" type="submit">
+      <span *ngIf="!loading">Create account</span>
+      <span *ngIf="loading">Please wait…</span>
+    </button>
+
+    <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
+  </form>
+
+  <div class="meta">
+    <span>Already have an account?</span>
+    <a routerLink="/login">Sign in</a>
+  </div>
+
+  <app-auth-hero 
+    slot="hero"
+    title="Join our community"
+    description="Discover local food vendors, read reviews, and support small businesses."
+  ></app-auth-hero>
+</app-auth-layout>

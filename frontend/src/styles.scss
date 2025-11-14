@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Global Styles */
 
 :root {
@@ -70,3 +71,171 @@ html, body {
 .text-muted {
   color: var(--gerobakku-text-muted);
 }
+=======
+/* ---- CSS variables (runtime, theme-able) ---- */
+/* Light theme as default */
+@use './styles/tokens' as *;
+@use 'sass:color';
+
+:root {
+  /* Light Theme */
+  /* Brand */
+  --gbk-brand: #{$brand-main};
+  --gbk-ink-on-brand: #{$brand-ink-on-main};
+  --gbk-brand-600: color-mix(in srgb, #{$brand-main} 90%, #{$brand-accent});
+  --gbk-brand-700: color-mix(in srgb, #{$brand-main} 70%, #{$brand-accent});
+  --gbk-gradient: linear-gradient(135deg, #FBBE21, #FFEFAD);
+
+  /* Neutrals */
+  --gbk-bg: #ffffff;
+  --gbk-bg-alt: #FFEFAD; /* light creamy accent background */
+  --gbk-text: #01161E;
+  --gbk-text-muted: rgba(1, 22, 30, 0.7);
+  --gbk-border: rgba(1, 22, 30, 0.1);
+  --gbk-elev: 0 8px 24px rgba(1, 22, 30, 0.08);
+
+  /* States */
+  --gbk-success: #17c964;
+  --gbk-danger: #ff4d4f;
+  --gbk-warning: #FBBE21;
+  --gbk-focus: 0 0 0 3px color-mix(in oklab, var(--gbk-brand) 35%, transparent);
+  
+  /* shapes */
+  --gbk-radius-1: #{$radius-1};
+  --gbk-radius-2: #{$radius-2};
+  --gbk-radius-3: #{$radius-3};
+
+  /* spacing scale (rem for accessibility) */
+  --gbk-space-2: #{$space-2};
+  --gbk-space-3: #{$space-3};
+  --gbk-space-4: #{$space-4};
+  --gbk-space-5: #{$space-5};
+  --gbk-space-6: #{$space-6};
+  --gbk-space-8: #{$space-8};
+
+  /* typography */
+  --gbk-font: #{$font-sans};
+  --gbk-fs-1: clamp(28px, 4vw, 34px);
+  --gbk-fs-2: clamp(18px, 2.2vw, 20px);
+  --gbk-fs-3: 14px;
+  --gbk-fs-4: 12px;
+}
+
+/* Dark theme */
+@mixin dark-theme-vars {
+  --gbk-bg: #01161E;         /* deep teal */
+  --gbk-bg-alt: #124559;     /* slightly lighter teal */
+  --gbk-text: #FFEFAD;       /* warm cream text */
+  --gbk-text-muted: rgba(255, 239, 173, 0.7);
+  --gbk-border: rgba(255, 239, 173, 0.15);
+  --gbk-elev: 0 10px 28px rgba(0, 0, 0, 0.6);
+  --gbk-brand: #FBBE21;      /* yellow stands out nicely */
+  --gbk-brand-600: color-mix(in srgb, #FBBE21 80%, #124559);
+  --gbk-brand-700: color-mix(in srgb, #FBBE21 60%, #124559);
+  --gbk-focus: 0 0 0 3px color-mix(in oklab, var(--gbk-brand) 45%, transparent);
+  --gbk-gradient: linear-gradient(135deg, #124559, #598392);
+
+}
+
+/* Apply it to explicit dark theme */
+:root[data-theme='dark'] {
+  @include dark-theme-vars;
+}
+
+/* Apply it when OS prefers dark and the app didn't set a theme */
+// @media (prefers-color-scheme: dark) {
+//   :root:not([data-theme]) {
+//     @include dark-theme-vars;
+//   }
+// }
+
+/* ---- Base reset-ish ---- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--gbk-font);
+  background: var(--gbk-bg);
+  color: var(--gbk-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- Mixins (reusable building blocks) ---- */
+@mixin card {
+  background: var(--gbk-bg);
+  border: 1px solid var(--gbk-border);
+  border-radius: var(--gbk-radius-2);
+  box-shadow: var(--gbk-elev);
+}
+
+@mixin input {
+  width: 100%;
+  background: transparent;
+  color: var(--gbk-text);
+  border: 1px solid var(--gbk-border);
+  border-radius: var(--gbk-radius-2);
+  padding: 0.85rem 0.95rem;
+  font-size: var(--gbk-fs-3);
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+
+  &::placeholder { color: var(--gbk-text-muted); }
+  &:focus {
+    border-color: var(--gbk-brand);
+    box-shadow: var(--gbk-focus);
+  }
+}
+
+@mixin button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  width: 100%;
+  border: 0;
+  border-radius: var(--gbk-radius-2);
+  padding: 0.9rem 1rem;
+  font-weight: 600;
+  font-size: var(--gbk-fs-3);
+  color: #fff;
+  background: var(--gbk-ink-on-brand);
+  cursor: pointer;
+  transition: transform .04s ease, box-shadow .15s ease, background .15s ease;
+
+  &:hover { 
+    background: color-mix(in srgb, var(--gbk-ink-on-brand) 55%, black);
+    box-shadow: 0 10px 24px color-mix(in oklab, var(--gbk-brand) 30%, transparent);
+  }
+
+  &:active { transform: translateY(1px); }
+  &:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+@mixin label {
+  font-size: var(--gbk-fs-4);
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: var(--gbk-text-muted);
+}
+
+@mixin headline-1 {
+  font-size: var(--gbk-fs-1);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+@mixin subtext { font-size: var(--gbk-fs-3); color: var(--gbk-text-muted); }
+
+/* Motion safety */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+>>>>>>> 6066a50fd1a3e0b68e49cb0ea9511ba92130d220
