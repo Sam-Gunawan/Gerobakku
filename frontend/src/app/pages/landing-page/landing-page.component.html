@@ -1,1 +1,41 @@
-<p>landing-page works!</p>
+<section class="landing">
+  <div class="landing__visual">
+    <div class="landing__visual-content">
+      <app-brand-lockup orientation="column" [muted]="true"></app-brand-lockup>
+
+      <div class="landing__eyebrow">Every meal from every corner</div>
+      <p class="landing__hero-copy">
+        Discover the most loved gerobak, sate grills, and secret market bites curated by locals.
+      </p>
+
+      <ul class="landing__stats">
+        <li *ngFor="let stat of heroStats">
+          <span class="landing__stat-value">{{ stat.value }}</span>
+          <span class="landing__stat-label">{{ stat.label }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="landing__panel">
+    <div class="landing__copy">
+      <p class="landing__eyebrow landing__eyebrow--panel">Taste the city</p>
+      <h1 class="landing__headline">Every meal from every corner</h1>
+      <p class="landing__subtext">
+        Welcome to our finder where we bring every flavor closer - mapping gerobak favorites,
+        chef recommendations, and late-night legends across the archipelago.
+      </p>
+    </div>
+
+    <app-cta-button label="Get Started" [routerLink]="['/register']"></app-cta-button>
+    <app-cta-button
+      label="I already have an account"
+      variant="ghost"
+      [routerLink]="['/login']"
+    ></app-cta-button>
+
+    <div class="landing__meta">
+      <span>Need a preview? <a routerLink="/home">Browse as guest</a></span>
+    </div>
+  </div>
+</section>

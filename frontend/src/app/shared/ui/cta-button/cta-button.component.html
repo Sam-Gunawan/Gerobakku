@@ -1,0 +1,11 @@
+<ng-container *ngIf="href; else buttonTpl">
+  <a [href]="href" class="cta-button" [ngClass]="classes">
+    <span>{{ label }}</span>
+  </a>
+</ng-container>
+
+<ng-template #buttonTpl>
+  <button type="button" class="cta-button" [ngClass]="classes" [routerLink]="routerLink">
+    <span>{{ label }}</span>
+  </button>
+</ng-template>
