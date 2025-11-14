@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { BrandLockupComponent } from '../../shared/ui/brand-lockup/brand-lockup.component';
-import { CtaButtonComponent } from '../../shared/ui/cta-button/cta-button.component';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [CommonModule, RouterModule, BrandLockupComponent, CtaButtonComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss'
 })

@@ -25,6 +25,23 @@
   }
 
   .brand {
-    margin-bottom: var(--gbk-space-6);
+    display: flex;
+    align-items: center;
+    gap: var(--gbk-space-3);
+
+    .logo {
+      @include card;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--gbk-radius-2);
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+    }
+
+    .brand-copy {
+      .app-name { font-weight: 700; letter-spacing: .01em; }
+      .tagline { @include subtext; }
+    }
   }
 }

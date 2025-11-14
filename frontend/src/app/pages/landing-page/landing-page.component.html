@@ -1,7 +1,13 @@
 <section class="landing">
   <div class="landing__visual">
     <div class="landing__visual-content">
-      <app-brand-lockup orientation="column" [muted]="true"></app-brand-lockup>
+      <div class="landing__brand">
+        <div class="landing__brand-logo">🍢</div>
+        <div class="landing__brand-copy">
+          <div class="landing__brand-name">Gerobakku</div>
+          <div class="landing__brand-tagline">Cari. Cek. Cuss.</div>
+        </div>
+      </div>
 
       <div class="landing__eyebrow">Every meal from every corner</div>
       <p class="landing__hero-copy">
@@ -27,12 +33,10 @@
       </p>
     </div>
 
-    <app-cta-button label="Get Started" [routerLink]="['/register']"></app-cta-button>
-    <app-cta-button
-      label="I already have an account"
-      variant="ghost"
-      [routerLink]="['/login']"
-    ></app-cta-button>
+    <div class="landing__cta-group">
+      <a class="landing__cta landing__cta--primary" routerLink="/register">Get Started</a>
+      <a class="landing__cta landing__cta--ghost" routerLink="/login">I already have an account</a>
+    </div>
 
     <div class="landing__meta">
       <span>Need a preview? <a routerLink="/home">Browse as guest</a></span>
