@@ -1,6 +1,6 @@
-<<<<<<< HEAD
 /* Global Styles */
-
+@use './styles/tokens' as *;
+@use 'sass:color';
 :root {
   /* Colors */
   --gerobakku-background-light: #f8f9fa;
@@ -71,11 +71,10 @@ html, body {
 .text-muted {
   color: var(--gerobakku-text-muted);
 }
-=======
+
 /* ---- CSS variables (runtime, theme-able) ---- */
 /* Light theme as default */
-@use './styles/tokens' as *;
-@use 'sass:color';
+
 
 :root {
   /* Light Theme */
@@ -238,4 +237,4 @@ html, body {
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
->>>>>>> 6066a50fd1a3e0b68e49cb0ea9511ba92130d220
+
