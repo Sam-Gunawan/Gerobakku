@@ -8,10 +8,4 @@ import { RouterModule } from '@angular/router';
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss'
 })
-export class LandingPageComponent {
-  readonly heroStats = [
-    { label: 'Cities', value: '32+' },
-    { label: 'Local carts', value: '1,200+' },
-    { label: 'Happy foodies', value: '58k' }
-  ];
-}
+export class LandingPageComponent {}
