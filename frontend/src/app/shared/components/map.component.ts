@@ -32,8 +32,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const markerStyle = new Style({
       image: new Icon({
         anchor: [0.5, 1], // Anchor at bottom center
-        src: 'assets/location-pin.png',
-        scale: 0.5, // Adjust scale if the image is too large
+        src: 'assets/gerobak-icon-brown-nobg.png',
+        scale: 0.1, // Adjust scale if the image is too large
       }),
     });
 

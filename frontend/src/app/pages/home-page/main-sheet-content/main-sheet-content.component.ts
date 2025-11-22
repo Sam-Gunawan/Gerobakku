@@ -16,7 +16,9 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
   carouselImages = [
     'assets/ad1.png',
     'assets/ad2.png',
-    'assets/ad3.png'
+    'assets/ad3.png',
+    'assets/ad4.png',
+    'assets/ad5.png',
   ];
   currentCarouselIndex = 0;
   private carouselInterval: any;
