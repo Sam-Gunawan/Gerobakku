@@ -9,6 +9,13 @@
 
   <app-header></app-header>
 
+  <!-- Sidebar for Desktop/Tablet -->
+  <div class="sidebar-container">
+    <app-main-sheet-content (viewChangeRequest)="handleViewChange($event)">
+    </app-main-sheet-content>
+  </div>
+
+  <!-- Bottom Sheet for Mobile -->
   <app-bottom-sheet (heightChange)="onBottomSheetHeightChange($event)">
     <ng-container [ngSwitch]="currentSheetView">
       <app-main-sheet-content *ngSwitchCase="'main'" (viewChangeRequest)="handleViewChange($event)">

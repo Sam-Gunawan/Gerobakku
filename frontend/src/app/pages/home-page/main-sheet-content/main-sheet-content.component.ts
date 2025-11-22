@@ -1,15 +1,50 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-main-sheet-content',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './main-sheet-content.component.html',
   styleUrl: './main-sheet-content.component.scss'
 })
-export class MainSheetContentComponent {
+export class MainSheetContentComponent implements OnInit, OnDestroy {
   // Output event to tell the parent (MapDashboard) to switch view
   @Output() viewChangeRequest = new EventEmitter<string>();
+
+  // Carousel state
+  carouselImages = [
+    'assets/ad1.png',
+    'assets/ad2.png',
+    'assets/ad3.png'
+  ];
+  currentCarouselIndex = 0;
+  private carouselInterval: any;
+
+  ngOnInit(): void {
+    // Auto-rotate carousel every 3 seconds
+    this.carouselInterval = setInterval(() => {
+      this.nextSlide();
+    }, 3000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.carouselInterval) {
+      clearInterval(this.carouselInterval);
+    }
+  }
+
+  nextSlide(): void {
+    this.currentCarouselIndex = (this.currentCarouselIndex + 1) % this.carouselImages.length;
+  }
+
+  previousSlide(): void {
+    this.currentCarouselIndex = (this.currentCarouselIndex - 1 + this.carouselImages.length) % this.carouselImages.length;
+  }
+
+  goToSlide(index: number): void {
+    this.currentCarouselIndex = index;
+  }
 
   // Placeholder function for button clicks
   navigateTo(menuName: string): void {

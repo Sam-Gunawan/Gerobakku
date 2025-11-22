@@ -2,52 +2,7 @@
   position: relative;
   width: 100vw;
   height: 100vh;
-  overflow: hidden; // Prevent whole page scroll
-}
-
-.map-placeholder {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--gerobakku-map-placeholder-bg); // Use variable
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--gerobakku-map-placeholder-text); // Use variable
-  font-size: var(--gerobakku-font-size-l); // Use variable
-  z-index: 1; // Base layer
-  // Placeholder: Map library integration will replace this
-}
-
-.target-icon-placeholder {
-    position: absolute;
-    right: var(--gerobakku-spacing-m); // Use variable
-    width: var(--gerobakku-button-tap-area); // Use variable for size
-    height: var(--gerobakku-button-tap-area); // Use variable for size
-    background-color: rgba(255, 255, 255, 0.9); // Keep specific RGBA for transparency
-    border-radius: var(--gerobakku-border-radius-round); // Use variable
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 5px var(--gerobakku-shadow-color-medium); // Use variable
-    font-size: 26px; // Icon size (can be variable too if needed)
-    cursor: pointer;
-    z-index: 500; // Above map, below sheet generally
-    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Match sheet transition
-    // Placeholder: Add click handler for map centering
-}
-
-// Ensure child components stack correctly
-app-header {
-  z-index: 1010; // Header above target icon and sheet
-  display: block; // Ensures it takes space if needed (though absolutely positioned)
-}
-
-app-bottom-sheet {
-  z-index: 1000; // Sheet container itself
-  display: block;
+  overflow: hidden;
 }
 
 app-map {
@@ -55,6 +10,86 @@ app-map {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;   // <--- THIS IS THE KEY FIX
-  z-index: 1;     // map at bottom layer
+  height: 100%;
+  z-index: 1;
+}
+
+app-header {
+  z-index: 1010;
+  display: block;
+}
+
+/* Sidebar Container - Desktop/Tablet Only */
+.sidebar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 320px;
+  height: 100vh;
+  background: var(--gbk-bg, #ffffff);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 16px;
+  padding-top: 80px;
+  /* Below header */
+  display: none;
+  /* Hidden on mobile by default */
+}
+
+/* Show sidebar on desktop/tablet, hide on mobile */
+@media (min-width: 769px) {
+  .sidebar-container {
+    display: block;
+  }
+
+  app-bottom-sheet {
+    display: none;
+    /* Hide bottom sheet on desktop */
+  }
+}
+
+/* Mobile: Show bottom sheet, hide sidebar */
+@media (max-width: 768px) {
+  .sidebar-container {
+    display: none;
+  }
+
+  app-bottom-sheet {
+    z-index: 1000;
+    display: block;
+  }
+}
+
+/* Legacy styles for reference */
+.map-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--gerobakku-map-placeholder-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--gerobakku-map-placeholder-text);
+  font-size: var(--gerobakku-font-size-l);
+  z-index: 1;
+}
+
+.target-icon-placeholder {
+  position: absolute;
+  right: var(--gerobakku-spacing-m);
+  width: var(--gerobakku-button-tap-area);
+  height: var(--gerobakku-button-tap-area);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: var(--gerobakku-border-radius-round);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 5px var(--gerobakku-shadow-color-medium);
+  font-size: 26px;
+  cursor: pointer;
+  z-index: 500;
+  transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

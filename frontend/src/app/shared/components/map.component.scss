@@ -4,16 +4,15 @@
     min-height: 400px;
     display: block;
     border-radius: 0;
-    /* Full screen usually doesn't need radius, or maybe just for the container */
     overflow: hidden;
     position: relative;
 }
 
-/* Reposition Zoom Control to Bottom Right */
+/* Reposition Zoom Control to Avoid Header and Bottom Sheet */
 ::ng-deep .ol-zoom {
-    top: auto;
-    bottom: 2rem;
-    /* Give some space from bottom */
+    top: 80px;
+    /* Below header */
+    bottom: auto;
     right: 1rem;
     left: auto;
 
@@ -31,25 +30,26 @@
     }
 }
 
-/* Hide or Minimize Attribution */
+/* Minimize and Reposition Attribution */
 ::ng-deep .ol-attribution {
-    bottom: 0.5rem;
-    right: 0.5rem;
-    background: rgba(255, 255, 255, 0.7);
+    bottom: 5px;
+    left: 5px;
+    right: auto;
+    background: rgba(255, 255, 255, 0.6);
     border-radius: 4px;
+    font-size: 9px;
 
-    /* If user really wants it gone, we can display: none, but it's against TOS usually. 
-     I'll make it very small. */
     ul {
-        font-size: 10px;
+        font-size: 9px;
         color: #666;
+        margin: 2px 4px;
     }
 
     &.ol-collapsed {
-        background: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.4);
 
         &:hover {
-            background: #fff;
+            background: rgba(255, 255, 255, 0.8);
         }
     }
 }
