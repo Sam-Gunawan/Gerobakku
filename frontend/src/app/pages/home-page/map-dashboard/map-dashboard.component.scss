@@ -49,3 +49,12 @@ app-bottom-sheet {
   z-index: 1000; // Sheet container itself
   display: block;
 }
+
+app-map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;   // <--- THIS IS THE KEY FIX
+  z-index: 1;     // map at bottom layer
+}

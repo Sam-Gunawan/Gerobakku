@@ -5,6 +5,7 @@ import { HeaderComponent } from '../header/header.component';
 import { BottomSheetComponent } from '../bottom-sheet/bottom-sheet.component';
 import { MainSheetContentComponent } from '../main-sheet-content/main-sheet-content.component';
 import { Menu1SheetContentComponent } from '../menu1-sheet-content/menu1-sheet-content.component';
+import { MapComponent } from '../../../shared/components/map.component';
 
 type BottomSheetView = 'main' | 'menu-1' | 'menu-2' | 'menu-3' | 'menu-4';
 
@@ -16,7 +17,8 @@ type BottomSheetView = 'main' | 'menu-1' | 'menu-2' | 'menu-3' | 'menu-4';
     HeaderComponent,
     BottomSheetComponent,
     MainSheetContentComponent,
-    Menu1SheetContentComponent
+    Menu1SheetContentComponent,
+    MapComponent
   ],
   templateUrl: './map-dashboard.component.html',
   styleUrl: './map-dashboard.component.scss'

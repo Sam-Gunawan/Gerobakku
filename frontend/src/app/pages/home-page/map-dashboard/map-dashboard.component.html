@@ -1,24 +1,23 @@
 <div class="dashboard-container">
-  <div class="map-placeholder">
+  <!-- <div class="map-placeholder">
     Map Background Placeholder
     <div class="target-icon-placeholder" [style.bottom]="getTargetIconBottom()">
       🎯 </div>
-  </div>
+  </div> -->
+
+  <app-map></app-map>
 
   <app-header></app-header>
 
   <app-bottom-sheet (heightChange)="onBottomSheetHeightChange($event)">
     <ng-container [ngSwitch]="currentSheetView">
-      <app-main-sheet-content *ngSwitchCase="'main'"
-        (viewChangeRequest)="handleViewChange($event)">
+      <app-main-sheet-content *ngSwitchCase="'main'" (viewChangeRequest)="handleViewChange($event)">
       </app-main-sheet-content>
 
-      <app-menu1-sheet-content *ngSwitchCase="'menu-1'"
-        (viewChangeRequest)="handleViewChange($event)">
+      <app-menu1-sheet-content *ngSwitchCase="'menu-1'" (viewChangeRequest)="handleViewChange($event)">
       </app-menu1-sheet-content>
 
-      <app-main-sheet-content *ngSwitchDefault
-        (viewChangeRequest)="handleViewChange($event)">
+      <app-main-sheet-content *ngSwitchDefault (viewChangeRequest)="handleViewChange($event)">
       </app-main-sheet-content>
     </ng-container>
   </app-bottom-sheet>
