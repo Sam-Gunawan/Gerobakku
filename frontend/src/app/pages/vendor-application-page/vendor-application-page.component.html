@@ -1,0 +1,95 @@
+<div class="application-container">
+  <div class="application-content">
+    <!-- Header -->
+    <div class="application-header">
+      <div class="back-button" (click)="router.navigate(['/profile'])">
+        <span>←</span>
+      </div>
+      <h1>Apply as Vendor</h1>
+    </div>
+
+    <!-- Info Card -->
+    <div class="info-card">
+      <h3>Become a Gerobakku Vendor</h3>
+      <p>Join our platform and reach more customers! Fill out the application form below to get started.</p>
+    </div>
+
+    <!-- Application Form -->
+    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="application-form">
+      
+      <!-- ID Card Upload -->
+      <div class="form-section">
+        <h3>ID Card Photo</h3>
+        <p class="section-description">Upload a clear photo of your government-issued ID card</p>
+        
+        <div class="upload-area" [class.has-file]="idCardPreview">
+          <div *ngIf="!idCardPreview" class="upload-placeholder">
+            <div class="upload-icon">📷</div>
+            <p>Click to upload ID card</p>
+            <span class="upload-hint">PNG, JPG up to 5MB</span>
+          </div>
+          
+          <div *ngIf="idCardPreview" class="image-preview">
+            <img [src]="idCardPreview" alt="ID Card Preview" />
+            <button type="button" class="remove-btn" (click)="removeIdCard()">✕</button>
+          </div>
+          
+          <input 
+            type="file" 
+            accept="image/*" 
+            (change)="onIdCardSelect($event)"
+            class="file-input"
+          />
+        </div>
+        
+        <div *ngIf="applicationForm.get('idCard')?.touched && applicationForm.get('idCard')?.hasError('required')" 
+             class="error-message">
+          ID card photo is required
+        </div>
+      </div>
+
+      <!-- Selfie Upload -->
+      <div class="form-section">
+        <h3>Selfie Photo</h3>
+        <p class="section-description">Upload a clear selfie photo of yourself</p>
+        
+        <div class="upload-area" [class.has-file]="selfiePreview">
+          <div *ngIf="!selfiePreview" class="upload-placeholder">
+            <div class="upload-icon">📷</div>
+            <p>Click to upload selfie</p>
+            <span class="upload-hint">PNG, JPG up to 5MB</span>
+          </div>
+          
+          <div *ngIf="selfiePreview" class="image-preview">
+            <img [src]="selfiePreview" alt="Selfie Preview" />
+            <button type="button" class="remove-btn" (click)="removeSelfie()">✕</button>
+          </div>
+          
+          <input 
+            type="file" 
+            accept="image/*" 
+            (change)="onSelfieSelect($event)"
+            class="file-input"
+          />
+        </div>
+        
+        <div *ngIf="applicationForm.get('selfie')?.touched && applicationForm.get('selfie')?.hasError('required')" 
+             class="error-message">
+          Selfie photo is required
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        class="submit-btn"
+        [disabled]="isSubmitting || applicationForm.invalid"
+      >
+        <span *ngIf="!isSubmitting">Submit Application</span>
+        <span *ngIf="isSubmitting">
+          <span class="spinner"></span> Submitting...
+        </span>
+      </button>
+    </form>
+  </div>
+</div>
