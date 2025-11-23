@@ -1,4 +1,5 @@
 import { Component, AfterViewInit, ElementRef, ViewChild, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
@@ -17,6 +18,7 @@ import AnimatedCluster from 'ol-ext/layer/AnimatedCluster';
 @Component({
   selector: 'app-map',
   standalone: true,
+  imports: [CommonModule],
   template: `<div id="map" #mapContainer></div>`,
   styleUrls: ['./map.component.scss']
 })
@@ -57,15 +59,12 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       features: []
     });
 
-    // Animated cluster layer for vendors
-    const clusterSource = new AnimatedCluster({
-      distance: 40, // Distance in pixels for clustering
+    // AnimatedCluster is a LAYER, not a source!
+    this.vendorLayer = new AnimatedCluster({
+      name: 'Vendor Cluster',
       source: this.vendorSource,
-      animationDuration: 700
-    });
-
-    this.vendorLayer = new VectorLayer({
-      source: clusterSource,
+      distance: 40, // Distance in pixels for clustering
+      animationDuration: 700,
       style: (feature: any) => this.getClusterStyle(feature)
     });
 
