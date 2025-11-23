@@ -8,48 +8,67 @@
     position: relative;
 }
 
-/* Reposition Zoom Control to Avoid Header and Bottom Sheet */
+/* Completely hide zoom controls */
 ::ng-deep .ol-zoom {
-    top: 80px;
-    /* Below header */
-    bottom: auto;
-    right: 1rem;
-    left: auto;
-
-    button {
-        background-color: var(--gbk-bg);
-        color: var(--gbk-text);
-        border-radius: 50%;
-        margin: 4px 0;
-        box-shadow: var(--gbk-elev);
-
-        &:hover {
-            background-color: var(--gbk-brand);
-            color: var(--gbk-ink-on-brand);
-        }
-    }
+    display: none !important;
 }
 
-/* Minimize and Reposition Attribution */
+/* Hide rotate control */
+::ng-deep .ol-rotate {
+    display: none !important;
+}
+
+/* Style Attribution at bottom with very small font */
 ::ng-deep .ol-attribution {
-    bottom: 5px;
-    left: 5px;
-    right: auto;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 4px;
-    font-size: 9px;
+    bottom: 2px;
+    left: auto;
+    right: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 2px;
+    font-size: 8px;
+    padding: 2px 4px;
+    max-width: 200px;
 
     ul {
-        font-size: 9px;
+        font-size: 8px;
         color: #666;
-        margin: 2px 4px;
+        margin: 0;
+        padding: 0;
+        line-height: 1.2;
+    }
+
+    li {
+        font-size: 8px;
+        line-height: 1.2;
+    }
+
+    a {
+        font-size: 8px;
+        color: #666;
+        text-decoration: none;
+        
+        &:hover {
+            text-decoration: underline;
+        }
     }
 
     &.ol-collapsed {
-        background: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.3);
 
         &:hover {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.7);
         }
+    }
+
+    button {
+        font-size: 8px;
+        padding: 1px 2px;
+    }
+}
+
+/* Ensure no other controls are visible */
+::ng-deep .ol-control {
+    &:not(.ol-attribution) {
+        display: none !important;
     }
 }

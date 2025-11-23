@@ -44,3 +44,16 @@
         <app-vendor-card *ngFor="let store of recommendedStores" [store]="store"></app-vendor-card>
     </div>
 </div>
+
+<!-- Simulation Control Button -->
+<!-- Used inline CSS for quick implementation -->
+<!-- <div class="simulation-control" style="padding: 1rem; margin: 1rem 0;">
+    <button class="sim-button" (click)="onStartSimulation()" [disabled]="isSimulationRunning"
+        style="width: 100%; padding: 1rem; background: #8B4513; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;">
+        <span style="margin-right: 0.5rem;">🎬</span>
+        <span>{{ isSimulationRunning ? 'Simulation Running...' : 'Start Vendor Simulation' }}</span>
+    </button>
+    <p *ngIf="!isSimulationRunning" style="margin-top: 0.5rem; font-size: 0.9rem; color: #666; text-align: center;">
+        Watch 3 vendors move in real-time!
+    </p>
+</div> -->

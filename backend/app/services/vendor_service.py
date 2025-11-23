@@ -1,82 +1,145 @@
 import time
-import datetime
-from app.repositories.vendor_repo import insert_store_location, get_store_locations
-from app.database import init_db_pool
+from app.repositories.vendor_repo import insert_store_location
 
-def interpolate(start_val, end_val, fraction):
-    """Calculates a point between two values based on a fraction (0.0 to 1.0)."""
-    return start_val + (end_val - start_val) * fraction
 
-# --- The New Simulation Function ---
+# Define realistic walking paths around Sampoerna University for 3 vendors
+# Sampoerna University coordinates: -6.2443, 106.8385
 
-def interpolate(start_val, end_val, fraction):
-    """Calculates a point between two values based on a fraction (0.0 to 1.0)."""
-    return start_val + (end_val - start_val) * fraction
+VENDOR_PATHS = {
+    # Sate Pak Joko - walks around campus perimeter (store_id: 301)
+    301: [
+        {"name": "Start - Campus Gate", "lat": -6.2440, "lon": 106.8385},
+        {"name": "North entrance", "lat": -6.2435, "lon": 106.8385},
+        {"name": "Northeast corner", "lat": -6.2435, "lon": 106.8395},
+        {"name": "East side", "lat": -6.2440, "lon": 106.8400},
+        {"name": "Southeast corner", "lat": -6.2450, "lon": 106.8400},
+        {"name": "South gate", "lat": -6.2450, "lon": 106.8385},
+        {"name": "Southwest corner", "lat": -6.2450, "lon": 106.8375},
+        {"name": "West side", "lat": -6.2440, "lon": 106.8370},
+        {"name": "Back to start",  "lat": -6.2440, "lon": 106.8385},
+    ],
+    
+    # Es Teh Bu Siti - walks street pattern (store_id: 302)
+    302: [
+        {"name": "Start - Main road", "lat": -6.2443, "lon": 106.8390},
+        {"name": "Down street", "lat": -6.2448, "lon": 106.8392},
+        {"name": "Turn right", "lat": -6.2448, "lon": 106.8388},
+        {"name": "Walk back", "lat": -6.2443, "lon": 106.8386},
+        {"name": "Cross street", "lat": -6.2438, "lon": 106.8384},
+        {"name": "Loop around", "lat": -6.2438, "lon": 106.8390},
+        {"name": "Return path", "lat": -6.2443, "lon": 106.8390},
+    ],
+    
+    # Gorengan Bu Rina - small loop near campus (store_id: 304) 
+    304: [
+        {"name": "Start - Campus side", "lat": -6.2438, "lon": 106.8380},
+        {"name": "Walk north", "lat": -6.2433, "lon": 106.8380},
+        {"name": "Turn east", "lat": -6.2433, "lon": 106.8385},
+        {"name": "Walk south", "lat": -6.2440, "lon": 106.8385},
+        {"name": "Turn west", "lat": -6.2440, "lon": 106.8378},
+        {"name": "Back north", "lat": -6.2438, "lon": 106.8380},
+    ]
+}
 
-# --- The New Simulation Function ---
+
+def interpolate_points(start, end, steps):
+    """
+    Interpolate between two points with the given number of steps.
+    Returns a list of intermediate coordinates.
+    """
+    points = []
+    for i in range(steps + 1):
+        fraction = i / steps
+        lat = start['lat'] + (end['lat'] - start['lat']) * fraction
+        lon = start['lon'] + (end['lon'] - start['lon']) * fraction
+        points.append({'lat': lat, 'lon': lon})
+    return points
+
+
+def simulate_vendor_movement(store_id, steps_per_segment=10, delay_seconds=1, loops=5):
+    """
+    Simulate realistic vendor movement along a predefined path.
+    
+    Args:
+        store_id: The store/vendor ID to simulate
+        steps_per_segment: Number of interpolation steps between path points
+        delay_seconds: Delay between each location update (in seconds)
+        loops: Number of times to repeat the full path (for continuous demo)
+    """
+    if store_id not in VENDOR_PATHS:
+        print(f"No path defined for store {store_id}")
+        return
+    
+    path = VENDOR_PATHS[store_id]
+    total_points = 0
+    
+    print(f"🚶 Starting simulation for vendor {store_id} - {loops} loops")
+    
+    try:
+        for loop_count in range(loops):
+            print(f"  Loop {loop_count + 1}/{loops}")
+            
+            # Walk through each segment of the path
+            for i in range(len(path)):
+                start_point = path[i]
+                # Loop back to start when reaching the end
+                end_point = path[(i + 1) % len(path)]
+                
+                # Interpolate between points for smooth movement
+                intermediate_points = interpolate_points(start_point, end_point, steps_per_segment)
+                
+                for point in intermediate_points:
+                    # Insert location into database
+                    insert_store_location(store_id, point)
+                    total_points += 1
+                    
+                    # Small delay to simulate walking speed
+                    time.sleep(delay_seconds)
+            
+            print(f"  ✓ Completed loop {loop_count + 1} ({total_points} points total)")
+        
+        print(f"✅ Simulation complete for vendor {store_id}: {total_points} total points")
+        
+    except Exception as e:
+        print(f"❌ Error in simulation for vendor {store_id}: {e}")
+        raise
+
 
 def simulate_movement(store_id, steps_per_segment, delay_seconds, path=None):
     """
-    Simulates movement along a path, calling the database
-    functions for each update.
-    
+    Legacy function - redirect to new simulation if vendor has a path.
+    This maintains backward compatibility with existing code.
     """
+    if store_id in VENDOR_PATHS:
+        # Use new simulation with 5 loops for demo
+        simulate_vendor_movement(store_id, steps_per_segment, delay_seconds, loops=5)
+    else:
+        # For vendors without paths, do nothing (they stay in place)
+        print(f"Vendor {store_id} has no movement path - staying at current location")
+        return
+
+
+def simulate_three_vendors():
+    """
+    Simulate movement for the 3 vendors near Sampoerna University.
+    This is the main function to call for the demo.
+    """
+    print("=" * 60)
+    print("🎬 STARTING 3-VENDOR SIMULATION")
+    print("=" * 60)
     
-    if path is None:
-        path = [
-            {
-                "name": "JIEXPO",
-                "lon": 106.84602, 
-                "lat": -6.15104
-            },
-            {
-                "name": "Intersection",
-                "lon": 106.84475,
-                "lat": -6.15391
-            },
-            {
-                "name": "RSUD Kemayoran",
-                "lon": 106.84363,
-                "lat": -6.15585
-            }
-        ]
-    # --- END OF CHANGE ---
-        
-    print(f"--- STARTING SIMULATION for store_id: {store_id} ---")
-
-    # Loop through each pair of points in the path
-    for i in range(len(path) - 1):
-        start_point = path[i]
-        end_point = path[i+1]
-        
-        print(f"\n--- Segment: {start_point['name']} -> {end_point['name']} ---")
-        
-        # Loop through the "steps" for this segment
-        for step in range(steps_per_segment + 1):
-            # 1. Calculate the new interpolated point
-            fraction = step / steps_per_segment
-            current_lon = interpolate(start_point["lon"], end_point["lon"], fraction)
-            current_lat = interpolate(start_point["lat"], end_point["lat"], fraction)
-            
-            # This is the object our simulation creates
-            current_location_obj = {"lon": current_lon, "lat": current_lat}
-            
-            print(f"\n[APP] Step {step}/{steps_per_segment}: Sending update {current_location_obj}")
-            
-            # 2. Call your INSERT function
-            try:
-                insert_store_location(store_id, current_location_obj)
-            except Exception as e:
-                print(f"[APP] Error inserting: {e}")
-                break
-                
-            # 3. Call your GET function to verify
-            retrieved_data = get_store_locations(store_id)
-            
-            print(f"[APP] -> Verified Get: Latest location is ID {retrieved_data['location_id']} at {retrieved_data['location_point']}")
-            
-            if step < steps_per_segment:
-                time.sleep(delay_seconds)
-
-    print("\n--- SIMULATION FINISHED ---")
-
+    # Run each vendor simulation sequentially
+    # Each vendor will loop their path 5 times with 10 steps between each waypoint
+    # This gives approximately: 3 vendors × 5-9 waypoints × 10 steps × 5 loops = 750-1350 total points
+    
+    for store_id in [301, 302, 304]:
+        simulate_vendor_movement(
+            store_id=store_id,
+            steps_per_segment=10,   # 10 smooth steps between each waypoint
+            delay_seconds=2,         # 2 seconds between updates (reasonable speed)
+            loops=5                  # Repeat path 5 times for ~20-30 minute demo
+        )
+    
+    print("=" * 60)
+    print("✅ ALL SIMULATIONS COMPLETE")
+    print("=" * 60)
