@@ -1,0 +1,46 @@
+<!-- Advertisement Carousel -->
+<div class="advertisement-carousel">
+    <div class="carousel-track" [style.transform]="'translateX(-' + (currentCarouselIndex * 100) + '%)'">
+        <div class="carousel-slide" *ngFor="let image of carouselImages">
+            <img [src]="image" alt="Advertisement">
+        </div>
+    </div>
+    <div class="carousel-indicators">
+        <button *ngFor="let image of carouselImages; let i = index" class="indicator"
+            [class.active]="i === currentCarouselIndex" (click)="goToSlide(i)"></button>
+    </div>
+</div>
+
+<!-- Category Icons -->
+<div class="categories-section">
+    <div class="categories-scroll">
+        <button *ngFor="let category of categories" class="category-icon" (click)="onCategoryClick(category.id)">
+            <div class="icon-circle">
+                <span class="icon">{{ category.icon }}</span>
+            </div>
+            <span class="category-name">{{ category.name }}</span>
+        </button>
+    </div>
+</div>
+
+<!-- Near You Section -->
+<div class="vendor-section">
+    <div class="section-header">
+        <h2 class="section-title">Near You</h2>
+        <button class="see-all-btn" (click)="onSeeAllNearYou()">See All</button>
+    </div>
+    <div class="vendor-cards">
+        <app-vendor-card *ngFor="let store of nearYouStores" [store]="store"></app-vendor-card>
+    </div>
+</div>
+
+<!-- Stalls You May Like Section -->
+<div class="vendor-section">
+    <div class="section-header">
+        <h2 class="section-title">Stalls You May Like</h2>
+        <button class="see-all-btn" (click)="onSeeAllRecommended()">See All</button>
+    </div>
+    <div class="vendor-cards">
+        <app-vendor-card *ngFor="let store of recommendedStores" [store]="store"></app-vendor-card>
+    </div>
+</div>
