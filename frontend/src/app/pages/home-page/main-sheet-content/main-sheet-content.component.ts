@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, OnInit, OnDestroy } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { VendorCardComponent } from '../vendor-card/vendor-card.component';
 import { Store } from '../../../models/store.model';
+import { LocationService } from '../../../services/location.service';
 
 interface Category {
   id: string;
@@ -40,6 +41,8 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
     { id: 'middle-eastern', name: 'Middle Eastern', icon: '🥙' },
     { id: 'beverages', name: 'Beverages', icon: '🥤' }
   ];
+
+  isSimulationRunning: boolean = false;
 
   // Mock data for Near You
   nearYouStores: Store[] = [
@@ -109,6 +112,8 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
     }
   ];
 
+  constructor(private locationService: LocationService) { }
+
   ngOnInit(): void {
     // Auto-rotate carousel every 3 seconds
     this.carouselInterval = setInterval(() => {
@@ -147,5 +152,20 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
   onSeeAllRecommended(): void {
     console.log('See all recommended clicked');
     // TODO: Navigate to full list
+  }
+
+  onStartSimulation(): void {
+    if (this.isSimulationRunning) return;
+
+    this.isSimulationRunning = true;
+    this.locationService.startSimulation().subscribe({
+      next: (response) => {
+        console.log('🎬 Simulation started:', response);
+      },
+      error: (error) => {
+        console.error('❌ Simulation error:', error);
+        this.isSimulationRunning = false;
+      }
+    });
   }
 }

@@ -59,7 +59,8 @@ def insert_store_location(store_id, location):
     
     try:
         with get_cursor(commit=True) as cur:
-            cur.execute(sql, (store_id, lon, lat))
+            # Use prepare=False to avoid prepared statement conflicts in concurrent execution
+            cur.execute(sql, (store_id, lon, lat), prepare=False)
             row = cur.fetchone()
             if not row:
                 return None
