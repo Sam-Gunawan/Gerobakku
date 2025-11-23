@@ -1,5 +1,10 @@
 import { Menu } from "./menu.model";
 
+export interface LocationPoint {
+    lat: number;
+    lon: number;
+}
+
 export interface Store {
     storeId: string;
     vendorId: string;
@@ -14,4 +19,6 @@ export interface Store {
     closeTime: string;
     storeImageUrl: string;
     menu: Menu[];
+    currentLocation?: LocationPoint | null;
+    locationUpdatedAt?: Date | null;
 }

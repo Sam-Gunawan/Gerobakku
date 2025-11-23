@@ -33,6 +33,8 @@
               }
             ],
             "styles": [
+              "node_modules/ol/ol.css",
+              "node_modules/ol-ext/dist/ol-ext.css",
               "src/styles.scss"
             ],
             "scripts": [],
@@ -95,7 +97,8 @@
               }
             ],
             "styles": [
-              "node_modules/leaflet/dist/leaflet.css",
+              "node_modules/ol/ol.css",
+              "node_modules/ol-ext/dist/ol-ext.css",
               "src/styles.scss"
             ],
             "scripts": []
