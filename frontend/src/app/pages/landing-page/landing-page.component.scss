@@ -3,7 +3,6 @@
 
 :host {
   display: block;
-  min-height: 100svh;
   background: radial-gradient(circle at 10% 20%, rgba(248, 189, 63, 0.15), transparent 55%),
     radial-gradient(circle at 80% 0%, rgba(89, 131, 146, 0.2), transparent 45%),
     #050505;
@@ -11,9 +10,9 @@
 }
 
 .landing {
-  min-height: 100svh;
+  // min-height: 100%;
   display: grid;
-  grid-template-rows: minmax(420px, 55svh) auto;
+  grid-template-rows: minmax(420px, 55%) auto;
   background: linear-gradient(180deg, rgba(3, 3, 3, 0.85), rgba(1, 6, 10, 0.96));
 }
 
@@ -181,20 +180,20 @@
   background: transparent;
 }
 
-.landing__meta {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
-}
+// .landing__meta {
+//   font-size: 0.9rem;
+//   color: rgba(255, 255, 255, 0.6);
+// }
 
-.landing__meta a {
-  color: var(--gbk-brand);
-  font-weight: 600;
-  text-decoration: none;
-}
+// .landing__meta a {
+//   color: var(--gbk-brand);
+//   font-weight: 600;
+//   text-decoration: none;
+// }
 
-.landing__meta a:hover {
-  text-decoration: underline;
-}
+// .landing__meta a:hover {
+//   text-decoration: underline;
+// }
 
 @media (min-width: $bp-lg) {
   .landing__panel {
