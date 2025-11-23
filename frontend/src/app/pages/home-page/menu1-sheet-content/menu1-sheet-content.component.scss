@@ -1,0 +1,72 @@
+.menu1-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--gerobakku-spacing-s);
+  padding-top: var(--gerobakku-spacing-xs); // Small padding at the top
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--gerobakku-spacing-s); // Ensure good tap area
+  margin-right: var(--gerobakku-spacing-xs);
+  color: var(--gerobakku-icon-color-dark);
+  display: flex; // Center icon
+  align-items: center;
+  justify-content: center;
+
+  // Minimum tap area
+  min-width: var(--gerobakku-button-tap-area);
+  min-height: var(--gerobakku-button-tap-area);
+
+  svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.menu1-title {
+  font-size: 1.2rem; // Slightly larger title
+  font-weight: 600;
+  color: var(--gerobakku-text-primary);
+  margin: 0; // Remove default margin
+}
+
+.menu1-tabs {
+  display: flex;
+  gap: var(--gerobakku-spacing-l);
+  border-bottom: 1px solid var(--gerobakku-divider-color);
+  margin-bottom: var(--gerobakku-spacing-s);
+  padding: 0 var(--gerobakku-spacing-s); // Padding for tabs
+}
+
+.tab {
+  padding: var(--gerobakku-spacing-s) 0;
+  font-size: var(--gerobakku-font-size-m);
+  color: var(--gerobakku-text-muted);
+  cursor: pointer;
+  position: relative; // For active indicator
+
+  &.active {
+    color: var(--gerobakku-text-primary);
+    font-weight: 500;
+
+    // Underline for active tab
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; // Align with the border
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--gerobakku-text-primary);
+    }
+  }
+}
+
+.vendor-list {
+  // Styles for the list container itself, if needed (e.g., padding)
+}
+
+// VendorListItemComponent styles are in its own file

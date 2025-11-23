@@ -1,7 +1,97 @@
-/* ---- CSS variables (runtime, theme-able) ---- */
-/* Light theme as default */
+/* Global Styles */
 @use './styles/tokens' as *;
 @use 'sass:color';
+
+:root {
+  /* Colors */
+  --gerobakku-background-light: #f8f9fa;
+  --gerobakku-header-search-bg: #ffffff;
+  --gerobakku-header-search-text: #333333;
+  --gerobakku-header-search-placeholder: #999999;
+  --gerobakku-header-logo-bg: #ffffff;
+  --gerobakku-sheet-background: #ffffff;
+  --gerobakku-placeholder-bg-light: #f8f8f8;
+  --gerobakku-placeholder-bg-medium: #f0f0f0;
+  --gerobakku-placeholder-bg-dark: #eeeeee;
+  --gerobakku-placeholder-border: #dddddd;
+  --gerobakku-placeholder-border-light: #e0e0e0;
+  --gerobakku-handle-color: #cccccc;
+  --gerobakku-icon-color-medium: #888888;
+  --gerobakku-icon-color-dark: #666666;
+  --gerobakku-text-muted: #6c757d;
+  --gerobakku-text-primary: #333333;
+  --gerobakku-divider-color: #c6c6c6;
+  --gerobakku-map-placeholder-bg: #e0e0e0;
+  --gerobakku-map-placeholder-text: #888888;
+  --gerobakku-shadow-color-light: rgba(0, 0, 0, 0.1);
+  --gerobakku-shadow-color-medium: rgba(0, 0, 0, 0.15);
+  --gerobakku-shadow-color-dark: rgba(0, 0, 0, 0.2);
+
+  /* Spacing & Sizing */
+  --gerobakku-spacing-xs: 4px;
+  /* Slightly smaller */
+  --gerobakku-spacing-s: 8px;
+  /* Slightly smaller */
+  --gerobakku-spacing-m: 12px;
+  /* Slightly smaller */
+  --gerobakku-spacing-l: 18px;
+  /* Slightly smaller */
+  --gerobakku-spacing-xl: 24px;
+  /* Added larger spacing */
+  --gerobakku-header-height: 40px;
+  /* *** REDUCED HEIGHT *** */
+  --gerobakku-header-top-margin: 30px;
+  /* Slightly reduced top margin */
+  --gerobakku-header-side-margin: 15px;
+  --gerobakku-logo-size: 36px;
+  /* *** REDUCED SIZE *** */
+  --gerobakku-logo-bg-width: 55px;
+  /* *** REDUCED SIZE *** */
+  --gerobakku-button-tap-area: 44px;
+
+  /* Borders */
+  --gerobakku-border-radius-s: 6px;
+  /* Slightly smaller */
+  --gerobakku-border-radius-m: 8px;
+  /* Slightly smaller */
+  --gerobakku-border-radius-l: 16px;
+  /* Slightly smaller */
+  --gerobakku-border-radius-round: 50%;
+
+  /* Fonts */
+  --gerobakku-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --gerobakku-font-size-s: 0.8rem;
+  /* Slightly smaller */
+  --gerobakku-font-size-m: 0.9rem;
+  /* Slightly smaller */
+  --gerobakku-font-size-l: 1.4rem;
+  /* Slightly smaller */
+}
+
+/* Base HTML/Body styles */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: var(--gerobakku-font-sans);
+  background-color: var(--gerobakku-background-light);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Utility classes (Optional) */
+.text-muted {
+  color: var(--gerobakku-text-muted);
+}
+
+/* ---- CSS variables (runtime, theme-able) ---- */
+/* Light theme as default */
+
 
 :root {
   /* Light Theme */
@@ -14,7 +104,8 @@
 
   /* Neutrals */
   --gbk-bg: #ffffff;
-  --gbk-bg-alt: #FFEFAD; /* light creamy accent background */
+  --gbk-bg-alt: #FFEFAD;
+  /* light creamy accent background */
   --gbk-text: #01161E;
   --gbk-text-muted: rgba(1, 22, 30, 0.7);
   --gbk-border: rgba(1, 22, 30, 0.1);
@@ -25,7 +116,7 @@
   --gbk-danger: #ff4d4f;
   --gbk-warning: #FBBE21;
   --gbk-focus: 0 0 0 3px color-mix(in oklab, var(--gbk-brand) 35%, transparent);
-  
+
   /* shapes */
   --gbk-radius-1: #{$radius-1};
   --gbk-radius-2: #{$radius-2};
@@ -49,13 +140,17 @@
 
 /* Dark theme */
 @mixin dark-theme-vars {
-  --gbk-bg: #01161E;         /* deep teal */
-  --gbk-bg-alt: #124559;     /* slightly lighter teal */
-  --gbk-text: #FFEFAD;       /* warm cream text */
+  --gbk-bg: #01161E;
+  /* deep teal */
+  --gbk-bg-alt: #124559;
+  /* slightly lighter teal */
+  --gbk-text: #FFEFAD;
+  /* warm cream text */
   --gbk-text-muted: rgba(255, 239, 173, 0.7);
   --gbk-border: rgba(255, 239, 173, 0.15);
   --gbk-elev: 0 10px 28px rgba(0, 0, 0, 0.6);
-  --gbk-brand: #FBBE21;      /* yellow stands out nicely */
+  --gbk-brand: #FBBE21;
+  /* yellow stands out nicely */
   --gbk-brand-600: color-mix(in srgb, #FBBE21 80%, #124559);
   --gbk-brand-700: color-mix(in srgb, #FBBE21 60%, #124559);
   --gbk-focus: 0 0 0 3px color-mix(in oklab, var(--gbk-brand) 45%, transparent);
@@ -78,9 +173,12 @@
 /* ---- Base reset-ish ---- */
 *,
 *::before,
-*::after { box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   font-family: var(--gbk-font);
@@ -109,7 +207,10 @@ html, body {
   outline: none;
   transition: border-color .15s ease, box-shadow .15s ease;
 
-  &::placeholder { color: var(--gbk-text-muted); }
+  &::placeholder {
+    color: var(--gbk-text-muted);
+  }
+
   &:focus {
     border-color: var(--gbk-brand);
     box-shadow: var(--gbk-focus);
@@ -132,12 +233,15 @@ html, body {
   cursor: pointer;
   transition: transform .04s ease, box-shadow .15s ease, background .15s ease;
 
-  &:hover { 
+  &:hover {
     background: color-mix(in srgb, var(--gbk-ink-on-brand) 55%, black);
     box-shadow: 0 10px 24px color-mix(in oklab, var(--gbk-brand) 30%, transparent);
   }
 
-  &:active { transform: translateY(1px); }
+  &:active {
+    transform: translateY(1px);
+  }
+
   &:disabled {
     opacity: .55;
     cursor: not-allowed;
@@ -158,9 +262,15 @@ html, body {
   letter-spacing: -0.01em;
 }
 
-@mixin subtext { font-size: var(--gbk-fs-3); color: var(--gbk-text-muted); }
+@mixin subtext {
+  font-size: var(--gbk-fs-3);
+  color: var(--gbk-text-muted);
+}
 
 /* Motion safety */
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; animation: none !important; }
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
 }

@@ -1,0 +1,42 @@
+.vendor-item {
+  display: flex;
+  align-items: center;
+  padding: var(--gerobakku-spacing-m) 0; // Vertical padding, no horizontal
+  border-bottom: 1px solid var(--gerobakku-divider-color); // Use variable
+  gap: var(--gerobakku-spacing-m); // Space between image and details
+
+  &:last-child {
+    border-bottom: none; // No border on the last item
+  }
+}
+
+.vendor-image-placeholder {
+  width: 60px; // Fixed size for image placeholder
+  height: 60px;
+  background-color: var(--gerobakku-placeholder-bg-medium); // Use variable
+  border-radius: var(--gerobakku-border-radius-round); // Circular
+  flex-shrink: 0; // Prevent shrinking
+  border: 1px solid var(--gerobakku-placeholder-border); // Use variable
+}
+
+.vendor-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gerobakku-spacing-xs); // Small gap between text lines
+  overflow: hidden; // Prevent text overflow issues
+}
+
+.vendor-name {
+  font-size: var(--gerobakku-font-size-m);
+  font-weight: 500;
+  color: var(--gerobakku-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vendor-rating,
+.vendor-distance {
+  font-size: var(--gerobakku-font-size-s);
+  color: var(--gerobakku-text-muted);
+}
