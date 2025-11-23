@@ -76,7 +76,7 @@ export class MapDashboardComponent implements OnInit, OnDestroy {
 
   private startVendorLocationPolling(): void {
     // Initialize polling
-    this.locationService.initPolling();
+    this.locationService.initializeStores();
 
     // Subscribe to vendor location updates
     this.vendorLocationsSubscription = this.locationService.vendorLocations$.subscribe(
