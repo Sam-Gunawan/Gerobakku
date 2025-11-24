@@ -18,7 +18,6 @@ interface Category {
   styleUrl: './main-sheet-content.component.scss'
 })
 export class MainSheetContentComponent implements OnInit, OnDestroy {
-  @Output() viewChangeRequest = new EventEmitter<string>();
   @Output() vendorCardClick = new EventEmitter<Store>();
 
   // Carousel state

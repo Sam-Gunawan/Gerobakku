@@ -5,14 +5,12 @@ import { HeaderComponent } from '../header/header.component';
 import { BottomSheetComponent } from '../bottom-sheet/bottom-sheet.component';
 import { MainSheetContentComponent } from '../main-sheet-content/main-sheet-content.component';
 import { Menu1SheetContentComponent } from '../menu1-sheet-content/menu1-sheet-content.component';
-import { MapComponent, PinHoverEvent } from '../../../shared/components/map.component';
+import { MapComponent } from '../../../shared/components/map.component';
 import { StoreCardComponent } from '../../../shared/components/store-card/store-card.component';
 import { StoreDetailsComponent } from '../../../shared/components/store-details/store-details.component';
 import { LocationService } from '../../../services/location.service';
 import { RoutingService } from '../../../services/routing.service';
 import { LocationPoint, Store } from '../../../models/store.model';
-
-type BottomSheetView = 'main' | 'menu-1' | 'menu-2' | 'menu-3' | 'menu-4' | 'store-details';
 
 @Component({
   selector: 'app-map-dashboard',

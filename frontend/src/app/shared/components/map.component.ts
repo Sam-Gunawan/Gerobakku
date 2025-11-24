@@ -17,11 +17,6 @@ import { LocationPoint, Store } from '../../models/store.model';
 import AnimatedCluster from 'ol-ext/layer/AnimatedCluster';
 import { MapBrowserEvent } from 'ol';
 
-export interface PinHoverEvent {
-  store: Store;
-  pixel: [number, number];
-}
-
 @Component({
   selector: 'app-map',
   standalone: true,
@@ -34,10 +29,6 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() vendorLocations: Store[] = [];
   @Input() userLocation?: LocationPoint | null;
 
-  @Output() pinHover = new EventEmitter<PinHoverEvent | null>();
-  @Output() pinClick = new EventEmitter<Store>();
-  @Output() mapClick = new EventEmitter<void>();
-
   map!: Map;
   vendorLayer!: VectorLayer<VectorSource>;
   userLocationLayer!: VectorLayer<VectorSource>;
@@ -46,8 +37,6 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
   userLocationSource!: VectorSource;
   routingSource!: VectorSource;
 
-  private hoveredFeature: Feature | null = null;
-  private clickedFeature: Feature | null = null;
 
   private readonly MIN_ZOOM_FOR_MARKERS = 12; // Hide markers when zoomed out below this level
   private readonly ICON_BASE_SCALE = 0.08; // Base scale for vendor icons
@@ -133,16 +122,6 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       this.updateLayerVisibility();
     });
 
-    // Add pointer move listener for hover effects
-    this.map.on('pointermove', (evt: MapBrowserEvent<any>) => {
-      this.handlePointerMove(evt);
-    });
-
-    // Add click listener
-    this.map.on('click', (evt: MapBrowserEvent<any>) => {
-      this.handleMapClick(evt);
-    });
-
     // Change cursor on hover
     this.map.on('pointermove', (evt: MapBrowserEvent<any>) => {
       const pixel = this.map.getEventPixel(evt.originalEvent);
@@ -202,11 +181,14 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
         })
       });
     } else {
-      // Single vendor marker - check if it's hovered or clicked
-      const isHovered = this.hoveredFeature === feature;
-      const isClicked = this.clickedFeature === feature;
-
-      return this.getVendorIconStyle(isHovered, isClicked);
+      // Single vendor marker
+      return new Style({
+        image: new Icon({
+          anchor: [0.5, 1],
+          src: 'assets/gerobak-icon-brown-nobg.png',
+          scale: this.getVendorIconScale()
+        })
+      })
     }
   }
 
@@ -270,63 +252,6 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
-  private handlePointerMove(evt: MapBrowserEvent<any>): void {
-    const pixel = evt.pixel;
-    const feature = this.map.forEachFeatureAtPixel(pixel, (feat) => feat, {
-      layerFilter: (layer) => layer === this.vendorLayer
-    });
-
-    // If we're hovering over a new feature
-    if (feature && feature !== this.hoveredFeature) {
-      this.hoveredFeature = feature as Feature;
-      const features = (feature as any).get('features');
-
-      // Only emit hover for single markers (not clusters)
-      if (features && features.length === 1) {
-        const store = features[0].get('store') as Store;
-        if (store) {
-          this.pinHover.emit({ store, pixel: [pixel[0], pixel[1]] });
-        }
-      }
-
-      // Refresh the layer to update styling
-      this.vendorSource.changed();
-    } else if (!feature && this.hoveredFeature) {
-      // No longer hovering over any feature
-      this.hoveredFeature = null;
-      this.pinHover.emit(null);
-      this.vendorSource.changed();
-    }
-  }
-
-  private handleMapClick(evt: MapBrowserEvent<any>): void {
-    const pixel = evt.pixel;
-    const feature = this.map.forEachFeatureAtPixel(pixel, (feat) => feat, {
-      layerFilter: (layer) => layer === this.vendorLayer
-    });
-
-    if (feature) {
-      const features = (feature as any).get('features');
-
-      // Only handle single markers (not clusters)
-      if (features && features.length === 1) {
-        const store = features[0].get('store') as Store;
-        if (store) {
-          this.clickedFeature = feature as Feature;
-          this.pinClick.emit(store);
-          this.vendorSource.changed();
-        }
-      }
-    } else {
-      // Clicked on map (not a pin) - clear clicked state
-      if (this.clickedFeature) {
-        this.clickedFeature = null;
-        this.mapClick.emit();
-        this.vendorSource.changed();
-      }
-    }
-  }
-
   private getRouteStyle(): Style {
     return new Style({
       stroke: new Stroke({
@@ -334,20 +259,6 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
         width: 5,
         lineCap: 'round',
         lineJoin: 'round'
-      })
-    });
-  }
-
-  private getVendorIconStyle(isHovered: boolean, isClicked: boolean): Style {
-    const scale = this.getVendorIconScale();
-
-    return new Style({
-      image: new Icon({
-        anchor: [0.5, 1],
-        src: 'assets/gerobak-icon-brown-nobg.png',
-        scale: scale,
-        // Apply color filter when hovered or clicked
-        color: (isHovered || isClicked) ? '#FBBE21' : undefined
       })
     });
   }
