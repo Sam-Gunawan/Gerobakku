@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-sheet-content',
@@ -11,6 +12,8 @@ import { CommonModule } from '@angular/common';
 export class MainSheetContentComponent implements OnInit, OnDestroy {
   // Output event to tell the parent (MapDashboard) to switch view
   @Output() viewChangeRequest = new EventEmitter<string>();
+
+  constructor(private router: Router) {}
 
   // Carousel state
   carouselImages = [
@@ -53,5 +56,9 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
     console.log(`Maps to: ${menuName}`);
     // Emit event to parent to handle the actual view switch
     this.viewChangeRequest.emit(menuName);
+  }
+
+  goToVendorDashboard(): void {
+    this.router.navigate(['/vendor-dashboard']);
   }
 }

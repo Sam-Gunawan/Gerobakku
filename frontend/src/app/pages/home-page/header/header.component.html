@@ -1,10 +1,12 @@
 <header class="app-header">
-  <div class="logo-container">
-    <div class="logo-placeholder">
-      </div>
+  <div class="profile-avatar" (click)="openProfileModal()">
+    <span class="initials">{{ getInitials() }}</span>
   </div>
   <div class="search-container">
     <span class="search-icon">🔍</span>
     <input type="text" placeholder="Search..." class="search-input">
   </div>
 </header>
+
+<!-- Profile Modal -->
+<app-profile-modal *ngIf="showProfileModal" (close)="closeProfileModal()"></app-profile-modal>

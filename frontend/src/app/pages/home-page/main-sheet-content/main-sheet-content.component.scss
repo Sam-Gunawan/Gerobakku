@@ -99,6 +99,43 @@
     }
 }
 
+.vendor-button {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #01161E 0%, #124559 50%, #FBBE21 100%);
+    background-size: 200% 200%;
+    background-position: left center;
+    border: 2px solid #FBBE21;
+    box-shadow: 0 4px 12px rgba(1, 22, 30, 0.4);
+    transition: all 0.5s ease;
+
+    .icon {
+        color: #FBBE21;
+        transition: color 0.5s ease;
+    }
+
+    .text {
+        color: #FFEFAD;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: color 0.5s ease;
+    }
+
+    &:hover {
+        background-position: right center;
+        border-color: #FFEFAD;
+        box-shadow: 0 6px 16px rgba(251, 190, 33, 0.5);
+        transform: translateY(-2px);
+        
+        .text {
+            color: #01161E;
+        }
+        
+        .icon {
+            color: #01161E;
+        }
+    }
+}
+
 /* Desktop/Tablet Layout - Sidebar */
 @media (min-width: 769px) {
     .advertisement-carousel {

@@ -1,0 +1,85 @@
+<div class="modal-backdrop">
+  <div class="modal-content">
+    <!-- Close Button -->
+    <button class="close-btn" (click)="closeModal()">✕</button>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading profile...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="error-state">
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Profile Content -->
+    <div *ngIf="user && !isLoading" class="profile-content">
+      <!-- Avatar Section -->
+      <div class="avatar-section">
+        <div class="edit-icon" (click)="onEditProfile()">
+          <span>✏️</span>
+        </div>
+        <div class="avatar">
+          <span class="initials">{{ getInitials() }}</span>
+        </div>
+        <h2 class="user-name">{{ user.fullName }}</h2>
+        <p class="user-email">{{ user.email }}</p>
+        <div class="verification-badge" [class.verified]="user.isVerified">
+          <span *ngIf="user.isVerified">✓ Verified</span>
+          <span *ngIf="!user.isVerified">⚠ Not Verified</span>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="info-section">
+        <div class="info-card">
+          <div class="info-label">Member Since</div>
+          <div class="info-value">{{ formatDate(user.createdAt) }}</div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-label">User ID</div>
+          <div class="info-value">{{ user.userId }}</div>
+        </div>
+      </div>
+
+      <!-- Vendor Application Button -->
+      <div class="vendor-section">
+        <button class="vendor-btn" (click)="router.navigate(['/vendor-application']); closeModal()">
+          <span class="icon">🏪</span>
+          <div class="vendor-text">
+            <span class="vendor-title">Apply as Vendor</span>
+            <span class="vendor-subtitle">Start selling with Gerobakku</span>
+          </div>
+          <span class="arrow">→</span>
+        </button>
+      </div>
+
+      <!-- Settings Section -->
+      <div class="menu-section">
+        <div class="settings-header">
+          <h3>Settings</h3>
+          <button class="logout-btn" (click)="onLogout()">Logout</button>
+        </div>
+        <div class="menu-item" (click)="onChangePassword()">
+          <span>Change Password</span>
+          <span class="arrow">→</span>
+        </div>
+        <div class="menu-item">
+          <span>Notifications</span>
+          <span class="arrow">→</span>
+        </div>
+        <div class="menu-item">
+          <span>Privacy</span>
+          <span class="arrow">→</span>
+        </div>
+        <div class="menu-item">
+          <span>Help & Support</span>
+          <span class="arrow">→</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

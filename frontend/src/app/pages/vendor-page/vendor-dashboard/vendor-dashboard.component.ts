@@ -288,6 +288,10 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
     console.log('Store status changed to:', this.isOpen ? 'Open' : 'Closed');
   }
 
+  goBackToHome(): void {
+    this.router.navigate(['/home']);
+  }
+
   onProfileClick(): void {
     this.router.navigate(['/profile']);
   }

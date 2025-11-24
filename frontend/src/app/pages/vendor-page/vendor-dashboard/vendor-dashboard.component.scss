@@ -1,8 +1,59 @@
 .vendor-dashboard {
   height: 100vh;
   display: flex;
-  background: #f8f9fa;
+  background: #01161E;
   overflow: hidden;
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  background: linear-gradient(135deg, #01161E 0%, #124559 50%, #FBBE21 100%);
+  background-size: 200% 200%;
+  background-position: left center;
+  border: 2px solid #FBBE21;
+  border-radius: 12px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(1, 22, 30, 0.4);
+  transition: all 0.5s ease;
+
+  .back-icon {
+    font-size: 20px;
+    font-weight: bold;
+    color: #FBBE21;
+    transition: color 0.5s ease;
+  }
+
+  .back-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #FFEFAD;
+    letter-spacing: 0.5px;
+    transition: color 0.5s ease;
+  }
+
+  &:hover {
+    background-position: right center;
+    border-color: #FFEFAD;
+    box-shadow: 0 6px 16px rgba(251, 190, 33, 0.5);
+    transform: translateX(-3px);
+
+    .back-icon,
+    .back-text {
+      color: #01161E;
+    }
+  }
+
+  &:active {
+    transform: translateX(-1px);
+  }
 }
 
 .left-side {
@@ -11,12 +62,14 @@
   flex-direction: column;
   overflow-y: auto;
   min-width: 0;
+  padding-top: 70px;
 }
 
 .status-section {
-  background: linear-gradient(135deg, #FBBE21 0%, #FFEFAD 100%);
+  background: linear-gradient(135deg, #124559 0%, #01161E 100%);
   padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(251, 190, 33, 0.2);
+  border-bottom: 2px solid #FBBE21;
 }
 
 .store-profile {
@@ -26,13 +79,15 @@
   margin-bottom: 20px;
   cursor: pointer;
   padding: 12px;
-  background: white;
+  background: rgba(251, 190, 33, 0.1);
+  border: 1px solid #FBBE21;
   border-radius: 12px;
   transition: all 0.3s;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(251, 190, 33, 0.3);
+    background: rgba(251, 190, 33, 0.15);
   }
 
   .store-avatar {
@@ -55,13 +110,13 @@
     h3 {
       font-size: 18px;
       font-weight: 600;
-      color: #01161E;
+      color: #FFEFAD;
       margin: 0 0 4px 0;
     }
 
     .view-profile {
       font-size: 12px;
-      color: #124559;
+      color: #FBBE21;
     }
   }
 }
@@ -73,10 +128,11 @@
 }
 
 .status-card {
-  background: white;
+  background: rgba(18, 69, 89, 0.5);
+  border: 1px solid rgba(251, 190, 33, 0.3);
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
   .status-header {
     display: flex;
@@ -88,7 +144,7 @@
   .status-label {
     font-size: 12px;
     font-weight: 600;
-    color: #598392;
+    color: #FBBE21;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -105,7 +161,7 @@
   .status-value {
     font-size: 14px;
     font-weight: 500;
-    color: #01161E;
+    color: #FFEFAD;
     margin: 0;
     word-break: break-word;
 
@@ -115,6 +171,7 @@
       color: #FBBE21;
       font-family: 'Courier New', monospace;
       letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(251, 190, 33, 0.5);
     }
 
     &.date {
@@ -141,15 +198,15 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #f0f0f0;
-  border: none;
+  background: rgba(18, 69, 89, 0.5);
+  border: 1px solid rgba(251, 190, 33, 0.3);
   border-radius: 20px;
   padding: 6px 12px;
   cursor: pointer;
   transition: all 0.3s;
   font-size: 12px;
   font-weight: 600;
-  color: #666;
+  color: #FFEFAD;
 
   .toggle-indicator {
     width: 8px;
@@ -160,11 +217,13 @@
   }
 
   &.open {
-    background: #c6f6d5;
-    color: #22543d;
+    background: rgba(251, 190, 33, 0.2);
+    border-color: #FBBE21;
+    color: #FBBE21;
 
     .toggle-indicator {
-      background: #48bb78;
+      background: #FBBE21;
+      box-shadow: 0 0 8px rgba(251, 190, 33, 0.6);
     }
   }
 
@@ -175,16 +234,17 @@
 
 .analytics-section {
   flex: 1;
-  background: white;
+  background: linear-gradient(135deg, #124559 0%, #01161E 100%);
   padding: 24px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  border-left: 2px solid #FBBE21;
 
   h3 {
     font-size: 18px;
     font-weight: 600;
-    color: #01161E;
+    color: #FBBE21;
     margin: 0 0 20px 0;
   }
 
@@ -198,26 +258,29 @@
   .rating-overview {
     text-align: center;
     padding: 24px;
-    background: linear-gradient(135deg, #FFEFAD 0%, #FBBE21 100%);
+    background: rgba(251, 190, 33, 0.1);
+    border: 2px solid #FBBE21;
     border-radius: 12px;
 
     .average-rating {
       .rating-number {
         font-size: 48px;
         font-weight: 700;
-        color: #01161E;
+        color: #FBBE21;
         display: block;
         line-height: 1;
+        text-shadow: 0 0 20px rgba(251, 190, 33, 0.5);
       }
 
       .stars {
         font-size: 24px;
         margin: 8px 0;
+        filter: drop-shadow(0 0 8px rgba(251, 190, 33, 0.6));
       }
 
       .total-reviews {
         font-size: 14px;
-        color: #124559;
+        color: #FFEFAD;
         font-weight: 500;
       }
     }
@@ -237,27 +300,29 @@
       .star-label {
         font-size: 14px;
         font-weight: 500;
-        color: #01161E;
+        color: #FFEFAD;
       }
 
       .bar-container {
         height: 24px;
-        background: #e0e0e0;
+        background: rgba(18, 69, 89, 0.5);
+        border: 1px solid rgba(251, 190, 33, 0.3);
         border-radius: 12px;
         overflow: hidden;
 
         .bar {
           height: 100%;
-          background: linear-gradient(90deg, #FBBE21, #124559);
+          background: linear-gradient(90deg, #FBBE21, #FFEFAD);
           transition: width 0.3s ease;
           border-radius: 12px;
+          box-shadow: 0 0 10px rgba(251, 190, 33, 0.5);
         }
       }
 
       .count {
         font-size: 13px;
         font-weight: 600;
-        color: #598392;
+        color: #FBBE21;
         text-align: right;
       }
     }
@@ -265,7 +330,8 @@
 
   .sales-graph {
     padding: 20px;
-    background: #f8f9fa;
+    background: rgba(18, 69, 89, 0.3);
+    border: 1px solid rgba(251, 190, 33, 0.3);
     border-radius: 12px;
     flex: 1;
     min-height: 200px;
@@ -273,7 +339,7 @@
     h4 {
       font-size: 16px;
       font-weight: 600;
-      color: #01161E;
+      color: #FBBE21;
       margin: 0 0 16px 0;
     }
 
@@ -311,23 +377,24 @@
         align-items: flex-start;
         justify-content: center;
         padding-top: 4px;
+        box-shadow: 0 0 10px rgba(251, 190, 33, 0.3);
 
         &:hover {
           transform: translateY(-4px);
-          box-shadow: 0 4px 12px rgba(251, 190, 33, 0.4);
+          box-shadow: 0 4px 20px rgba(251, 190, 33, 0.6);
         }
 
         .bar-value {
           font-size: 11px;
           font-weight: 600;
-          color: white;
+          color: #01161E;
         }
       }
 
       .day-label {
         font-size: 12px;
         font-weight: 500;
-        color: #598392;
+        color: #FFEFAD;
       }
     }
   }
@@ -344,8 +411,9 @@
 .map-section {
   flex: 1;
   position: relative;
-  background: #e0e0e0;
+  background: #01161E;
   overflow: hidden;
+  border: 2px solid #FBBE21;
 
   .map {
     width: 100%;
@@ -355,8 +423,8 @@
 
 .chat-section {
   flex: 1;
-  background: white;
-  border-top: 2px solid #e0e0e0;
+  background: linear-gradient(135deg, #124559 0%, #01161E 100%);
+  border-top: 2px solid #FBBE21;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -364,10 +432,10 @@
   h3 {
     font-size: 18px;
     font-weight: 600;
-    color: #01161E;
+    color: #FBBE21;
     margin: 0;
     padding: 16px 20px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid rgba(251, 190, 33, 0.3);
   }
 
   .chat-container {
@@ -380,14 +448,17 @@
   }
 
   .review-message {
-    background: #f8f9fa;
+    background: rgba(18, 69, 89, 0.5);
+    border: 1px solid rgba(251, 190, 33, 0.3);
     border-radius: 12px;
     padding: 16px;
     transition: all 0.3s;
 
     &:hover {
-      background: #FFEFAD;
+      background: rgba(251, 190, 33, 0.1);
+      border-color: #FBBE21;
       transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(251, 190, 33, 0.3);
     }
 
     .review-header {
@@ -417,23 +488,24 @@
           display: block;
           font-size: 14px;
           font-weight: 600;
-          color: #01161E;
+          color: #FFEFAD;
         }
 
         .review-stars {
           font-size: 12px;
+          filter: drop-shadow(0 0 4px rgba(251, 190, 33, 0.6));
         }
       }
 
       .review-time {
         font-size: 12px;
-        color: #598392;
+        color: #FBBE21;
       }
     }
 
     .review-text {
       font-size: 13px;
-      color: #124559;
+      color: #FFEFAD;
       line-height: 1.5;
       margin: 0;
     }
