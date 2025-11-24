@@ -117,6 +117,12 @@ export class MapDashboardComponent implements OnInit, OnDestroy {
     this.showStoreDetails = true;
   }
 
+  onPinClick(store: Store): void {
+    console.log('Pin clicked:', store.name);
+    this.selectedStore = store;
+    this.showStoreDetails = true;
+  }
+
   onCloseStoreDetails(): void {
     this.showStoreDetails = false;
     this.selectedStore = null;

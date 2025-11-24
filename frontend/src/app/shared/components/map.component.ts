@@ -7,7 +7,8 @@ import XYZ from 'ol/source/XYZ';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
+import Point from 'ol/geom/Point'
+import Overlay from 'ol/Overlay';
 import LineString from 'ol/geom/LineString';
 import { Icon, Style, Text, Fill, Stroke, Circle as CircleStyle } from 'ol/style';
 import { fromLonLat } from 'ol/proj';
@@ -21,13 +22,19 @@ import { MapBrowserEvent } from 'ol';
   selector: 'app-map',
   standalone: true,
   imports: [CommonModule],
-  template: `<div id="map" #mapContainer></div>`,
+  template: `
+    <div id="map" #mapContainer></div>
+    <div id="map-popup" class="ol-popup" style="display: none;">
+      <div class="popup-content">Click detected - handled by parent</div>
+    </div>
+  `,
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   @Input() vendorLocations: Store[] = [];
   @Input() userLocation?: LocationPoint | null;
+  @Output() storeSelected = new EventEmitter<Store>();
 
   map!: Map;
   vendorLayer!: VectorLayer<VectorSource>;
@@ -37,10 +44,11 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
   userLocationSource!: VectorSource;
   routingSource!: VectorSource;
 
-
   private readonly MIN_ZOOM_FOR_MARKERS = 12; // Hide markers when zoomed out below this level
   private readonly ICON_BASE_SCALE = 0.08; // Base scale for vendor icons
   private readonly USER_ICON_SCALE = 0.06; // Scale for user location icon
+
+  private popupOverlay!: Overlay;
 
   ngAfterViewInit(): void {
     this.initializeMap();
@@ -138,6 +146,74 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (this.userLocation) {
       this.updateUserLocationMarker();
     }
+
+    // Create popup overlay
+    const popupElement = document.getElementById('map-popup');
+    if (popupElement) {
+      this.popupOverlay = new Overlay({
+        element: popupElement,
+        autoPan: {
+          animation: {
+            duration: 250,
+          },
+        },
+        positioning: 'bottom-center',
+        offset: [0, -10]
+      });
+      this.map.addOverlay(this.popupOverlay);
+    }
+
+    // Add click handler for pins - WORKING VERSION
+    this.map.on('click', (evt: MapBrowserEvent<any>) => {
+      console.log('🗺️ Map clicked');
+
+      const feature = this.map.forEachFeatureAtPixel(evt.pixel, (feat) => feat, {
+        layerFilter: (layer) => layer === this.vendorLayer
+      });
+
+      if (!feature) {
+        console.log('❌ No feature clicked');
+        return;
+      }
+
+      console.log('✅ Feature clicked');
+
+      // Get store object from features
+      const store = feature.get('store') as Store;
+
+      if (store) {
+        console.log('🏪 Emitting store:', store.name);
+        this.storeSelected.emit(store);
+      } else {
+        console.warn('⚠️ Feature has no store property:', feature.getProperties());
+      }
+    });
+
+    // For AnimatedCluster, the feature itself IS the wrapper
+    // We need to access the original features from the cluster
+    //   const clusterFeatures = feature.get('features');
+
+    //   if (clusterFeatures && Array.isArray(clusterFeatures)) {
+    //     console.log(`📦 Found ${clusterFeatures.length} feature(s) in cluster`);
+
+    //     if (clusterFeatures.length === 1) {
+    //       // Single pin - get the store from the ORIGINAL feature
+    //       const originalFeature = clusterFeatures[0];
+    //       const store = originalFeature.get('store') as Store;
+
+    //       if (store) {
+    //         console.log('🏪 Emitting store:', store.name);
+    //         this.storeSelected.emit(store);
+    //       } else {
+    //         console.warn('⚠️ Feature has no store property');
+    //       }
+    //     } else {
+    //       console.log('📦 Cluster with multiple pins - ignoring click');
+    //     }
+    //   } else {
+    //     console.warn('⚠️ Feature has no features array:', feature.getProperties());
+    //   }
+    // });
   }
 
   private updateLayerVisibility(): void {
