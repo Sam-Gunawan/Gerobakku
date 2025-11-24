@@ -1,25 +1,30 @@
 <div class="dashboard-container">
-  <app-map [vendorLocations]="vendorLocations" [userLocation]="userLocation"></app-map>
+  <app-map [vendorLocations]="vendorLocations" [userLocation]="userLocation">
+  </app-map>
 
   <app-header></app-header>
 
   <!-- Sidebar for Desktop/Tablet -->
   <div class="sidebar-container">
-    <app-main-sheet-content (viewChangeRequest)="handleViewChange($event)">
+    <!-- Normal main sheet -->
+    <app-main-sheet-content *ngIf="!showStoreDetails" (vendorCardClick)="onVendorCardClick($event)">
     </app-main-sheet-content>
+
+    <!-- Store details when card clicked -->
+    <app-store-details *ngIf="showStoreDetails && selectedStore" [store]="selectedStore" (close)="onCloseStoreDetails()"
+      (guideMe)="onGuideMe($event)">
+    </app-store-details>
   </div>
 
   <!-- Bottom Sheet for Mobile -->
   <app-bottom-sheet (heightChange)="onBottomSheetHeightChange($event)">
-    <ng-container [ngSwitch]="currentSheetView">
-      <app-main-sheet-content *ngSwitchCase="'main'" (viewChangeRequest)="handleViewChange($event)">
-      </app-main-sheet-content>
+    <!-- Normal main sheet -->
+    <app-main-sheet-content *ngIf="!showStoreDetails" (vendorCardClick)="onVendorCardClick($event)">
+    </app-main-sheet-content>
 
-      <app-menu1-sheet-content *ngSwitchCase="'menu-1'" (viewChangeRequest)="handleViewChange($event)">
-      </app-menu1-sheet-content>
-
-      <app-main-sheet-content *ngSwitchDefault (viewChangeRequest)="handleViewChange($event)">
-      </app-main-sheet-content>
-    </ng-container>
+    <!-- Store details when card clicked -->
+    <app-store-details *ngIf="showStoreDetails && selectedStore" [store]="selectedStore" (close)="onCloseStoreDetails()"
+      (guideMe)="onGuideMe($event)">
+    </app-store-details>
   </app-bottom-sheet>
 </div>

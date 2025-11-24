@@ -1,0 +1,207 @@
+.store-card {
+    background: var(--gbk-bg);
+    border-radius: var(--gbk-radius-2);
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 280px;
+    max-width: 90vw;
+
+    // Loading skeleton animation
+    @keyframes shimmer {
+        0% {
+            background-position: -468px 0;
+        }
+
+        100% {
+            background-position: 468px 0;
+        }
+    }
+}
+
+.loading-skeleton {
+    padding: 0;
+
+    .skeleton-image {
+        width: 100%;
+        height: 140px;
+        background: linear-gradient(to right,
+                var(--gerobakku-placeholder-bg-light) 0%,
+                var(--gerobakku-placeholder-bg-medium) 20%,
+                var(--gerobakku-placeholder-bg-light) 40%,
+                var(--gerobakku-placeholder-bg-light) 100%);
+        background-size: 800px 104px;
+        animation: shimmer 1.5s infinite linear;
+    }
+
+    .skeleton-content {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .skeleton-line {
+        height: 14px;
+        border-radius: 4px;
+        background: linear-gradient(to right,
+                var(--gerobakku-placeholder-bg-light) 0%,
+                var(--gerobakku-placeholder-bg-medium) 20%,
+                var(--gerobakku-placeholder-bg-light) 40%,
+                var(--gerobakku-placeholder-bg-light) 100%);
+        background-size: 800px 104px;
+        animation: shimmer 1.5s infinite linear;
+
+        &.skeleton-title {
+            height: 18px;
+            width: 70%;
+        }
+
+        &.skeleton-text {
+            width: 90%;
+
+            &.short {
+                width: 60%;
+            }
+        }
+    }
+}
+
+.card-content-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-image {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    overflow: hidden;
+    background: var(--gerobakku-placeholder-bg-light);
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.status-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: var(--gbk-fs-4);
+    font-weight: 600;
+    text-transform: uppercase;
+
+    &.open {
+        background: var(--gbk-success);
+        color: white;
+    }
+
+    &.closed {
+        background: var(--gbk-danger);
+        color: white;
+    }
+}
+
+.halal-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: var(--gbk-fs-4);
+    font-weight: 500;
+    color: var(--gbk-text);
+}
+
+.card-content {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.store-name {
+    margin: 0;
+    font-size: var(--gbk-fs-2);
+    font-weight: 600;
+    color: var(--gbk-text);
+    line-height: 1.3;
+    flex: 1;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+
+    .star {
+        font-size: 14px;
+    }
+
+    .rating-value {
+        font-size: var(--gbk-fs-3);
+        font-weight: 600;
+        color: var(--gbk-text);
+    }
+}
+
+.category {
+    margin: 0;
+    font-size: var(--gbk-fs-3);
+    color: var(--gbk-text-muted);
+    font-weight: 500;
+}
+
+.address,
+.hours {
+    margin: 0;
+    font-size: var(--gbk-fs-3);
+    color: var(--gbk-text-muted);
+    line-height: 1.4;
+}
+
+.guide-me-btn {
+    margin-top: 8px;
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--gbk-brand);
+    color: var(--gbk-ink-on-brand);
+    border: none;
+    border-radius: var(--gbk-radius-2);
+    font-size: var(--gbk-fs-3);
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+
+    .icon {
+        font-size: 16px;
+    }
+
+    &:hover {
+        background: var(--gbk-brand-600);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}

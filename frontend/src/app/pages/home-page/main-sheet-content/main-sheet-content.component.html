@@ -30,7 +30,8 @@
         <button class="see-all-btn" (click)="onSeeAllNearYou()">See All</button>
     </div>
     <div class="vendor-cards">
-        <app-vendor-card *ngFor="let store of nearYouStores" [store]="store"></app-vendor-card>
+        <app-vendor-card *ngFor="let store of nearYouStores" [store]="store"
+            (cardClick)="onVendorCardClick($event)"></app-vendor-card>
     </div>
 </div>
 
@@ -41,7 +42,8 @@
         <button class="see-all-btn" (click)="onSeeAllRecommended()">See All</button>
     </div>
     <div class="vendor-cards">
-        <app-vendor-card *ngFor="let store of recommendedStores" [store]="store"></app-vendor-card>
+        <app-vendor-card *ngFor="let store of recommendedStores" [store]="store"
+            (cardClick)="onVendorCardClick($event)"></app-vendor-card>
     </div>
 </div>
 

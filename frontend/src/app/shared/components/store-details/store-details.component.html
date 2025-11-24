@@ -1,0 +1,110 @@
+<div class="store-details" *ngIf="store">
+    <!-- Header with close button -->
+    <div class="details-header">
+        <button class="close-btn" (click)="onClose()">
+            <span class="icon">←</span>
+            <span class="text">Back</span>
+        </button>
+    </div>
+
+    <!-- Store Image -->
+    <div class="store-hero">
+        <img [src]="store.storeImageUrl" [alt]="store.name">
+        <div class="hero-overlay">
+            <div class="status-badge" [ngClass]="statusClass">
+                {{ statusText }}
+            </div>
+            <div class="halal-badge" *ngIf="store.isHalal">
+                <span>Halal</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Store Info -->
+    <div class="details-content">
+        <!-- Store Name & Rating -->
+        <div class="store-header">
+            <h1 class="store-name">{{ store.name }}</h1>
+            <div class="rating-summary">
+                <div class="stars">
+                    <span class="star" *ngFor="let filled of getStarArray(store.rating)" [class.filled]="filled">
+                        {{ filled ? '⭐' : '☆' }}
+                    </span>
+                </div>
+                <div class="rating-info">
+                    <span class="rating-value">{{ store.rating.toFixed(1) }}</span>
+                    <span class="rating-count">({{ totalReviews }} reviews)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category & Description -->
+        <div class="info-section">
+            <p class="category">
+                <span class="icon">🍽️</span>
+                {{ store.category }}
+            </p>
+            <p class="description" *ngIf="store.description">{{ store.description }}</p>
+        </div>
+
+        <!-- Hours & Address -->
+        <div class="info-section">
+            <div class="info-row">
+                <span class="icon">🕒</span>
+                <span class="text">{{ store.openTime }} - {{ store.closeTime }}</span>
+            </div>
+            <div class="info-row">
+                <span class="icon">📍</span>
+                <span class="text">{{ store.address }}</span>
+            </div>
+        </div>
+
+        <!-- Guide Me Button -->
+        <button class="guide-me-btn-large" (click)="onGuideMe()">
+            <span class="icon">🧭</span>
+            Guide Me to This Location
+        </button>
+
+        <!-- Menu Section -->
+        <div class="menu-section" *ngIf="store.menu && store.menu.length > 0">
+            <h2 class="section-title">Menu</h2>
+            <div class="menu-grid">
+                <div class="menu-item" *ngFor="let item of store.menu">
+                    <div class="menu-item-image" *ngIf="item.imageUrl">
+                        <img [src]="item.imageUrl" [alt]="item.name">
+                    </div>
+                    <div class="menu-item-info">
+                        <h3 class="menu-item-name">{{ item.name }}</h3>
+                        <p class="menu-item-description" *ngIf="item.description">{{ item.description }}</p>
+                        <p class="menu-item-price">Rp {{ item.price.toLocaleString('id-ID') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+            <h2 class="section-title">Reviews</h2>
+            <div class="review-list">
+                <div class="review-item" *ngFor="let review of reviews">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">{{ review.userName.charAt(0).toUpperCase() }}</div>
+                            <div class="reviewer-details">
+                                <h3 class="reviewer-name">{{ review.userName }}</h3>
+                                <p class="review-date">{{ formatDate(review.date) }}</p>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <span class="star" *ngFor="let filled of getStarArray(review.rating)"
+                                [class.filled]="filled">
+                                {{ filled ? '⭐' : '☆' }}
+                            </span>
+                        </div>
+                    </div>
+                    <p class="review-comment">{{ review.comment }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

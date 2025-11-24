@@ -19,6 +19,7 @@ interface Category {
 })
 export class MainSheetContentComponent implements OnInit, OnDestroy {
   @Output() viewChangeRequest = new EventEmitter<string>();
+  @Output() vendorCardClick = new EventEmitter<Store>();
 
   // Carousel state
   carouselImages = [
@@ -167,5 +168,10 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
         this.isSimulationRunning = false;
       }
     });
+  }
+
+  onVendorCardClick(store: Store): void {
+    console.log('Vendor card clicked:', store.name);
+    this.vendorCardClick.emit(store);  // Emit Store directly instead of string
   }
 }
