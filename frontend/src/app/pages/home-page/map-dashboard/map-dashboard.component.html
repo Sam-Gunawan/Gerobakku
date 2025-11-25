@@ -1,31 +1,55 @@
 <div class="dashboard-container">
-  <!-- <div class="map-placeholder">
-    Map Background Placeholder
-    <div class="target-icon-placeholder" [style.bottom]="getTargetIconBottom()">
-      🎯 </div>
-  </div> -->
-
-  <app-map></app-map>
+  <app-map [vendorLocations]="vendorLocations" [userLocation]="userLocation" (storeSelected)="onPinClick($event)">
+  </app-map>
 
   <app-header></app-header>
 
   <!-- Sidebar for Desktop/Tablet -->
   <div class="sidebar-container">
-    <app-main-sheet-content (viewChangeRequest)="handleViewChange($event)">
+    <!-- Normal main sheet -->
+    <app-main-sheet-content *ngIf="!showStoreDetails" (vendorCardClick)="onVendorCardClick($event)">
     </app-main-sheet-content>
+
+    <!-- Store details when card clicked -->
+    <app-store-details *ngIf="showStoreDetails && selectedStore" [store]="selectedStore" (close)="onCloseStoreDetails()"
+      (guideMe)="onGuideMe($event)" [hasActiveRoute]="hasActiveRoute">
+    </app-store-details>
   </div>
 
   <!-- Bottom Sheet for Mobile -->
   <app-bottom-sheet (heightChange)="onBottomSheetHeightChange($event)">
-    <ng-container [ngSwitch]="currentSheetView">
-      <app-main-sheet-content *ngSwitchCase="'main'" (viewChangeRequest)="handleViewChange($event)">
-      </app-main-sheet-content>
+    <!-- Normal main sheet -->
+    <app-main-sheet-content *ngIf="!showStoreDetails" (vendorCardClick)="onVendorCardClick($event)">
+    </app-main-sheet-content>
 
-      <app-menu1-sheet-content *ngSwitchCase="'menu-1'" (viewChangeRequest)="handleViewChange($event)">
-      </app-menu1-sheet-content>
-
-      <app-main-sheet-content *ngSwitchDefault (viewChangeRequest)="handleViewChange($event)">
-      </app-main-sheet-content>
-    </ng-container>
+    <!-- Store details when card clicked -->
+    <app-store-details *ngIf="showStoreDetails && selectedStore" [store]="selectedStore" (close)="onCloseStoreDetails()"
+      (guideMe)="onGuideMe($event)" [hasActiveRoute]="hasActiveRoute">
+    </app-store-details>
   </app-bottom-sheet>
+
+  <!-- Loading overlay -->
+  <app-loading-overlay [isVisible]="isLoadingRoute" title="Calculating Route"
+    message="Finding the best path to your destination..." spinnerColor="#FFB300">
+  </app-loading-overlay>
+
+  <!-- Route info + Clear button (floating on map) -->
+  <div *ngIf="hasActiveRoute && !isLoadingRoute" class="route-info-card">
+    <div class="route-details">
+      <div class="route-stat">
+        <span class="icon">📍</span>
+        <span class="value">{{ formatDistance(routeDistance) }}</span>
+      </div>
+      <div class="route-stat">
+        <span class="icon">⏱️</span>
+        <span class="value">{{ formatDuration(routeDuration) }}</span>
+      </div>
+    </div>
+    <button class="clear-route-btn-small" (click)="clearRoute()" aria-label="Clear route">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M18 6L6 18M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
 </div>

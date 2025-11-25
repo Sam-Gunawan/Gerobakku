@@ -12,7 +12,7 @@ export const routes: Routes = [
     { path: '', component: LandingPageComponent },
     { path: 'login', component: LoginPageComponent },
     { path: 'register', component: RegisterPageComponent },
-    { path: 'home', component: MapDashboardComponent },
+    { path: 'home', component: MapDashboardComponent, canActivate: [AuthGuard] },
     { path: 'profile', component: ProfilePageComponent, canActivate: [AuthGuard] },
     { path: 'vendor-application', component: VendorApplicationPageComponent, canActivate: [AuthGuard] },
     { path: 'vendor-dashboard', component: VendorDashboardComponent, canActivate: [AuthGuard] },

@@ -14,6 +14,45 @@ app-map {
   z-index: 1;
 }
 
+/* Position map to the right of sidebar on desktop/tablet */
+@media (min-width: 769px) {
+  app-map {
+    left: 360px;
+    width: calc(100% - 360px);
+  }
+}
+
+/* Pin Tooltip */
+.pin-tooltip {
+  position: fixed;
+  z-index: 2000;
+  pointer-events: none;
+  animation: tooltipFadeIn 0.2s ease;
+
+  app-store-card {
+    pointer-events: all;
+  }
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide tooltip on mobile */
+@media (max-width: 768px) {
+  .pin-tooltip {
+    display: none !important;
+  }
+}
+
 app-header {
   z-index: 1010;
   display: block;
@@ -24,17 +63,14 @@ app-header {
   position: fixed;
   top: 0;
   left: 0;
-  width: 320px;
+  width: 360px;
   height: 100vh;
   background: var(--gbk-bg, #ffffff);
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   overflow-y: auto;
   padding: 16px;
-  padding-top: 80px;
-  /* Below header */
   display: none;
-  /* Hidden on mobile by default */
 }
 
 /* Show sidebar on desktop/tablet, hide on mobile */
@@ -45,7 +81,6 @@ app-header {
 
   app-bottom-sheet {
     display: none;
-    /* Hide bottom sheet on desktop */
   }
 }
 
@@ -61,35 +96,114 @@ app-header {
   }
 }
 
-/* Legacy styles for reference */
-.map-placeholder {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--gerobakku-map-placeholder-bg);
+// Route info card with clear button
+.route-info-card {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 1005;
+
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: var(--gerobakku-map-placeholder-text);
-  font-size: var(--gerobakku-font-size-l);
-  z-index: 1;
+  gap: 12px;
+
+  padding: 12px 16px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.1);
+
+  animation: slideInRight 0.3s ease;
 }
 
-.target-icon-placeholder {
-  position: absolute;
-  right: var(--gerobakku-spacing-m);
-  width: var(--gerobakku-button-tap-area);
-  height: var(--gerobakku-button-tap-area);
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: var(--gerobakku-border-radius-round);
+.route-details {
   display: flex;
-  justify-content: center;
+  gap: 16px;
   align-items: center;
-  box-shadow: 0 2px 5px var(--gerobakku-shadow-color-medium);
-  font-size: 26px;
+}
+
+.route-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .icon {
+    font-size: 14px;
+  }
+
+  .value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+.clear-route-btn-small {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+  padding: 0;
+
+  background: #fee;
+  border: none;
+  border-radius: 50%;
   cursor: pointer;
-  z-index: 500;
-  transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
+
+  svg {
+    color: #d32f2f;
+  }
+
+  &:hover {
+    background: #fdd;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .route-info-card {
+    top: auto;
+    bottom: calc(var(--bottom-sheet-height, 240px) + 16px);
+    right: 16px;
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .route-details {
+    gap: 12px;
+  }
+
+  .route-stat .value {
+    font-size: 12px;
+  }
+
+  .clear-route-btn-small {
+    width: 28px;
+    height: 28px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
 }

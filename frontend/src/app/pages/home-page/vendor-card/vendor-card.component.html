@@ -1,0 +1,23 @@
+<div class="vendor-card" *ngIf="store" (click)="onClick()">
+    <div class="card-image">
+        <img [src]="store.storeImageUrl" [alt]="store.name">
+        <div class="status-badge" [ngClass]="statusClass">
+            {{ statusText }}
+        </div>
+        <div class="halal-badge" *ngIf="store.isHalal">
+            <span>Halal</span>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="card-header">
+            <h3 class="store-name">{{ store.name }}</h3>
+            <div class="rating">
+                <span class="star">⭐</span>
+                <span class="rating-value">{{ store.rating.toFixed(1) }}</span>
+            </div>
+        </div>
+        <p class="category">{{ store.category }}</p>
+        <p class="address">📍 {{ store.address }}</p>
+        <p class="hours">🕒 {{ store.openTime }} - {{ store.closeTime }}</p>
+    </div>
+</div>

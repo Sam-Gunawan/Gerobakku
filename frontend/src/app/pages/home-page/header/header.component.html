@@ -1,10 +1,16 @@
 <header class="app-header">
-  <div class="profile-avatar" (click)="openProfileModal()">
-    <span class="initials">{{ getInitials() }}</span>
+  <button class="profile-button" (click)="openProfileModal()">
+    <div class="profile-icon">👤</div>
+  </button>
+
+  <div class="branding">
+    <h1 class="brand-name">Gerobakku</h1>
+    <p class="tagline">Cari. Cek. Cuss.</p>
   </div>
+
   <div class="search-container">
     <span class="search-icon">🔍</span>
-    <input type="text" placeholder="Search..." class="search-input">
+    <input type="text" placeholder="Search for stalls, food..." class="search-input">
   </div>
 </header>
 

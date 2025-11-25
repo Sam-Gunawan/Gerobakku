@@ -11,26 +11,51 @@
     </div>
 </div>
 
-<!-- Navigation Buttons -->
-<div class="navigation-buttons">
-    <button class="nav-button" (click)="navigateTo('menu-1')">
-        <span class="icon">📍</span>
-        <span class="text">Near You</span>
-    </button>
-    <button class="nav-button" (click)="navigateTo('menu-2')">
-        <span class="icon">📂</span>
-        <span class="text">Categories</span>
-    </button>
-    <button class="nav-button" (click)="navigateTo('menu-3')">
-        <span class="icon">⭐</span>
-        <span class="text">Favorites</span>
-    </button>
-    <button class="nav-button" (click)="navigateTo('menu-4')">
-        <span class="icon">🔍</span>
-        <span class="text">Search</span>
-    </button>
-    <button class="nav-button vendor-button" (click)="goToVendorDashboard()">
-        <span class="icon">🏪</span>
-        <span class="text">Vendor Dashboard</span>
-    </button>
+<!-- Category Icons -->
+<div class="categories-section">
+    <div class="categories-scroll">
+        <button *ngFor="let category of categories" class="category-icon" (click)="onCategoryClick(category.id)">
+            <div class="icon-circle">
+                <span class="icon">{{ category.icon }}</span>
+            </div>
+            <span class="category-name">{{ category.name }}</span>
+        </button>
+    </div>
 </div>
+
+<!-- Near You Section -->
+<div class="vendor-section">
+    <div class="section-header">
+        <h2 class="section-title">Near You</h2>
+        <button class="see-all-btn" (click)="onSeeAllNearYou()">See All</button>
+    </div>
+    <div class="vendor-cards">
+        <app-vendor-card *ngFor="let store of nearYouStores" [store]="store"
+            (cardClick)="onVendorCardClick($event)"></app-vendor-card>
+    </div>
+</div>
+
+<!-- Stalls You May Like Section -->
+<div class="vendor-section">
+    <div class="section-header">
+        <h2 class="section-title">Stalls You May Like</h2>
+        <button class="see-all-btn" (click)="onSeeAllRecommended()">See All</button>
+    </div>
+    <div class="vendor-cards">
+        <app-vendor-card *ngFor="let store of recommendedStores" [store]="store"
+            (cardClick)="onVendorCardClick($event)"></app-vendor-card>
+    </div>
+</div>
+
+<!-- Simulation Control Button -->
+<!-- Used inline CSS for quick implementation -->
+<!-- <div class="simulation-control" style="padding: 1rem; margin: 1rem 0;">
+    <button class="sim-button" (click)="onStartSimulation()" [disabled]="isSimulationRunning"
+        style="width: 100%; padding: 1rem; background: #8B4513; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;">
+        <span style="margin-right: 0.5rem;">🎬</span>
+        <span>{{ isSimulationRunning ? 'Simulation Running...' : 'Start Vendor Simulation' }}</span>
+    </button>
+    <p *ngIf="!isSimulationRunning" style="margin-top: 0.5rem; font-size: 0.9rem; color: #666; text-align: center;">
+        Watch 3 vendors move in real-time!
+    </p>
+</div> -->
