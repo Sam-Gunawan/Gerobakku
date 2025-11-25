@@ -1,5 +1,11 @@
 import time
+import aiofiles
+from pathlib import Path
+from typing import Optional
+from fastapi import UploadFile
+from app.repositories.vendor_repo import post_new_vendor, post_new_vendor_store
 from app.repositories.vendor_repo import insert_store_location
+from app.schemas.vendor_schema import VendorRegistrationData, StoreRegistrationData, VendorStoreRegistrationResponse
 
 
 # Define realistic walking paths around Sampoerna University for 3 vendors
@@ -143,3 +149,121 @@ def simulate_three_vendors():
     print("=" * 60)
     print("✅ ALL SIMULATIONS COMPLETE")
     print("=" * 60)
+
+
+
+
+async def register_vendor_and_store_service(
+    user_id: int,
+    ktp: Optional[UploadFile],
+    selfie: Optional[UploadFile],
+    store_name: Optional[str],
+    store_description: Optional[str],
+    store_img: Optional[UploadFile],
+    category_id: Optional[int],
+    address: Optional[str],
+    is_halal: Optional[bool],
+    open_time: Optional[int],
+    close_time: Optional[int],
+) -> dict:
+    """Handle vendor and store registration with file uploads."""
+    
+    upload_base = Path("app/uploads/vendors")
+    stores_dir = upload_base / "stores"
+    
+    upload_base.mkdir(parents=True, exist_ok=True)
+    stores_dir.mkdir(parents=True, exist_ok=True)
+
+    def _make_local_url_for_vendor(filename: str) -> str:
+        return f"/app/uploads/vendors/{filename}"
+
+    def _make_local_url_for_store(filename: str) -> str:
+        return f"/app/uploads/vendors/stores/{filename}"
+
+    # ===== KTP =====
+    if ktp is not None:
+        ktp_filename = f"{user_id}_ktp"
+        ktp_path = upload_base / ktp_filename
+        async with aiofiles.open(str(ktp_path), "wb") as out_file:
+            content = await ktp.read()
+            await out_file.write(content)
+        ktp_local_url = _make_local_url_for_vendor(ktp_filename)
+    else:
+        ktp_filename = "ktp_placeholder"
+        ktp_path = upload_base / ktp_filename
+        if not ktp_path.exists():
+            async with aiofiles.open(str(ktp_path), "wb") as out_file:
+                await out_file.write(b"")
+        ktp_local_url = _make_local_url_for_vendor(ktp_filename)
+
+    # ===== Selfie =====
+    if selfie is not None:
+        selfie_filename = f"{user_id}_selfie"
+        selfie_path = upload_base / selfie_filename
+        async with aiofiles.open(str(selfie_path), "wb") as out_file:
+            content = await selfie.read()
+            await out_file.write(content)
+        selfie_local_url = _make_local_url_for_vendor(selfie_filename)
+    else:
+        selfie_filename = "selfie_placeholder"
+        selfie_path = upload_base / selfie_filename
+        if not selfie_path.exists():
+            async with aiofiles.open(str(selfie_path), "wb") as out_file:
+                await out_file.write(b"")
+        selfie_local_url = _make_local_url_for_vendor(selfie_filename)
+
+    # ===== Store image =====
+    if store_img is not None:
+        store_img_filename = f"{user_id}_store"
+        store_img_path = stores_dir / store_img_filename
+        async with aiofiles.open(str(store_img_path), "wb") as out_file:
+            content = await store_img.read()
+            await out_file.write(content)
+        store_img_local_url = _make_local_url_for_store(store_img_filename)
+    else:
+        default_store_filename = "default_store_image"
+        default_store_path = stores_dir / default_store_filename
+        if not default_store_path.exists():
+            async with aiofiles.open(str(default_store_path), "wb") as out_file:
+                await out_file.write(b"")
+        store_img_local_url = _make_local_url_for_store(default_store_filename)
+
+    # Create vendor using schema
+    vendor_data = VendorRegistrationData(
+        user_id=user_id,
+        ktp_image_url=ktp_local_url,
+        selfie_image_url=selfie_local_url
+    )
+    result = post_new_vendor(
+        vendor_data.user_id,
+        vendor_data.ktp_image_url,
+        vendor_data.selfie_image_url
+    )
+
+    # Create store using schema
+    store_data = StoreRegistrationData(
+        vendor_id=result.get("vendor_id"),
+        name=store_name or f"Store of user {user_id}",
+        description=store_description or "",
+        category_id=category_id,
+        address=address,
+        is_halal=is_halal,
+        open_time=open_time,
+        close_time=close_time,
+        store_image_url=store_img_local_url
+    )
+    store_result = post_new_vendor_store(
+        vendor_id=store_data.vendor_id,
+        name=store_data.name,
+        description=store_data.description,
+        category_id=store_data.category_id,
+        address=store_data.address,
+        is_halal=store_data.is_halal,
+        open_time=store_data.open_time,
+        close_time=store_data.close_time,
+        store_image_url=store_data.store_image_url
+    )
+
+    return VendorStoreRegistrationResponse(
+        message="Vendor and store registered successfully"
+    )

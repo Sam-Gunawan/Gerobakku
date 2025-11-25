@@ -1,10 +1,12 @@
-from fastapi import APIRouter, status, HTTPException
-from typing import List
+from fastapi import APIRouter, status, HTTPException, UploadFile, File, Form
+from typing import List, Optional
 import asyncio
 from app.services.vendor_service import simulate_movement
 from app.repositories import vendor_repo
 from app.schemas.vendor_schema import StoreLocationUpdate
-
+import aiofiles
+import os
+from pathlib import Path
 router = APIRouter(prefix="/vendor", tags=["vendor"])
 
 
@@ -94,3 +96,30 @@ async def simulate_three_vendors_endpoint():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to start simulation: {str(e)}"
         )
+        
+
+
+
+
+@router.post("/registerVendorAndStore", status_code=status.HTTP_200_OK)
+async def register_vendor_and_store(
+    user_id: int = Form(...),
+    ktp: Optional[UploadFile] = File(None),
+    selfie: Optional[UploadFile] = File(None),
+    store_name: Optional[str] = Form(None),
+    store_description: Optional[str] = Form(None),
+    store_img: Optional[UploadFile] = File(None),
+    category_id: Optional[int] = Form(None),
+    address: Optional[str] = Form(None),
+    is_halal: Optional[bool] = Form(None),
+    open_time: Optional[int] = Form(None),
+    close_time: Optional[int] = Form(None),
+):
+    """Register a new vendor and store with file uploads."""
+    from app.services.vendor_service import register_vendor_and_store_service
+    
+    result = await register_vendor_and_store_service(
+        user_id, ktp, selfie, store_name, store_description,
+        store_img, category_id, address, is_halal, open_time, close_time
+    )
+    return result

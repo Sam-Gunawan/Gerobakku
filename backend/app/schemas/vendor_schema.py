@@ -29,3 +29,27 @@ class VendorLocationUpdate(BaseModel):
     """Schema for updating vendor location"""
     longitude: float
     latitude: float
+
+class VendorRegistrationData(BaseModel):
+    """Internal schema for vendor registration data"""
+    user_id: int
+    ktp_image_url: str
+    selfie_image_url: str
+
+class StoreRegistrationData(BaseModel):
+    """Internal schema for store registration data"""
+    vendor_id: int
+    name: str
+    description: str
+    category_id: Optional[int] = None
+    address: Optional[str] = None
+    is_halal: Optional[bool] = None
+    open_time: Optional[int] = None
+    close_time: Optional[int] = None
+    store_image_url: str
+
+class VendorStoreRegistrationResponse(BaseModel):
+    """Response for vendor and store registration"""
+    message: str
+    vendor_id: int
+    store_id: Optional[int] = None

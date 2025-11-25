@@ -102,3 +102,59 @@ def get_store_locations(store_id):
     except Exception as e:
         print(f"Error fetching store location: {e}")
         raise
+
+def post_new_vendor(user_id, ktp_image_url: str = '', selfie_image_url: str = '', is_verified: bool = False):
+    """Insert a new vendor and return the inserted row."""
+    sql = """
+        INSERT INTO gerobakku.vendors
+        (user_id, ktp_image_url, selfie_image_url)
+        VALUES (%s, %s, %s)
+        RETURNING vendor_id;
+    """
+    try:
+        with get_cursor(commit=True) as cur:
+            # avoid prepared statement conflicts like elsewhere in this module
+            cur.execute(sql, (user_id, ktp_image_url, selfie_image_url))
+            return {"success": True, "message": "Vendor created", "vendor_id": cur.fetchone()[0]}
+    except Exception as e:
+        print(f"Error inserting vendor: {e}")
+        raise
+
+def post_new_vendor_store(
+    vendor_id: int,
+    name: str = '',
+    description: str = '',
+    category_id: int = 0,
+    address: str = '',
+    is_halal: bool = False,
+    open_time: Optional[int] = None,
+    close_time: Optional[int] = None,
+    store_image_url: str = ''
+):
+    """Insert a new store for a vendor and return the inserted row."""
+    sql = """
+        INSERT INTO gerobakku.stores
+        (vendor_id, "name", description, category_id, address, is_halal, open_time, close_time, store_image_url)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        RETURNING *;
+    """
+    params = (
+        vendor_id,
+        name,
+        description,
+        category_id,
+        address,
+        is_halal,
+        open_time,
+        close_time,
+        store_image_url
+    )
+
+    try:
+        with get_cursor(commit=True) as cur:
+            # avoid prepared statement conflicts like elsewhere in this module
+            cur.execute(sql, params, prepare=False)
+            return {"success": True, "message": "store created"}
+    except Exception as e:
+        print(f"Error inserting vendor store: {e}")
+        raise
