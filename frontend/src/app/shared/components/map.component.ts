@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ElementRef, ViewChild, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewChild, OnDestroy, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -7,35 +7,52 @@ import XYZ from 'ol/source/XYZ';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Feature from 'ol/Feature';
-import Point from 'ol/geom/Point';
+import Point from 'ol/geom/Point'
+import Overlay from 'ol/Overlay';
+import LineString from 'ol/geom/LineString';
 import { Icon, Style, Text, Fill, Stroke, Circle as CircleStyle } from 'ol/style';
 import { fromLonLat } from 'ol/proj';
 import { defaults as defaultControls } from 'ol/control';
 import { LocationPoint, Store } from '../../models/store.model';
 // @ts-ignore - ol-ext may not have TypeScript definitions
 import AnimatedCluster from 'ol-ext/layer/AnimatedCluster';
+import { MapBrowserEvent } from 'ol';
 
 @Component({
   selector: 'app-map',
   standalone: true,
   imports: [CommonModule],
-  template: `<div id="map" #mapContainer></div>`,
+  template: `
+    <div id="map" #mapContainer></div>
+    <div id="map-popup" class="ol-popup">
+      <div class="popup-content"></div>
+    </div>
+  `,
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('mapContainer') mapContainer!: ElementRef;
   @Input() vendorLocations: Store[] = [];
   @Input() userLocation?: LocationPoint | null;
+  @Output() storeSelected = new EventEmitter<Store>();
 
   map!: Map;
   vendorLayer!: VectorLayer<VectorSource>;
   userLocationLayer!: VectorLayer<VectorSource>;
+  routingLayer!: VectorLayer<VectorSource>;
   vendorSource!: VectorSource;
   userLocationSource!: VectorSource;
+  routingSource!: VectorSource;
 
   private readonly MIN_ZOOM_FOR_MARKERS = 12; // Hide markers when zoomed out below this level
   private readonly ICON_BASE_SCALE = 0.08; // Base scale for vendor icons
   private readonly USER_ICON_SCALE = 0.06; // Scale for user location icon
+
+  private popupOverlay!: Overlay;
+
+  // Trackers for pin styles and popup
+  private hoveredFeature: any = null;
+  private clickedFeature: any = null;
 
   ngAfterViewInit(): void {
     this.initializeMap();
@@ -78,6 +95,17 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       style: this.getUserLocationStyle()
     });
 
+    // Routing layer
+    this.routingSource = new VectorSource({
+      features: []
+    });
+
+    this.routingLayer = new VectorLayer({
+      source: this.routingSource,
+      style: this.getRouteStyle(),
+      zIndex: 100 // Ensure route is above other layers
+    });
+
     // CartoDB Light Basemap
     const rasterLayer = new TileLayer({
       source: new XYZ({
@@ -88,7 +116,7 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     this.map = new Map({
       target: this.mapContainer.nativeElement,
-      layers: [rasterLayer, this.vendorLayer, this.userLocationLayer],
+      layers: [rasterLayer, this.routingLayer, this.vendorLayer, this.userLocationLayer],
       view: new View({
         center: center,
         zoom: 15,
@@ -97,7 +125,7 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       controls: defaultControls({
         zoom: false,
         rotate: false,
-        attribution: true // Keep attribution but we'll style it
+        attribution: false
       })
     });
 
@@ -106,13 +134,102 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       this.updateLayerVisibility();
     });
 
-    // Update markers if we already have data
-    if (this.vendorLocations.length > 0) {
-      this.updateVendorMarkers();
+    // Create popup overlay
+    const popupElement = document.getElementById('map-popup');
+    if (popupElement) {
+      this.popupOverlay = new Overlay({
+        element: popupElement,
+        autoPan: false,
+        positioning: 'bottom-center',
+        offset: [0, -10]
+      });
+      this.map.addOverlay(this.popupOverlay);
     }
-    if (this.userLocation) {
-      this.updateUserLocationMarker();
-    }
+
+    // Add click handler for pins - WORKING VERSION
+    this.map.on('click', (evt: MapBrowserEvent<any>) => {
+      console.log('🗺️ Map clicked');
+
+      const feature = this.map.forEachFeatureAtPixel(evt.pixel, (feat) => feat, {
+        layerFilter: (layer) => layer === this.vendorLayer
+      });
+
+      if (!feature) {
+        console.log('❌ No feature clicked');
+        return;
+      }
+
+      console.log('✅ Feature clicked');
+      this.clickedFeature = feature;
+
+      // Get store object from features
+      const store = feature.get('store') as Store;
+
+      if (store) {
+        console.log('🏪 Emitting store:', store.name);
+        this.storeSelected.emit(store);
+      } else {
+        console.warn('⚠️ Feature has no store property:', feature.getProperties());
+      }
+    });
+
+    // Add hover handler for tooltip (desktop only)
+    this.map.on('pointermove', (evt: MapBrowserEvent<any>) => {
+      // Check if desktop (width >= 769px)
+      if (window.innerWidth < 769) return;
+
+      const feature = this.map.forEachFeatureAtPixel(evt.pixel, (feat) => feat, {
+        layerFilter: (layer) => layer === this.vendorLayer
+      });
+
+      if (feature && feature !== this.hoveredFeature) {
+        // New feature hovered
+        this.hoveredFeature = feature;
+        const store = feature.get('store') as Store;
+
+        if (store) {
+          // Update popup content
+          const popup = document.getElementById('map-popup');
+          const content = popup?.querySelector('.popup-content');
+
+          if (content) {
+            content.innerHTML = `
+            <h4>${store.name}</h4>
+            <div class="rating">⭐ ${store.rating.toFixed(1)}</div>
+            <div class="hours">${store.openTime} - ${store.closeTime}</div>
+            `;
+          }
+
+          // Show popup at feature location
+          const geometry = feature.getGeometry();
+          const coordinates = geometry ? (geometry as Point).getCoordinates() : null;
+
+          if (coordinates && this.popupOverlay) {
+            this.popupOverlay.setPosition(coordinates);
+            if (popup) popup.style.display = 'block';
+          }
+        }
+
+        // Refresh layer to update pin color
+        this.vendorSource.changed();
+
+      } else if (!feature && this.hoveredFeature) {
+        // Mouse left all features
+        this.hoveredFeature = null;
+
+        const popup = document.getElementById('map-popup');
+        if (popup) popup.style.display = 'none';
+
+        // Refresh layer to reset pin color
+        this.vendorSource.changed();
+      }
+
+      // Change cursor on hover
+      const target = this.map.getTarget();
+      if (target && typeof target !== 'string') {
+        (target as HTMLElement).style.cursor = feature ? 'pointer' : '';
+      }
+    });
   }
 
   private updateLayerVisibility(): void {
@@ -157,13 +274,20 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       });
     } else {
       // Single vendor marker
+
+      const isHovered = this.hoveredFeature === feature;
+      const isClicked = this.clickedFeature === feature;
+
       return new Style({
         image: new Icon({
-          anchor: [0.5, 1], // Anchor at bottom center
+          anchor: [0.5, 1],
           src: 'assets/gerobak-icon-brown-nobg.png',
-          scale: this.getVendorIconScale()
+          scale: this.getVendorIconScale(),
+
+          // Change color on hover or click
+          color: (isHovered || isClicked) ? '#FBBE21' : undefined
         })
-      });
+      })
     }
   }
 
@@ -224,6 +348,53 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
         zoom: 15,
         duration: 1000
       });
+    }
+  }
+
+  private getRouteStyle(): Style {
+    return new Style({
+      stroke: new Stroke({
+        color: '#FFB300', // Orange-yellow color that contrasts with light map
+        width: 5,
+        lineCap: 'round',
+        lineJoin: 'round'
+      })
+    });
+  }
+
+  /**
+   * Display a route on the map
+   * @param coordinates Array of [lon, lat] coordinates
+   */
+  displayRoute(coordinates: [number, number][]): void {
+    if (!this.routingSource) return;
+
+    // Clear existing route
+    this.routingSource.clear();
+
+    // Convert coordinates to map projection and create LineString
+    const projectedCoords = coordinates.map(coord => fromLonLat(coord));
+    const routeLine = new LineString(projectedCoords);
+
+    const routeFeature = new Feature({
+      geometry: routeLine
+    });
+
+    this.routingSource.addFeature(routeFeature);
+
+    // Fit map to show entire route
+    this.map.getView().fit(routeLine.getExtent(), {
+      padding: [50, 50, 50, 50],
+      duration: 1000
+    });
+  }
+
+  /**
+   * Clear the current route from the map
+   */
+  clearRoute(): void {
+    if (this.routingSource) {
+      this.routingSource.clear();
     }
   }
 

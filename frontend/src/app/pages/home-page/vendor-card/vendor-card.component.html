@@ -1,4 +1,4 @@
-<div class="vendor-card" *ngIf="store">
+<div class="vendor-card" *ngIf="store" (click)="onClick()">
     <div class="card-image">
         <img [src]="store.storeImageUrl" [alt]="store.name">
         <div class="status-badge" [ngClass]="statusClass">

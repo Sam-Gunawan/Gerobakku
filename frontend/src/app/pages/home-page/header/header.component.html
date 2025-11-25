@@ -1,5 +1,5 @@
 <header class="app-header">
-  <button class="profile-button">
+  <button class="profile-button" (click)="openProfileModal()">
     <div class="profile-icon">👤</div>
   </button>
 
@@ -13,3 +13,6 @@
     <input type="text" placeholder="Search for stalls, food..." class="search-input">
   </div>
 </header>
+
+<!-- Profile Modal -->
+<app-profile-modal *ngIf="showProfileModal" (close)="closeProfileModal()"></app-profile-modal>

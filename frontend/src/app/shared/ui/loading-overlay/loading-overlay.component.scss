@@ -1,0 +1,96 @@
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 31, 48, 0.38);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.loading-modal {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    padding: 22px 28px 20px;
+    width: 320px;
+    max-width: 90%;
+    display: flex;
+    flex-direction: row;
+    gap: 18px;
+    align-items: center;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16), 0 10px 34px -12px rgba(0, 0, 0, 0.25);
+    animation: fadeInScale .25s cubic-bezier(.4, 0, .2, 1);
+}
+
+.loading-modal h6 {
+    margin: 0 0 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.loading-modal p {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.35;
+    color: #666;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.loading-modal .text-block {
+    flex: 1;
+}
+
+.spinner {
+    --size: 38px;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    border: 3px solid rgba(139, 69, 19, 0.15); // Brand brown with opacity
+    border-top-color: #8B4513; // Brand brown - will be overridden by input
+    animation: spin 0.9s linear infinite;
+    position: relative;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(.92) translateY(6px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@media (max-width: 640px) {
+    .loading-modal {
+        width: 260px;
+        padding: 18px 20px 16px;
+        gap: 14px;
+    }
+
+    .spinner {
+        --size: 32px;
+    }
+
+    .loading-modal h6 {
+        font-size: 13px;
+    }
+
+    .loading-modal p {
+        font-size: 10px;
+    }
+}

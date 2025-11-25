@@ -1,0 +1,265 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 400px;
+  height: 100vh;
+  background: #F5F5F5; // Changed from yellow
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  animation: slideInRight 0.3s ease;
+  position: relative;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.close-btn {
+  position: sticky;
+  top: 16px;
+  right: 16px;
+  margin-left: auto;
+  display: block;
+  width: 40px;
+  height: 40px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  color: #2d3748;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s;
+  z-index: 10;
+  margin-bottom: 16px;
+
+  &:hover {
+    background: #f56565;
+    color: white;
+    transform: rotate(90deg);
+  }
+}
+
+.profile-content {
+  padding: 0 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #01161E;
+  padding: 20px;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(1, 22, 30, 0.3);
+    border-top-color: #01161E;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    margin-top: 16px;
+    font-size: 16px;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.avatar-section {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    .initials {
+      font-size: 36px;
+      font-weight: 600;
+      color: white;
+    }
+  }
+
+  .user-name {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 8px 0;
+  }
+
+  .user-email {
+    font-size: 14px;
+    color: #718096;
+    margin: 0;
+  }
+}
+
+.vendor-section {
+  margin: 0;
+}
+
+.vendor-btn {
+  width: 100%;
+  background: #8B4513; // Solid brown
+  border: none;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+
+  .icon {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+
+  .vendor-text {
+    flex: 1;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .vendor-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      display: block;
+    }
+
+    .vendor-subtitle {
+      font-size: 12px;
+      color: #FFEFAD;
+      display: block;
+    }
+  }
+
+  .arrow {
+    font-size: 20px;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: #704010;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(139, 69, 19, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.menu-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .settings-header {
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+  }
+
+  .menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: color 0.3s;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      color: #8B4513;
+    }
+
+    span {
+      font-size: 14px;
+    }
+
+    .icon {
+      font-size: 18px;
+      color: #cbd5e0;
+    }
+
+    &.logout-item {
+      color: #f56565;
+
+      .icon {
+        color: #f56565;
+      }
+
+      &:hover {
+        color: #e53e3e;
+        background: #fff5f5;
+        margin: 0 -24px;
+        padding: 16px 24px;
+        border-radius: 8px;
+      }
+    }
+  }
+}
