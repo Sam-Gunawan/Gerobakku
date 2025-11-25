@@ -4,9 +4,7 @@ import { Subscription } from 'rxjs';
 import { HeaderComponent } from '../header/header.component';
 import { BottomSheetComponent } from '../bottom-sheet/bottom-sheet.component';
 import { MainSheetContentComponent } from '../main-sheet-content/main-sheet-content.component';
-import { Menu1SheetContentComponent } from '../menu1-sheet-content/menu1-sheet-content.component';
 import { MapComponent } from '../../../shared/components/map.component';
-import { StoreCardComponent } from '../../../shared/components/store-card/store-card.component';
 import { StoreDetailsComponent } from '../../../shared/components/store-details/store-details.component';
 import { LocationService } from '../../../services/location.service';
 import { RoutingService } from '../../../services/routing.service';
@@ -20,9 +18,7 @@ import { LocationPoint, Store } from '../../../models/store.model';
     HeaderComponent,
     BottomSheetComponent,
     MainSheetContentComponent,
-    Menu1SheetContentComponent,
     MapComponent,
-    StoreCardComponent,
     StoreDetailsComponent
   ],
   templateUrl: './map-dashboard.component.html',
