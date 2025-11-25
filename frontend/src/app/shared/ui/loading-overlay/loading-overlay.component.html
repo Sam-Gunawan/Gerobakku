@@ -1,0 +1,9 @@
+<div class="loading-overlay" *ngIf="isVisible">
+    <div class="loading-modal" role="alert" aria-live="assertive">
+        <div class="spinner" [style.border-top-color]="spinnerColor" aria-hidden="true"></div>
+        <div class="text-block">
+            <h6>{{ title }}</h6>
+            <p>{{ message }}</p>
+        </div>
+    </div>
+</div>
