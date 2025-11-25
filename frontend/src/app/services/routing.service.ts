@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 import { LocationPoint } from '../models/store.model';
 
@@ -31,17 +31,18 @@ export class RoutingService {
             geometries: 'geojson',
             steps: 'false'
         };
-
-        return this.http.get<any>(url, { params }).pipe(
+        // Use context to skip auth interceptors for external API
+        return this.http.get<any>(url, {
+            params,
+            context: new HttpContext()  // Fresh context without interceptors
+        }).pipe(
             map(response => {
                 if (response.code !== 'Ok' || !response.routes || response.routes.length === 0) {
                     console.error('OSRM routing error:', response);
                     return null;
                 }
-
                 const route = response.routes[0];
                 const geometry = route.geometry;
-
                 return {
                     coordinates: geometry.coordinates as [number, number][],
                     distance: route.distance,

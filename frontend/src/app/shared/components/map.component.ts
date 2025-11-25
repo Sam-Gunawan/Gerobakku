@@ -24,8 +24,8 @@ import { MapBrowserEvent } from 'ol';
   imports: [CommonModule],
   template: `
     <div id="map" #mapContainer></div>
-    <div id="map-popup" class="ol-popup" style="display: none;">
-      <div class="popup-content">Click detected - handled by parent</div>
+    <div id="map-popup" class="ol-popup">
+      <div class="popup-content"></div>
     </div>
   `,
   styleUrls: ['./map.component.scss']
@@ -49,6 +49,10 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
   private readonly USER_ICON_SCALE = 0.06; // Scale for user location icon
 
   private popupOverlay!: Overlay;
+
+  // Trackers for pin styles and popup
+  private hoveredFeature: any = null;
+  private clickedFeature: any = null;
 
   ngAfterViewInit(): void {
     this.initializeMap();
@@ -130,33 +134,12 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       this.updateLayerVisibility();
     });
 
-    // Change cursor on hover
-    this.map.on('pointermove', (evt: MapBrowserEvent<any>) => {
-      const pixel = this.map.getEventPixel(evt.originalEvent);
-      const hit = this.map.hasFeatureAtPixel(pixel, {
-        layerFilter: (layer) => layer === this.vendorLayer
-      });
-      this.map.getTargetElement().style.cursor = hit ? 'pointer' : '';
-    });
-
-    // Update markers if we already have data
-    if (this.vendorLocations.length > 0) {
-      this.updateVendorMarkers();
-    }
-    if (this.userLocation) {
-      this.updateUserLocationMarker();
-    }
-
     // Create popup overlay
     const popupElement = document.getElementById('map-popup');
     if (popupElement) {
       this.popupOverlay = new Overlay({
         element: popupElement,
-        autoPan: {
-          animation: {
-            duration: 250,
-          },
-        },
+        autoPan: false,
         positioning: 'bottom-center',
         offset: [0, -10]
       });
@@ -177,6 +160,7 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       }
 
       console.log('✅ Feature clicked');
+      this.clickedFeature = feature;
 
       // Get store object from features
       const store = feature.get('store') as Store;
@@ -189,31 +173,63 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       }
     });
 
-    // For AnimatedCluster, the feature itself IS the wrapper
-    // We need to access the original features from the cluster
-    //   const clusterFeatures = feature.get('features');
+    // Add hover handler for tooltip (desktop only)
+    this.map.on('pointermove', (evt: MapBrowserEvent<any>) => {
+      // Check if desktop (width >= 769px)
+      if (window.innerWidth < 769) return;
 
-    //   if (clusterFeatures && Array.isArray(clusterFeatures)) {
-    //     console.log(`📦 Found ${clusterFeatures.length} feature(s) in cluster`);
+      const feature = this.map.forEachFeatureAtPixel(evt.pixel, (feat) => feat, {
+        layerFilter: (layer) => layer === this.vendorLayer
+      });
 
-    //     if (clusterFeatures.length === 1) {
-    //       // Single pin - get the store from the ORIGINAL feature
-    //       const originalFeature = clusterFeatures[0];
-    //       const store = originalFeature.get('store') as Store;
+      if (feature && feature !== this.hoveredFeature) {
+        // New feature hovered
+        this.hoveredFeature = feature;
+        const store = feature.get('store') as Store;
 
-    //       if (store) {
-    //         console.log('🏪 Emitting store:', store.name);
-    //         this.storeSelected.emit(store);
-    //       } else {
-    //         console.warn('⚠️ Feature has no store property');
-    //       }
-    //     } else {
-    //       console.log('📦 Cluster with multiple pins - ignoring click');
-    //     }
-    //   } else {
-    //     console.warn('⚠️ Feature has no features array:', feature.getProperties());
-    //   }
-    // });
+        if (store) {
+          // Update popup content
+          const popup = document.getElementById('map-popup');
+          const content = popup?.querySelector('.popup-content');
+
+          if (content) {
+            content.innerHTML = `
+            <h4>${store.name}</h4>
+            <div class="rating">⭐ ${store.rating.toFixed(1)}</div>
+            <div class="hours">${store.openTime} - ${store.closeTime}</div>
+            `;
+          }
+
+          // Show popup at feature location
+          const geometry = feature.getGeometry();
+          const coordinates = geometry ? (geometry as Point).getCoordinates() : null;
+
+          if (coordinates && this.popupOverlay) {
+            this.popupOverlay.setPosition(coordinates);
+            if (popup) popup.style.display = 'block';
+          }
+        }
+
+        // Refresh layer to update pin color
+        this.vendorSource.changed();
+
+      } else if (!feature && this.hoveredFeature) {
+        // Mouse left all features
+        this.hoveredFeature = null;
+
+        const popup = document.getElementById('map-popup');
+        if (popup) popup.style.display = 'none';
+
+        // Refresh layer to reset pin color
+        this.vendorSource.changed();
+      }
+
+      // Change cursor on hover
+      const target = this.map.getTarget();
+      if (target && typeof target !== 'string') {
+        (target as HTMLElement).style.cursor = feature ? 'pointer' : '';
+      }
+    });
   }
 
   private updateLayerVisibility(): void {
@@ -258,11 +274,18 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       });
     } else {
       // Single vendor marker
+
+      const isHovered = this.hoveredFeature === feature;
+      const isClicked = this.clickedFeature === feature;
+
       return new Style({
         image: new Icon({
           anchor: [0.5, 1],
           src: 'assets/gerobak-icon-brown-nobg.png',
-          scale: this.getVendorIconScale()
+          scale: this.getVendorIconScale(),
+
+          // Change color on hover or click
+          color: (isHovered || isClicked) ? '#FBBE21' : undefined
         })
       })
     }
