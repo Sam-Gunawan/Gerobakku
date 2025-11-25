@@ -23,7 +23,7 @@ export class VendorApplicationPageComponent implements OnInit {
     private fb: FormBuilder,
     public router: Router,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -40,13 +40,13 @@ export class VendorApplicationPageComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
-      
+
       // Validate file type
       if (!file.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
       }
-      
+
       // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
         alert('File size must be less than 5MB');
@@ -55,7 +55,7 @@ export class VendorApplicationPageComponent implements OnInit {
 
       this.idCardFile = file;
       this.applicationForm.patchValue({ idCard: file });
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -69,13 +69,13 @@ export class VendorApplicationPageComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
-      
+
       // Validate file type
       if (!file.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
       }
-      
+
       // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
         alert('File size must be less than 5MB');
@@ -84,7 +84,7 @@ export class VendorApplicationPageComponent implements OnInit {
 
       this.selfieFile = file;
       this.applicationForm.patchValue({ selfie: file });
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -124,18 +124,18 @@ export class VendorApplicationPageComponent implements OnInit {
     // Simulate API call
     setTimeout(() => {
       this.isSubmitting = false;
-      alert('Vendor application submitted successfully! We will review your application and get back to you soon.');
-      this.router.navigate(['/profile']);
+      alert('Vendor application submitted successfully!');
+      this.router.navigate(['/vendor-store-details']);
     }, 2000);
   }
 
   getErrorMessage(controlName: string): string {
     const control = this.applicationForm.get(controlName);
-    
+
     if (control?.hasError('required')) {
       return 'This field is required';
     }
-    
+
     return '';
   }
 }

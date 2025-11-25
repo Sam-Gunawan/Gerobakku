@@ -13,7 +13,7 @@ import { User } from '../../../models/user.model';
 })
 export class ProfileModalComponent {
   @Output() close = new EventEmitter<void>();
-  
+
   user: User | null = null;
   isLoading: boolean = true;
   error: string = '';
@@ -28,25 +28,12 @@ export class ProfileModalComponent {
   loadUserProfile(): void {
     this.isLoading = true;
     this.user = this.authService.getCurrentUser();
-    
+
     if (!this.user) {
       this.error = 'Unable to load user profile';
     }
-    
+
     this.isLoading = false;
-  }
-
-  formatDate(date: Date | string): string {
-    const d = new Date(date);
-    return d.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-  }
-
-  onEditProfile(): void {
-    console.log('Edit profile clicked');
   }
 
   onChangePassword(): void {
@@ -63,7 +50,7 @@ export class ProfileModalComponent {
 
   getInitials(): string {
     if (!this.user?.fullName) return 'U';
-    
+
     const names = this.user.fullName.split(' ');
     if (names.length >= 2) {
       return (names[0][0] + names[names.length - 1][0]).toUpperCase();

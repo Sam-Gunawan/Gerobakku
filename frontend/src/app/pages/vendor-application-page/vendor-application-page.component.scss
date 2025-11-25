@@ -1,7 +1,7 @@
 .application-container {
   min-height: 100vh;
   height: 100vh;
-  background: linear-gradient(135deg, #FBBE21 0%, #FFEFAD 100%);
+  background: #F5F5F5;
   padding: 20px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -271,7 +271,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 640px) {

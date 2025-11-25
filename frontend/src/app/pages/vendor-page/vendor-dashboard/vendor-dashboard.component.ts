@@ -5,13 +5,13 @@ import { AuthService } from '../../../services/auth.service';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
 import { fromLonLat } from 'ol/proj';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Style, Circle, Fill, Stroke } from 'ol/style';
+import { XYZ } from 'ol/source';
 
 @Component({
   selector: 'app-vendor-dashboard',
@@ -25,12 +25,11 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
   currentLocation: string = 'Loading location...';
   storeName: string = 'My Store';
   currentTime: string = '';
-  currentDate: string = '';
-  
+
   private map!: Map;
   private userMarker!: VectorLayer<VectorSource>;
   currentCoords: [number, number] = [106.8456, -6.2088]; // Default to Jakarta
-  
+
   // Mock review data
   reviewStats = {
     5: 89,
@@ -39,17 +38,6 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
     2: 7,
     1: 3
   };
-
-  // Mock sales data for graph
-  salesData = [
-    { day: 'Mon', value: 45, percentage: 75 },
-    { day: 'Tue', value: 32, percentage: 53 },
-    { day: 'Wed', value: 58, percentage: 97 },
-    { day: 'Thu', value: 28, percentage: 47 },
-    { day: 'Fri', value: 52, percentage: 87 },
-    { day: 'Sat', value: 60, percentage: 100 },
-    { day: 'Sun', value: 38, percentage: 63 }
-  ];
 
   // Mock recent reviews
   recentReviews = [
@@ -62,13 +50,13 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
   constructor(
     public router: Router,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.updateDateTime();
     this.loadStoreInfo();
     // Update time every 10 milliseconds for smooth millisecond display
-    setInterval(() => this.updateDateTime(), 10);
+    setInterval(() => this.updateDateTime(), 1000);
   }
 
   ngAfterViewInit(): void {
@@ -78,22 +66,14 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
 
   updateDateTime(): void {
     const now = new Date();
-    
+
     // Format time with seconds and milliseconds (Indonesia, GMT+7)
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
     const seconds = now.getSeconds().toString().padStart(2, '0');
     const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
-    
-    this.currentTime = `${hours}:${minutes}:${seconds}.${milliseconds}`;
-    
-    // Format date (Day, Month Date, Year) with timezone
-    this.currentDate = now.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }) + ' (Indonesia, GMT+7)';
+
+    this.currentTime = `${hours}:${minutes}:${seconds}`;
   }
 
   loadStoreInfo(): void {
@@ -102,7 +82,7 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
     if (user) {
       this.storeName = user.fullName + "'s Store";
     }
-    
+
     // TODO: Get actual location from GPS
     this.getCurrentLocation();
   }
@@ -146,7 +126,10 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
       target: 'vendor-map',
       layers: [
         new TileLayer({
-          source: new OSM()
+          source: new XYZ({
+            url: 'https://{a-d}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+            attributions: '' // Hide attribution
+          })
         }),
         this.userMarker
       ],
@@ -177,11 +160,11 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
       const now = Date.now();
       const phase1 = (now % 3000) / 3000; // First ring: 3 second cycle
       const phase2 = ((now - 400) % 3000) / 3000; // Second ring: 400ms delay
-      
+
       // Easing function for smoother fade out
       const easeOut1 = 1 - Math.pow(phase1, 2);
       const easeOut2 = 1 - Math.pow(phase2, 2);
-      
+
       const styles = [
         // Main marker (always visible)
         new Style({
@@ -199,10 +182,10 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
           new Style({
             image: new Circle({
               radius: 15 + (phase1 * 60), // Grows from 15 to 75
-              fill: new Fill({ 
+              fill: new Fill({
                 color: 'transparent'
               }),
-              stroke: new Stroke({ 
+              stroke: new Stroke({
                 color: `rgba(1, 22, 30, ${0.8 * easeOut1})`,
                 width: Math.max(5 * easeOut1, 0.5)
               })
@@ -217,10 +200,10 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
           new Style({
             image: new Circle({
               radius: 15 + (phase2 * 40),
-              fill: new Fill({ 
+              fill: new Fill({
                 color: 'transparent'
               }),
-              stroke: new Stroke({ 
+              stroke: new Stroke({
                 color: `rgba(1, 22, 30, ${0.9 * Math.pow(easeOut2, 0.8)})`,
                 width: Math.max(4 * easeOut2, 0.5)
               })
@@ -239,10 +222,10 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
         (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          
+
           this.currentCoords = [lon, lat];
           this.currentLocation = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-          
+
           // Update map center and marker
           this.updateMapLocation(lon, lat);
         },
@@ -265,15 +248,15 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
     if (!this.map) return;
 
     const coords = fromLonLat([lon, lat]);
-    
+
     // Update map center
     this.map.getView().setCenter(coords);
-    
+
     // Clear existing markers
     const source = this.userMarker.getSource();
     if (source) {
       source.clear();
-      
+
       // Add new marker
       const marker = new Feature({
         geometry: new Point(coords)
@@ -303,7 +286,7 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
         (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          
+
           this.currentCoords = [lon, lat];
           this.currentLocation = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
           this.updateMapLocation(lon, lat);

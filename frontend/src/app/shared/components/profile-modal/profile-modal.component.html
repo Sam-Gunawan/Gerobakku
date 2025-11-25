@@ -1,6 +1,6 @@
 <div class="modal-backdrop">
   <div class="modal-content">
-    <!-- Close Button -->
+    <!-- Close Button (Sticky) -->
     <button class="close-btn" (click)="closeModal()">✕</button>
 
     <!-- Loading State -->
@@ -16,33 +16,14 @@
 
     <!-- Profile Content -->
     <div *ngIf="user && !isLoading" class="profile-content">
+
       <!-- Avatar Section -->
       <div class="avatar-section">
-        <div class="edit-icon" (click)="onEditProfile()">
-          <span>✏️</span>
-        </div>
         <div class="avatar">
           <span class="initials">{{ getInitials() }}</span>
         </div>
         <h2 class="user-name">{{ user.fullName }}</h2>
         <p class="user-email">{{ user.email }}</p>
-        <div class="verification-badge" [class.verified]="user.isVerified">
-          <span *ngIf="user.isVerified">✓ Verified</span>
-          <span *ngIf="!user.isVerified">⚠ Not Verified</span>
-        </div>
-      </div>
-
-      <!-- Info Cards -->
-      <div class="info-section">
-        <div class="info-card">
-          <div class="info-label">Member Since</div>
-          <div class="info-value">{{ formatDate(user.createdAt) }}</div>
-        </div>
-
-        <div class="info-card">
-          <div class="info-label">User ID</div>
-          <div class="info-value">{{ user.userId }}</div>
-        </div>
       </div>
 
       <!-- Vendor Application Button -->
@@ -57,27 +38,26 @@
         </button>
       </div>
 
-      <!-- Settings Section -->
+      <!-- Settings Menu -->
       <div class="menu-section">
         <div class="settings-header">
           <h3>Settings</h3>
-          <button class="logout-btn" (click)="onLogout()">Logout</button>
         </div>
         <div class="menu-item" (click)="onChangePassword()">
           <span>Change Password</span>
-          <span class="arrow">→</span>
-        </div>
-        <div class="menu-item">
-          <span>Notifications</span>
-          <span class="arrow">→</span>
+          <span class="icon">→</span>
         </div>
         <div class="menu-item">
           <span>Privacy</span>
-          <span class="arrow">→</span>
+          <span class="icon">→</span>
         </div>
         <div class="menu-item">
           <span>Help & Support</span>
-          <span class="arrow">→</span>
+          <span class="icon">→</span>
+        </div>
+        <div class="menu-item logout-item" (click)="onLogout()">
+          <span>Logout</span>
+          <span class="icon">🚪</span>
         </div>
       </div>
     </div>

@@ -1,76 +1,55 @@
 <div class="vendor-dashboard">
-  <!-- Back Button -->
+  <!-- Sticky Back Button -->
   <button class="back-button" (click)="goBackToHome()">
     <span class="back-icon">←</span>
     <span class="back-text">Back to Home</span>
   </button>
 
-  <!-- Left Side Container -->
-  <div class="left-side">
-    <!-- Top: Status Section -->
-    <div class="status-section">
-      <!-- Store Profile -->
-      <div class="store-profile" (click)="onProfileClick()">
-        <div class="store-avatar">
-          <span>{{ storeName.charAt(0) }}</span>
-        </div>
-        <div class="store-info">
-          <h3>{{ storeName }}</h3>
-          <span class="view-profile">View Profile</span>
-        </div>
-      </div>
+  <!-- Main Flexbox Container -->
+  <div class="dashboard-grid">
 
-      <!-- Status Cards -->
-      <div class="status-cards">
-        <!-- Store Status -->
-        <div class="status-card">
-          <div class="status-header">
-            <span class="status-label">Store Status</span>
-            <button 
-              class="toggle-btn" 
-              [class.open]="isOpen"
-              (click)="toggleStoreStatus()"
-            >
-              <span class="toggle-indicator"></span>
-              <span class="toggle-text">{{ isOpen ? 'Open' : 'Closed' }}</span>
-            </button>
+    <!-- LEFT COLUMN -->
+    <div class="left-column">
+
+      <!-- Store Info & Controls -->
+      <div class="store-section">
+        <div class="store-profile" (click)="onProfileClick()">
+          <div class="store-avatar">
+            <span>{{ storeName.charAt(0) }}</span>
+          </div>
+          <div class="store-info">
+            <h3>{{ storeName }}</h3>
+            <span class="view-profile">View Profile</span>
           </div>
         </div>
 
-        <!-- Location -->
-        <div class="status-card">
-          <div class="status-header">
-            <span class="status-label">Current Location</span>
-            <button class="refresh-btn" (click)="onUpdateLocation()">🔄</button>
-          </div>
-          <p class="status-value">{{ currentLocation }}</p>
+        <!-- Open/Close Toggle -->
+        <div class="control-card">
+          <span class="control-label">Store Status</span>
+          <button class="ios-toggle" [class.active]="isOpen" (click)="toggleStoreStatus()">
+            <span class="toggle-slider"></span>
+          </button>
+          <span class="status-text" [class.open]="isOpen">
+            {{ isOpen ? 'Store is Open' : 'Store is Closed' }}
+          </span>
         </div>
 
-        <!-- Time -->
-        <div class="status-card time-card">
-          <span class="status-label">Time (Indonesia, GMT+7)</span>
-          <p class="status-value time">{{ currentTime }}</p>
-        </div>
-
-        <!-- Date -->
-        <div class="status-card">
-          <span class="status-label">Date</span>
-          <p class="status-value date">{{ currentDate }}</p>
+        <!-- Current Time -->
+        <div class="control-card">
+          <span class="control-label">Current Time</span>
+          <p class="time-display">{{ currentTime }}</p>
+          <span class="time-hint">Akurasi waktu membantu pelanggan tahu kapan kamu buka</span>
         </div>
       </div>
-    </div>
 
-    <!-- Bottom: Analytics Section -->
-    <div class="analytics-section">
-      <h3>Reviews Analytics</h3>
-      
-      <div class="analytics-content">
+      <!-- Rating Analytics -->
+      <div class="analytics-section">
+        <h3>Reviews & Ratings</h3>
+
         <div class="rating-overview">
-          <div class="average-rating">
-            <span class="rating-number">4.5</span>
-            <div class="stars">⭐⭐⭐⭐⭐</div>
-            <span class="total-reviews">156 Reviews</span>
-          </div>
+          <span class="rating-number">4.5</span>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <span class="total-reviews">156 Reviews</span>
         </div>
 
         <div class="rating-breakdown">
@@ -82,46 +61,37 @@
             <span class="count">{{ getRatingCount(rating) }}</span>
           </div>
         </div>
-
-        <!-- Sales Graph -->
-        <div class="sales-graph">
-          <h4>Sales This Week</h4>
-          <div class="graph-bars">
-            <div class="graph-item" *ngFor="let day of salesData">
-              <div class="bar-wrapper">
-                <div class="graph-bar" [style.height]="day.percentage + '%'">
-                  <span class="bar-value">{{ day.value }}</span>
-                </div>
-              </div>
-              <span class="day-label">{{ day.day }}</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Right Side Container -->
-  <div class="right-side">
-    <!-- Top: Map -->
-    <div class="map-section">
-      <div id="vendor-map" class="map"></div>
-    </div>
+    <!-- RIGHT COLUMN -->
+    <div class="right-column">
+      <!-- Map Section -->
+      <div class="map-section">
+        <div class="map-header">
+          <h3>Your Current Location</h3>
+          <button class="refresh-btn" (click)="onUpdateLocation()">
+            🔄 Refresh
+          </button>
+        </div>
+        <div id="vendor-map" class="map"></div>
+      </div>
 
-    <!-- Bottom: Chat Reviews -->
-    <div class="chat-section">
-      <h3>Recent Reviews</h3>
-      <div class="chat-container">
-        <div class="review-message" *ngFor="let review of recentReviews">
-          <div class="review-header">
-            <div class="reviewer-avatar">{{ review.name.charAt(0) }}</div>
-            <div class="reviewer-info">
-              <span class="reviewer-name">{{ review.name }}</span>
-              <div class="review-stars">{{ getStars(review.rating) }}</div>
+      <!-- Recent Reviews -->
+      <div class="reviews-section">
+        <h3>Recent Reviews</h3>
+        <div class="reviews-container">
+          <div class="review-card" *ngFor="let review of recentReviews">
+            <div class="review-header">
+              <div class="reviewer-avatar">{{ review.name.charAt(0) }}</div>
+              <div class="reviewer-info">
+                <span class="reviewer-name">{{ review.name }}</span>
+                <div class="review-stars">{{ getStars(review.rating) }}</div>
+              </div>
+              <span class="review-time">{{ review.time }}</span>
             </div>
-            <span class="review-time">{{ review.time }}</span>
+            <p class="review-text">{{ review.comment }}</p>
           </div>
-          <p class="review-text">{{ review.comment }}</p>
         </div>
       </div>
     </div>
