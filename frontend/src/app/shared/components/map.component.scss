@@ -63,54 +63,6 @@
     display: none !important;
 }
 
-/* Style Attribution at bottom with very small font */
-::ng-deep .ol-attribution {
-    bottom: 2px;
-    left: auto;
-    right: 4px;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 2px;
-    font-size: 8px;
-    padding: 2px 4px;
-    max-width: 200px;
-
-    ul {
-        font-size: 8px;
-        color: #666;
-        margin: 0;
-        padding: 0;
-        line-height: 1.2;
-    }
-
-    li {
-        font-size: 8px;
-        line-height: 1.2;
-    }
-
-    a {
-        font-size: 8px;
-        color: #666;
-        text-decoration: none;
-
-        &:hover {
-            text-decoration: underline;
-        }
-    }
-
-    &.ol-collapsed {
-        background: rgba(255, 255, 255, 0.3);
-
-        &:hover {
-            background: rgba(255, 255, 255, 0.7);
-        }
-    }
-
-    button {
-        font-size: 8px;
-        padding: 1px 2px;
-    }
-}
-
 /* Ensure no other controls are visible */
 ::ng-deep .ol-control {
     &:not(.ol-attribution) {

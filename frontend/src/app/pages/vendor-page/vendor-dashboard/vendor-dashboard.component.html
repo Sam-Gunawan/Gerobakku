@@ -1,0 +1,99 @@
+<div class="vendor-dashboard">
+  <!-- Sticky Back Button -->
+  <button class="back-button" (click)="goBackToHome()">
+    <span class="back-icon">←</span>
+    <span class="back-text">Back to Home</span>
+  </button>
+
+  <!-- Main Flexbox Container -->
+  <div class="dashboard-grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="left-column">
+
+      <!-- Store Info & Controls -->
+      <div class="store-section">
+        <div class="store-profile" (click)="onProfileClick()">
+          <div class="store-avatar">
+            <span>{{ storeName.charAt(0) }}</span>
+          </div>
+          <div class="store-info">
+            <h3>{{ storeName }}</h3>
+            <span class="view-profile">View Profile</span>
+          </div>
+        </div>
+
+        <!-- Open/Close Toggle -->
+        <div class="control-card">
+          <span class="control-label">Store Status</span>
+          <button class="ios-toggle" [class.active]="isOpen" (click)="toggleStoreStatus()">
+            <span class="toggle-slider"></span>
+          </button>
+          <span class="status-text" [class.open]="isOpen">
+            {{ isOpen ? 'Store is Open' : 'Store is Closed' }}
+          </span>
+        </div>
+
+        <!-- Current Time -->
+        <div class="control-card">
+          <span class="control-label">Current Time</span>
+          <p class="time-display">{{ currentTime }}</p>
+          <span class="time-hint">Akurasi waktu membantu pelanggan tahu kapan kamu buka</span>
+        </div>
+      </div>
+
+      <!-- Rating Analytics -->
+      <div class="analytics-section">
+        <h3>Reviews & Ratings</h3>
+
+        <div class="rating-overview">
+          <span class="rating-number">4.5</span>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <span class="total-reviews">156 Reviews</span>
+        </div>
+
+        <div class="rating-breakdown">
+          <div class="rating-row" *ngFor="let rating of [5, 4, 3, 2, 1]">
+            <span class="star-label">{{ rating }} ⭐</span>
+            <div class="bar-container">
+              <div class="bar" [style.width]="getRatingPercentage(rating) + '%'"></div>
+            </div>
+            <span class="count">{{ getRatingCount(rating) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-column">
+      <!-- Map Section -->
+      <div class="map-section">
+        <div class="map-header">
+          <h3>Your Current Location</h3>
+          <button class="refresh-btn" (click)="onUpdateLocation()">
+            🔄 Refresh
+          </button>
+        </div>
+        <div id="vendor-map" class="map"></div>
+      </div>
+
+      <!-- Recent Reviews -->
+      <div class="reviews-section">
+        <h3>Recent Reviews</h3>
+        <div class="reviews-container">
+          <div class="review-card" *ngFor="let review of recentReviews">
+            <div class="review-header">
+              <div class="reviewer-avatar">{{ review.name.charAt(0) }}</div>
+              <div class="reviewer-info">
+                <span class="reviewer-name">{{ review.name }}</span>
+                <div class="review-stars">{{ getStars(review.rating) }}</div>
+              </div>
+              <span class="review-time">{{ review.time }}</span>
+            </div>
+            <p class="review-text">{{ review.comment }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

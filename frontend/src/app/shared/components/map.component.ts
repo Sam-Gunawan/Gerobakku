@@ -125,7 +125,7 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       controls: defaultControls({
         zoom: false,
         rotate: false,
-        attribution: true // Keep attribution but we'll style it
+        attribution: false
       })
     });
 

@@ -72,7 +72,8 @@
 
 /* Search Container */
 .search-container {
-  flex-grow: 1;
+  flex: 1;
+  min-width: 0;
   position: relative;
   display: flex;
   align-items: center;

@@ -1,0 +1,130 @@
+<div class="store-details-container">
+    <div class="store-details-content">
+        <!-- Header -->
+        <div class="details-header">
+            <div class="back-button" (click)="router.navigate(['/vendor-application'])">
+                <span>←</span>
+            </div>
+            <h1>Store Details</h1>
+        </div>
+        <!-- Info Card -->
+        <div class="info-card">
+            <h3>Tell us about your store</h3>
+            <p>Provide details so customers can find and recognize your gerobak.</p>
+        </div>
+        <!-- Store Form -->
+        <form [formGroup]="storeForm" (ngSubmit)="onSubmit()" class="store-form">
+
+            <!-- Store Name -->
+            <div class="form-group">
+                <label>Store Name *</label>
+                <input type="text" formControlName="storeName" placeholder="e.g., Sate Pak Budi" class="form-input" />
+                <div *ngIf="storeForm.get('storeName')?.touched && storeForm.get('storeName')?.hasError('required')"
+                    class="error-message">
+                    Store name is required
+                </div>
+            </div>
+            <!-- Category -->
+            <div class="form-group">
+                <label>Category *</label>
+                <select formControlName="category" class="form-input">
+                    <option value="">Select a category</option>
+                    <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+                </select>
+                <div *ngIf="storeForm.get('category')?.touched && storeForm.get('category')?.hasError('required')"
+                    class="error-message">
+                    Category is required
+                </div>
+            </div>
+            <!-- Description -->
+            <div class="form-group">
+                <label>Description</label>
+                <textarea formControlName="description" placeholder="Tell customers about your specialty..." rows="4"
+                    class="form-input"></textarea>
+            </div>
+            <!-- Address -->
+            <div class="form-group">
+                <label>Address *</label>
+                <input type="text" formControlName="address" placeholder="e.g., Jl. Sudirman No. 123"
+                    class="form-input" />
+                <div *ngIf="storeForm.get('address')?.touched && storeForm.get('address')?.hasError('required')"
+                    class="error-message">
+                    Address is required
+                </div>
+            </div>
+            <!-- Location -->
+            <div class="form-group">
+                <label>Location (Coordinates) *</label>
+                <div class="location-fields">
+                    <input type="number" step="any" formControlName="latitude" placeholder="Latitude"
+                        class="form-input" />
+                    <input type="number" step="any" formControlName="longitude" placeholder="Longitude"
+                        class="form-input" />
+                </div>
+                <button type="button" class="location-btn" (click)="onUseCurrentLocation()">
+                    📍 Use Current Location
+                </button>
+                <div *ngIf="storeForm.get('latitude')?.touched && storeForm.get('latitude')?.hasError('required')"
+                    class="error-message">
+                    Location coordinates are required
+                </div>
+            </div>
+            <!-- Operating Hours -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Open Time *</label>
+                    <input type="time" formControlName="openTime" class="form-input" />
+                    <div *ngIf="storeForm.get('openTime')?.touched && storeForm.get('openTime')?.hasError('required')"
+                        class="error-message">
+                        Open time is required
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Close Time *</label>
+                    <input type="time" formControlName="closeTime" class="form-input" />
+                    <div *ngIf="storeForm.get('closeTime')?.touched && storeForm.get('closeTime')?.hasError('required')"
+                        class="error-message">
+                        Close time is required
+                    </div>
+                </div>
+            </div>
+            <!-- Halal Certification -->
+            <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" formControlName="isHalal" />
+                    <span>Halal Certified</span>
+                </label>
+            </div>
+            <!-- Store Image -->
+            <div class="form-group">
+                <label>Store Image *</label>
+                <div class="upload-area" [class.has-file]="storeImagePreview">
+                    <div *ngIf="!storeImagePreview" class="upload-placeholder">
+                        <div class="upload-icon">📷</div>
+                        <p>Click to upload store photo</p>
+                        <span class="upload-hint">PNG, JPG up to 5MB</span>
+                    </div>
+
+                    <div *ngIf="storeImagePreview" class="image-preview">
+                        <img [src]="storeImagePreview" alt="Store Preview" />
+                        <button type="button" class="remove-btn" (click)="removeStoreImage()">✕</button>
+                    </div>
+
+                    <input type="file" accept="image/*" (change)="onStoreImageSelect($event)" class="file-input" />
+                </div>
+
+                <div *ngIf="storeForm.get('storeImage')?.touched && storeForm.get('storeImage')?.hasError('required')"
+                    class="error-message">
+                    Store image is required
+                </div>
+            </div>
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn" [disabled]="isSubmitting || storeForm.invalid">
+                <span *ngIf="!isSubmitting">Submit Vendor Application</span>
+                <span *ngIf="isSubmitting">
+                    <span class="spinner"></span> Submitting...
+                </span>
+            </button>
+        </form>
+    </div>
+</div>
