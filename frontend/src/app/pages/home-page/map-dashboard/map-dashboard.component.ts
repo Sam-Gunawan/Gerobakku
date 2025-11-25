@@ -9,6 +9,7 @@ import { StoreDetailsComponent } from '../../../shared/components/store-details/
 import { LocationService } from '../../../services/location.service';
 import { RoutingService } from '../../../services/routing.service';
 import { LocationPoint, Store } from '../../../models/store.model';
+import { LoadingOverlayComponent } from '../../../shared/ui/loading-overlay/loading-overlay.component';
 
 @Component({
   selector: 'app-map-dashboard',
@@ -19,7 +20,8 @@ import { LocationPoint, Store } from '../../../models/store.model';
     BottomSheetComponent,
     MainSheetContentComponent,
     MapComponent,
-    StoreDetailsComponent
+    StoreDetailsComponent,
+    LoadingOverlayComponent
   ],
   templateUrl: './map-dashboard.component.html',
   styleUrl: './map-dashboard.component.scss'
@@ -37,6 +39,12 @@ export class MapDashboardComponent implements OnInit, OnDestroy {
   // Location data
   userLocation?: LocationPoint | null = null;
   vendorLocations: Store[] = [];
+
+  // Route state
+  isLoadingRoute = false;
+  hasActiveRoute = false;
+  routeDistance: number = 0;
+  routeDuration: number = 0;
 
   // Pin interaction (for map)
   @ViewChild(MapComponent) mapComponent?: MapComponent;
@@ -125,6 +133,12 @@ export class MapDashboardComponent implements OnInit, OnDestroy {
   }
 
   onGuideMe(store: Store): void {
+    // If route is active, clear it
+    if (this.hasActiveRoute) {
+      this.clearRoute();
+      return;
+    }
+
     if (!this.userLocation) {
       console.warn('User location not available for routing');
       alert('Please enable location services to get directions');
@@ -137,17 +151,45 @@ export class MapDashboardComponent implements OnInit, OnDestroy {
     }
 
     console.log(`Getting route to ${store.name}...`);
+    this.isLoadingRoute = true;
 
     this.routingService.getRoute(this.userLocation, store.currentLocation).subscribe(
       routeData => {
+        this.isLoadingRoute = false;
+
         if (routeData && this.mapComponent) {
           this.mapComponent.displayRoute(routeData.coordinates);
+          this.hasActiveRoute = true;
+          this.routeDistance = routeData.distance;
+          this.routeDuration = routeData.duration;
           console.log(`Route displayed: ${this.routingService.formatDistance(routeData.distance)}, ${this.routingService.formatDuration(routeData.duration)}`);
         } else {
           console.error('Failed to get route');
           alert('Could not calculate route. Please try again.');
         }
+      },
+      error => {
+        this.isLoadingRoute = false;
+        console.error('Error getting route:', error);
+        alert('Failed to get route. Please try again.');
       }
     );
+  }
+
+  clearRoute(): void {
+    if (this.mapComponent) {
+      this.mapComponent.clearRoute();
+      this.hasActiveRoute = false;
+      this.routeDistance = 0;
+      this.routeDuration = 0;
+    }
+  }
+
+  formatDistance(meters: number): string {
+    return this.routingService.formatDistance(meters);
+  }
+
+  formatDuration(seconds: number): string {
+    return this.routingService.formatDuration(seconds);
   }
 }

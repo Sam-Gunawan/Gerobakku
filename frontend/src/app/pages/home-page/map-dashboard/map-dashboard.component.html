@@ -12,7 +12,7 @@
 
     <!-- Store details when card clicked -->
     <app-store-details *ngIf="showStoreDetails && selectedStore" [store]="selectedStore" (close)="onCloseStoreDetails()"
-      (guideMe)="onGuideMe($event)">
+      (guideMe)="onGuideMe($event)" [hasActiveRoute]="hasActiveRoute">
     </app-store-details>
   </div>
 
@@ -24,7 +24,32 @@
 
     <!-- Store details when card clicked -->
     <app-store-details *ngIf="showStoreDetails && selectedStore" [store]="selectedStore" (close)="onCloseStoreDetails()"
-      (guideMe)="onGuideMe($event)">
+      (guideMe)="onGuideMe($event)" [hasActiveRoute]="hasActiveRoute">
     </app-store-details>
   </app-bottom-sheet>
+
+  <!-- Loading overlay -->
+  <app-loading-overlay [isVisible]="isLoadingRoute" title="Calculating Route"
+    message="Finding the best path to your destination..." spinnerColor="#FFB300">
+  </app-loading-overlay>
+
+  <!-- Route info + Clear button (floating on map) -->
+  <div *ngIf="hasActiveRoute && !isLoadingRoute" class="route-info-card">
+    <div class="route-details">
+      <div class="route-stat">
+        <span class="icon">📍</span>
+        <span class="value">{{ formatDistance(routeDistance) }}</span>
+      </div>
+      <div class="route-stat">
+        <span class="icon">⏱️</span>
+        <span class="value">{{ formatDuration(routeDuration) }}</span>
+      </div>
+    </div>
+    <button class="clear-route-btn-small" (click)="clearRoute()" aria-label="Clear route">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M18 6L6 18M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
 </div>

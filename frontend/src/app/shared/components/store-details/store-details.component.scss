@@ -208,35 +208,41 @@
     }
 }
 
-.guide-me-btn-large {
+.guide-me-btn {
     width: 100%;
-    padding: 14px 20px;
-    background: var(--gbk-brand);
-    color: var(--gbk-ink-on-brand);
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #FFB300 0%, #FFA000 100%);
+    color: white;
     border: none;
-    border-radius: var(--gbk-radius-2);
-    font-size: var(--gbk-fs-2);
+    border-radius: 12px;
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    .icon {
-        font-size: 20px;
-    }
+    box-shadow: 0 2px 8px rgba(255, 179, 0, 0.3);
 
     &:hover {
-        background: var(--gbk-brand-600);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #FFA000 0%, #FF8F00 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 179, 0, 0.4);
     }
 
     &:active {
         transform: translateY(0);
+    }
+
+    &.active {
+        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+
+        &:hover {
+            background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+        }
     }
 }
 

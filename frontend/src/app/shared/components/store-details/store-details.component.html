@@ -60,9 +60,8 @@
         </div>
 
         <!-- Guide Me Button -->
-        <button class="guide-me-btn-large" (click)="onGuideMe()">
-            <span class="icon">🧭</span>
-            Guide Me to This Location
+        <button class="guide-me-btn" (click)="onGuideMe()" [class.active]="hasActiveRoute">
+            {{ hasActiveRoute ? '✕ Clear Route' : 'Guide Me' }}
         </button>
 
         <!-- Menu Section -->

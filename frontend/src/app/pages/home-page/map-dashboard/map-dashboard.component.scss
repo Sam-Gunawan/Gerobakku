@@ -95,3 +95,115 @@ app-header {
     display: block;
   }
 }
+
+// Route info card with clear button
+.route-info-card {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 1005;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px 16px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.1);
+
+  animation: slideInRight 0.3s ease;
+}
+
+.route-details {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.route-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .icon {
+    font-size: 14px;
+  }
+
+  .value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+.clear-route-btn-small {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+  padding: 0;
+
+  background: #fee;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  svg {
+    color: #d32f2f;
+  }
+
+  &:hover {
+    background: #fdd;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .route-info-card {
+    top: auto;
+    bottom: calc(var(--bottom-sheet-height, 240px) + 16px);
+    right: 16px;
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .route-details {
+    gap: 12px;
+  }
+
+  .route-stat .value {
+    font-size: 12px;
+  }
+
+  .clear-route-btn-small {
+    width: 28px;
+    height: 28px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}

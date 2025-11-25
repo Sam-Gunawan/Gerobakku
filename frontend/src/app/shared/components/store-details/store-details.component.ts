@@ -19,6 +19,7 @@ interface Review {
 })
 export class StoreDetailsComponent {
     @Input() store?: Store;
+    @Input() hasActiveRoute: boolean = false;
     @Output() close = new EventEmitter<void>();
     @Output() guideMe = new EventEmitter<Store>();
 
