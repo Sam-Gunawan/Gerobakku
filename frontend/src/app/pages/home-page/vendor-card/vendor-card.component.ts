@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '../../../models/store.model';
 
@@ -11,6 +11,7 @@ import { Store } from '../../../models/store.model';
 })
 export class VendorCardComponent {
     @Input() store!: Store;
+    @Output() cardClick = new EventEmitter<Store>();
 
     get statusText(): string {
         return this.store.isOpen ? 'Open' : 'Closed';
@@ -18,5 +19,9 @@ export class VendorCardComponent {
 
     get statusClass(): string {
         return this.store.isOpen ? 'open' : 'closed';
+    }
+
+    onClick(): void {
+        this.cardClick.emit(this.store);
     }
 }

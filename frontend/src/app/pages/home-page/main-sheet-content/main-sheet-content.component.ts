@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { VendorCardComponent } from '../vendor-card/vendor-card.component';
 import { Store } from '../../../models/store.model';
 import { LocationService } from '../../../services/location.service';
@@ -18,7 +19,7 @@ interface Category {
   styleUrl: './main-sheet-content.component.scss'
 })
 export class MainSheetContentComponent implements OnInit, OnDestroy {
-  @Output() viewChangeRequest = new EventEmitter<string>();
+  @Output() vendorCardClick = new EventEmitter<Store>();
 
   // Carousel state
   carouselImages = [
@@ -112,7 +113,7 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
     }
   ];
 
-  constructor(private locationService: LocationService) { }
+  constructor(private locationService: LocationService, private router: Router) { }
 
   ngOnInit(): void {
     // Auto-rotate carousel every 3 seconds
@@ -167,5 +168,14 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
         this.isSimulationRunning = false;
       }
     });
+  }
+
+  onVendorCardClick(store: Store): void {
+    console.log('Vendor card clicked:', store.name);
+    this.vendorCardClick.emit(store);  // Emit Store directly instead of string
+  }
+
+  goToVendorDashboard(): void {
+    this.router.navigate(['/vendor-dashboard']);
   }
 }

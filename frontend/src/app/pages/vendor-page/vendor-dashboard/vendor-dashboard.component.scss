@@ -1,0 +1,487 @@
+.vendor-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #124559 0%, #01161E 100%);
+  padding: 20px;
+  padding-top: 80px; // Space for sticky button
+}
+
+.back-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+
+  background: white;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  font-size: 14px;
+  font-weight: 600;
+  color: #01161E;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  .back-icon {
+    font-size: 18px;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.dashboard-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.left-column {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.right-column {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// Store Section
+.store-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.store-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 12px;
+  transition: background 0.3s;
+
+  &:hover {
+    background: #f7fafc;
+  }
+}
+
+.store-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FBBE21 0%, #FFEFAD 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: #01161E;
+  box-shadow: 0 2px 8px rgba(251, 190, 33, 0.3);
+}
+
+.store-info {
+  flex: 1;
+
+  h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+  }
+
+  .view-profile {
+    font-size: 12px;
+    color: #718096;
+  }
+}
+
+.control-card {
+  padding: 16px;
+  background: #f7fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+
+  .control-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+}
+
+// iOS-style Toggle
+.ios-toggle {
+  width: 60px;
+  height: 32px;
+  background: #cbd5e0;
+  border: none;
+  border-radius: 16px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+
+  .toggle-slider {
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &.active {
+    background: #48BB78;
+
+    .toggle-slider {
+      transform: translateX(28px);
+    }
+  }
+}
+
+.status-text {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #e53e3e;
+
+  &.open {
+    color: #38a169;
+  }
+}
+
+.time-display {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #2d3748;
+  font-family: 'Courier New', monospace;
+}
+
+.time-hint {
+  display: block;
+  font-size: 11px;
+  color: #a0aec0;
+  line-height: 1.4;
+}
+
+// Analytics Section
+.analytics-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+
+  h3 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+  }
+}
+
+.rating-overview {
+  text-align: center;
+  padding: 16px;
+  background: #f7fafc;
+  border-radius: 12px;
+  margin-bottom: 20px;
+
+  .rating-number {
+    display: block;
+    font-size: 48px;
+    font-weight: 700;
+    color: #FBBE21;
+    line-height: 1;
+  }
+
+  .stars {
+    font-size: 20px;
+    margin: 8px 0;
+  }
+
+  .total-reviews {
+    display: block;
+    font-size: 14px;
+    color: #718096;
+  }
+}
+
+.rating-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rating-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 40px;
+  align-items: center;
+  gap: 12px;
+
+  .star-label {
+    font-size: 14px;
+    color: #2d3748;
+    font-weight: 500;
+  }
+
+  .bar-container {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+
+    .bar {
+      height: 100%;
+      background: linear-gradient(90deg, #FBBE21 0%, #FFEFAD 100%);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+  }
+
+  .count {
+    text-align: right;
+    font-size: 14px;
+    color: #718096;
+    font-weight: 600;
+  }
+}
+
+// Map Section
+.map-section {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+  }
+
+  .refresh-btn {
+    padding: 8px 16px;
+    background: #EDF2F7;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #2d3748;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      background: #E2E8F0;
+      border-color: #cbd5e0;
+    }
+  }
+}
+
+.map {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #e2e8f0;
+}
+
+// Reviews Section
+.reviews-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+
+  h3 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+  }
+}
+
+.reviews-container {
+  max-height: 500px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+
+    &:hover {
+      background: #a0aec0;
+    }
+  }
+}
+
+.review-card {
+  padding: 16px;
+  background: #f7fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.review-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.reviewer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FBBE21 0%, #FFEFAD 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  color: #01161E;
+  flex-shrink: 0;
+}
+
+.reviewer-info {
+  flex: 1;
+
+  .reviewer-name {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 4px;
+  }
+
+  .review-stars {
+    font-size: 14px;
+  }
+}
+
+.review-time {
+  font-size: 12px;
+  color: #a0aec0;
+  flex-shrink: 0;
+}
+
+.review-text {
+  margin: 0;
+  font-size: 14px;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+// Hide OpenLayers attribution and controls
+::ng-deep .ol-attribution,
+::ng-deep .ol-zoom,
+::ng-deep .ol-rotate {
+  display: none !important;
+}
+
+// Mobile Responsive
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    flex-direction: column;
+  }
+
+  .left-column,
+  .right-column {
+    width: 100%;
+  }
+
+  // Mobile order: map → analytics → reviews
+  .right-column {
+    order: -1; // Moves right column above left
+
+    .map-section {
+      order: 1; // Map first
+    }
+
+    .reviews-section {
+      order: 3; // Reviews last
+    }
+  }
+
+  .left-column {
+    .store-section {
+      order: 0; // Store info stays at top
+    }
+
+    .analytics-section {
+      order: 2; // Analytics after map
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .vendor-dashboard {
+    padding: 16px;
+    padding-top: 70px;
+  }
+
+  .back-button {
+    top: 16px;
+    left: 16px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .map-section {
+    height: 300px;
+  }
+
+  .rating-row {
+    grid-template-columns: 45px 1fr 35px;
+    gap: 8px;
+  }
+}
