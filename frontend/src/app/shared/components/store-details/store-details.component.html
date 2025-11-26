@@ -83,19 +83,38 @@
 
         <!-- Reviews Section -->
         <div class="reviews-section">
-            <h2 class="section-title">Reviews</h2>
-            <div class="review-list">
+            <div class="reviews-header">
+                <h2 class="section-title">Reviews</h2>
+                <button class="add-review-btn" (click)="openAddReviewModal()" *ngIf="canAddReview">
+                    <span class="icon">✏️</span>
+                    <span>Add Review</span>
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="isLoadingReviews" class="loading-reviews">
+                <div class="spinner"></div>
+                <p>Loading reviews...</p>
+            </div>
+
+            <!-- No Reviews -->
+            <div *ngIf="!isLoadingReviews && reviews.length === 0" class="no-reviews">
+                <p>No reviews yet. Be the first to review!</p>
+            </div>
+
+            <!-- Review List -->
+            <div class="review-list" *ngIf="!isLoadingReviews && reviews.length > 0">
                 <div class="review-item" *ngFor="let review of reviews">
                     <div class="review-header">
                         <div class="reviewer-info">
-                            <div class="reviewer-avatar">{{ review.userName.charAt(0).toUpperCase() }}</div>
+                            <div class="reviewer-avatar">{{ review.reviewerName.charAt(0).toUpperCase() }}</div>
                             <div class="reviewer-details">
-                                <h3 class="reviewer-name">{{ review.userName }}</h3>
-                                <p class="review-date">{{ formatDate(review.date) }}</p>
+                                <h3 class="reviewer-name">{{ review.reviewerName }}</h3>
+                                <p class="review-date">{{ formatDate(review.createdAt) }}</p>
                             </div>
                         </div>
                         <div class="review-rating">
-                            <span class="star" *ngFor="let filled of getStarArray(review.rating)"
+                            <span class="star" *ngFor="let filled of getStarArray(review.score)"
                                 [class.filled]="filled">
                                 {{ filled ? '⭐' : '☆' }}
                             </span>
@@ -105,5 +124,9 @@
                 </div>
             </div>
         </div>
+
+        <!-- Add Review Modal -->
+        <app-add-review-modal *ngIf="showAddReviewModal" [storeName]="store.name || ''" (close)="closeAddReviewModal()"
+            (submit)="onReviewSubmit($event)"></app-add-review-modal>
     </div>
 </div>

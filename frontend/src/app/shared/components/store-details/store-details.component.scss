@@ -421,3 +421,63 @@
         height: 140px;
     }
 }
+
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.add-review-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #8B4513;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    .icon {
+        font-size: 16px;
+    }
+
+    &:hover {
+        background: #704010;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(139, 69, 19, 0.3);
+    }
+}
+
+.loading-reviews,
+.no-reviews {
+    text-align: center;
+    padding: 40px 20px;
+    color: #718096;
+
+    .spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid #e2e8f0;
+        border-top-color: #8B4513;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 12px;
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

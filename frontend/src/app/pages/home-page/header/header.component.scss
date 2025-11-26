@@ -1,13 +1,13 @@
 :host {
   position: absolute;
-  top: var(--gerobakku-header-top-margin);
+  top: 10px;
   left: 0;
   right: 0;
-  z-index: 1010;
   display: block;
 }
 
 .app-header {
+  z-index: 900;
   display: flex;
   align-items: center;
   gap: var(--gerobakku-spacing-m);

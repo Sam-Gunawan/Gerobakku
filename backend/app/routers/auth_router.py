@@ -44,5 +44,5 @@ async def login(body: LoginRequest):
 
 # Get current authenticated user, /auth/me
 @router.get("/me", response_model=User, status_code=status.HTTP_200_OK)
-async def get_me(current_user: dict = Depends(get_current_user)):
-    return User(**current_user)
+async def get_me(current_user: User = Depends(get_current_user)):
+    return current_user
