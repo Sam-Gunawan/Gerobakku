@@ -3,10 +3,10 @@ import aiofiles
 from pathlib import Path
 from typing import Optional
 from fastapi import UploadFile
-from app.repositories.vendor_repo import post_new_vendor, post_new_vendor_store
-from app.repositories.vendor_repo import insert_store_location
-from app.schemas.vendor_schema import VendorRegistrationData, StoreRegistrationData, VendorStoreRegistrationResponse
-
+from uuid import uuid4
+from app.repositories.vendor_repo import post_new_vendor, insert_store_location
+from app.repositories.store_repo import create_store
+from app.schemas.vendor_schema import VendorRegistrationData, VendorStoreRegistrationForm, VendorStoreRegistrationResponse
 
 # Define realistic walking paths around Sampoerna University for 3 vendors
 # Sampoerna University coordinates: -6.2443, 106.8385
@@ -154,17 +154,10 @@ def simulate_three_vendors():
 
 
 async def register_vendor_and_store_service(
-    user_id: int,
+    form_data: VendorStoreRegistrationForm,
     ktp: Optional[UploadFile],
     selfie: Optional[UploadFile],
-    store_name: Optional[str],
-    store_description: Optional[str],
     store_img: Optional[UploadFile],
-    category_id: Optional[int],
-    address: Optional[str],
-    is_halal: Optional[bool],
-    open_time: Optional[int],
-    close_time: Optional[int],
 ) -> dict:
     """Handle vendor and store registration with file uploads."""
     
@@ -181,8 +174,14 @@ async def register_vendor_and_store_service(
         return f"/app/uploads/vendors/stores/{filename}"
 
     # ===== KTP =====
+    def _unique_filename(user_id: int, purpose: str, upload: Optional[UploadFile]) -> str:
+        if upload and getattr(upload, 'filename', None):
+            suffix = Path(upload.filename).suffix or ""
+            return f"{user_id}_{purpose}_{uuid4().hex}{suffix}"
+        return f"{user_id}_{purpose}"
+
     if ktp is not None:
-        ktp_filename = f"{user_id}_ktp"
+        ktp_filename = _unique_filename(form_data.user_id, "ktp", ktp)
         ktp_path = upload_base / ktp_filename
         async with aiofiles.open(str(ktp_path), "wb") as out_file:
             content = await ktp.read()
@@ -198,7 +197,7 @@ async def register_vendor_and_store_service(
 
     # ===== Selfie =====
     if selfie is not None:
-        selfie_filename = f"{user_id}_selfie"
+        selfie_filename = _unique_filename(form_data.user_id, "selfie", selfie)
         selfie_path = upload_base / selfie_filename
         async with aiofiles.open(str(selfie_path), "wb") as out_file:
             content = await selfie.read()
@@ -214,7 +213,7 @@ async def register_vendor_and_store_service(
 
     # ===== Store image =====
     if store_img is not None:
-        store_img_filename = f"{user_id}_store"
+        store_img_filename = _unique_filename(form_data.user_id, "store", store_img)
         store_img_path = stores_dir / store_img_filename
         async with aiofiles.open(str(store_img_path), "wb") as out_file:
             content = await store_img.read()
@@ -230,40 +229,38 @@ async def register_vendor_and_store_service(
 
     # Create vendor using schema
     vendor_data = VendorRegistrationData(
-        user_id=user_id,
+        user_id=form_data.user_id,
         ktp_image_url=ktp_local_url,
         selfie_image_url=selfie_local_url
     )
+
     result = post_new_vendor(
         vendor_data.user_id,
         vendor_data.ktp_image_url,
         vendor_data.selfie_image_url
     )
 
-    # Create store using schema
-    store_data = StoreRegistrationData(
-        vendor_id=result.get("vendor_id"),
-        name=store_name or f"Store of user {user_id}",
-        description=store_description or "",
-        category_id=category_id,
-        address=address,
-        is_halal=is_halal,
-        open_time=open_time,
-        close_time=close_time,
+    vendor_id = result.get("vendor_id") if isinstance(result, dict) else None
+
+    # Create store using store_repo.create_store and capture returned store_id
+    store_result = create_store(
+        vendor_id=vendor_id,
+        name=form_data.store_name,
+        description=form_data.store_description,
+        category_id=form_data.category_id,
+        address=form_data.address,
+        is_halal=form_data.is_halal,
+        open_time=form_data.open_time,
+        close_time=form_data.close_time,
         store_image_url=store_img_local_url
     )
-    store_result = post_new_vendor_store(
-        vendor_id=store_data.vendor_id,
-        name=store_data.name,
-        description=store_data.description,
-        category_id=store_data.category_id,
-        address=store_data.address,
-        is_halal=store_data.is_halal,
-        open_time=store_data.open_time,
-        close_time=store_data.close_time,
-        store_image_url=store_data.store_image_url
-    )
+
+    store_id = None
+    if isinstance(store_result, dict):
+        store_id = store_result.get("store_id")
 
     return VendorStoreRegistrationResponse(
-        message="Vendor and store registered successfully"
+        message="Vendor and store registered successfully",
+        vendor_id=vendor_id or 0,
+        store_id=store_id
     )
