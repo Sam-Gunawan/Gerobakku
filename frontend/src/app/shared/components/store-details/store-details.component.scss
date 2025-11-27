@@ -44,10 +44,11 @@
     position: relative;
     width: 100%;
     height: 200px;
-    overflow: hidden;
+    margin-top: 16px;
     background: var(--gerobakku-placeholder-bg-light);
 
     img {
+        border-radius: var(--gbk-radius-2);
         width: 100%;
         height: 100%;
         object-fit: cover;

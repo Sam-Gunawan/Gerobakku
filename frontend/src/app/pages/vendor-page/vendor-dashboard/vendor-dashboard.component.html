@@ -114,6 +114,10 @@
     </div>
   </div>
 
+  <app-loading-overlay [isVisible]="isLoadingDashboard" title="Loading Dashboard" message="Fetching your vendor data..."
+    spinnerColor="#FBBE21">
+  </app-loading-overlay>
+
   <!-- Confirmation Modal -->
   <app-confirmation-modal *ngIf="showConfirmation" [title]="confirmationConfig.title"
     [message]="confirmationConfig.message"

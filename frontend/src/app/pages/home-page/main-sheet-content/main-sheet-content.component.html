@@ -1,3 +1,7 @@
+<app-loading-overlay [isVisible]="isSearching" title="Loading Stores" message="Fetching nearby food stalls for you..."
+    spinnerColor="#FBBE21">
+</app-loading-overlay>
+
 <!-- Search Results View -->
 <div *ngIf="showSearchResults" class="search-results-view">
     <div class="results-header">

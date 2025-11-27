@@ -17,12 +17,13 @@ import VectorSource from 'ol/source/Vector';
 import { Style, Circle, Fill, Stroke } from 'ol/style';
 import { XYZ } from 'ol/source';
 import { ReviewService } from '../../../services/review.service';
+import { LoadingOverlayComponent } from '../../../shared/ui/loading-overlay/loading-overlay.component';
 
 
 @Component({
   selector: 'app-vendor-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmationModalComponent, TimePickerComponent],
+  imports: [CommonModule, FormsModule, ConfirmationModalComponent, TimePickerComponent, LoadingOverlayComponent],
   templateUrl: './vendor-dashboard.component.html',
   styleUrls: ['./vendor-dashboard.component.scss']
 })
@@ -40,6 +41,9 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
   currentTime = '';
   currentLocation = 'Loading location...';
   currentCoords: [number, number] = [106.8456, -6.2088];
+
+  // Loading state
+  isLoadingDashboard = false;
 
   // Review stats
   reviewStats: any = null;
@@ -70,16 +74,16 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.updateDateTime();
     setInterval(() => this.updateDateTime(), 1000);
-    this.loadDashboardData();
-    this.loadRecentReviews(this.storeId!);
   }
 
   ngAfterViewInit(): void {
     this.initMap();
     this.getCurrentLocation();
+    this.loadDashboardData();
   }
 
   loadDashboardData(): void {
+    this.isLoadingDashboard = true;
     this.authService.getCurrentUser().subscribe({
       next: (user) => {
         // Get vendor's store ID
@@ -88,6 +92,7 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
             this.storeId = response.store_id;
             if (this.storeId) {
               this.fetchStoreData(this.storeId);
+              this.loadRecentReviews(this.storeId);
             } else {
               alert('You need to register as a vendor first');
               this.router.navigate(['/vendor-application']);
@@ -104,6 +109,7 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
         console.error('Failed to load user:', err);
       }
     });
+    this.isLoadingDashboard = false;
   }
 
   fetchStoreData(storeId: number): void {
@@ -129,9 +135,12 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
           this.currentCoords = [store.current_location.lon, store.current_location.lat];
           this.updateMapMarker();
         }
+
+        this.isLoadingDashboard = false;
       },
       error: (err) => {
         console.error('Failed to load dashboard data:', err);
+        this.isLoadingDashboard = false;
       }
     });
   }

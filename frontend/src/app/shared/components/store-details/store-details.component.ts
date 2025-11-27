@@ -5,6 +5,7 @@ import { AddReviewModalComponent } from '../add-review-modal/add-review-modal.co
 import { ReviewService } from '../../../services/review.service';
 import { Review, ReviewStats } from '../../../models/review.model';
 import { AuthService } from '../../../services/auth.service'
+import { formatTimeRange } from '../../utils/time-formatter';
 
 @Component({
     selector: 'app-store-details',
@@ -24,6 +25,16 @@ export class StoreDetailsComponent implements OnChanges {
     isLoadingReviews = false;
     showAddReviewModal = false;
     isSubmittingReview = false;
+
+    categoryMap: { [key: number]: string } = {
+        1: 'Western',
+        2: 'Japanese',
+        3: 'Indonesian',
+        4: 'Korean',
+        5: 'Middle-eastern',
+        6: 'Beverages',
+        7: 'Others'
+    };
 
     constructor(
         private reviewService: ReviewService,
@@ -74,6 +85,15 @@ export class StoreDetailsComponent implements OnChanges {
         return !!this.authService.getCurrentUser();
     }
 
+    get formattedHours(): string {
+        if (!this.store) return '';
+        return formatTimeRange(this.store.openTime, this.store.closeTime);
+    }
+
+    get categoryName(): string {
+        return this.categoryMap[Number(this.store?.category) || 7];
+    }
+
     openAddReviewModal(): void {
         if (!this.canAddReview) {
             alert('Please login to add a review');
@@ -103,6 +123,12 @@ export class StoreDetailsComponent implements OnChanges {
 
                 // Reload stats
                 this.loadReviews();
+
+                // Update store rating
+                if (this.store && this.reviewStats) {
+                    this.store.rating = this.reviewStats.averageRating;
+                }
+
                 alert('Review submitted successfully!');
             },
             error: (err) => {

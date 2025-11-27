@@ -4,12 +4,13 @@ import { Router } from '@angular/router';
 import { VendorCardComponent } from '../vendor-card/vendor-card.component';
 import { LocationPoint, Store } from '../../../models/store.model';
 import { LocationService } from '../../../services/location.service';
+import { LoadingOverlayComponent } from '../../../shared/ui/loading-overlay/loading-overlay.component';
 
 
 @Component({
   selector: 'app-main-sheet-content',
   standalone: true,
-  imports: [CommonModule, VendorCardComponent],
+  imports: [CommonModule, VendorCardComponent, LoadingOverlayComponent],
   templateUrl: './main-sheet-content.component.html',
   styleUrl: './main-sheet-content.component.scss'
 })
@@ -112,6 +113,7 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
   userLocation: LocationPoint | null = null;
 
   showSearchResults = false;
+  isSearching = false;
   searchQuery = '';
   selectedCategory: string | null = null;
   selectedCategoryName = '';
@@ -242,6 +244,7 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
       'korean': 4,
       'middle-eastern': 5,
       'beverages': 6,
+      'others': 7
     };
 
     const categoryNum = categoryMap[categoryId];
@@ -275,6 +278,7 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
 
   // Search method (called from header component)
   performSearch(query: string): void {
+    this.isSearching = true;
     this.searchQuery = query;
     this.selectedCategory = null;
     this.showingNearYou = false;
@@ -291,6 +295,7 @@ export class MainSheetContentComponent implements OnInit, OnDestroy {
     this.currentPage = 1;
     this.displayedResults = this.searchResults.slice(0, this.resultsPerPage);
     this.showSearchResults = true;
+    this.isSearching = false;
   }
 
   clearSearch(): void {

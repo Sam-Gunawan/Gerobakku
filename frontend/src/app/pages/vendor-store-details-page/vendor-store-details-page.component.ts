@@ -218,19 +218,20 @@ export class VendorStoreDetailsPageComponent implements OnInit {
 
     getCategoryId(categoryName: string): number {
         const categoryMap: { [key: string]: number } = {
-            'Indonesian Food': 1,
-            'Beverages': 2,
-            'Snacks': 3,
-            'Desserts': 4,
-            'Fast Food': 5,
-            'Other': 6
+            'Western': 1,
+            'Japanese': 2,
+            'Indonesian': 3,
+            'Korean': 4,
+            'Middle-eastern': 5,
+            'Beverages': 6,
+            'Others': 7
         };
-        return categoryMap[categoryName] || 6;
+        return categoryMap[categoryName] || 7;
     }
 
     parseTime(timeString: string): number {
-        // Convert "HH:MM" to hour (0-23)
-        const [hour] = timeString.split(':');
-        return parseInt(hour);
+        // Convert "HH:MM" to minutes since midnight (0-1439)
+        const [hour, minute] = timeString.split(':').map(Number);
+        return (hour * 60) + minute;
     }
 }

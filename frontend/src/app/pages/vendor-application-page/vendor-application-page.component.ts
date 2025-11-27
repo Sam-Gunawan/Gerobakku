@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { LoadingOverlayComponent } from '../../shared/ui/loading-overlay/loading-overlay.component';
+
 
 @Component({
   selector: 'app-vendor-application-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LoadingOverlayComponent],
   templateUrl: './vendor-application-page.component.html',
   styleUrls: ['./vendor-application-page.component.scss']
 })

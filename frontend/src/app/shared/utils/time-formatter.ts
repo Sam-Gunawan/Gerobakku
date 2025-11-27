@@ -1,6 +1,8 @@
-export function formatTime(hour: number | string): string {
-    const h = typeof hour === 'string' ? parseInt(hour) : hour;
-    return `${h.toString().padStart(2, '0')}:00`;
+export function formatTime(minutesSinceMidnight: number | string): string {
+    const minutes = typeof minutesSinceMidnight === 'string' ? parseInt(minutesSinceMidnight) : minutesSinceMidnight;
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
 }
 
 export function formatTimeRange(openTime: number | string, closeTime: number | string): string {

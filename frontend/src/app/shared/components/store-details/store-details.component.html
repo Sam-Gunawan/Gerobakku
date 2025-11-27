@@ -42,7 +42,7 @@
         <div class="info-section">
             <p class="category">
                 <span class="icon">🍽️</span>
-                {{ store.category }}
+                {{ categoryName }}
             </p>
             <p class="description" *ngIf="store.description">{{ store.description }}</p>
         </div>
@@ -51,7 +51,7 @@
         <div class="info-section">
             <div class="info-row">
                 <span class="icon">🕒</span>
-                <span class="text">{{ store.openTime }} - {{ store.closeTime }}</span>
+                <span class="text">{{ formattedHours }}</span>
             </div>
             <div class="info-row">
                 <span class="icon">📍</span>
