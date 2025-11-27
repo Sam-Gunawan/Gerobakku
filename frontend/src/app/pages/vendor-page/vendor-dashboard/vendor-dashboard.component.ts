@@ -19,6 +19,7 @@ import { XYZ } from 'ol/source';
 import { ReviewService } from '../../../services/review.service';
 import { LoadingOverlayComponent } from '../../../shared/ui/loading-overlay/loading-overlay.component';
 import { formatTimeRange } from '../../../shared/utils/time-formatter';
+import { TokenStorageService } from '../../../services/token-storage.service';
 
 
 @Component({
@@ -69,48 +70,79 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
     public router: Router,
     private authService: AuthService,
     private vendorService: VendorService,
-    private reviewService: ReviewService
+    private reviewService: ReviewService,
+    private tokenStorage: TokenStorageService
   ) { }
 
   ngOnInit(): void {
+    if (!this.tokenStorage.isLoggedIn()) {
+      console.error('No auth token found');
+      alert('Please log in to access the vendor dashboard');
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.updateDateTime();
-    setInterval(() => this.updateDateTime(), 1000);
+    this.isLoadingDashboard = true;
+    this.getCurrentLocation();
+    this.loadDashboardData();
   }
 
   ngAfterViewInit(): void {
     this.initMap();
-    this.getCurrentLocation();
-    this.loadDashboardData();
   }
 
   loadDashboardData(): void {
     this.isLoadingDashboard = true;
     this.authService.getCurrentUser().subscribe({
       next: (user) => {
+        console.log('Current user:', user); // DEBUG LOG
         // Get vendor's store ID
         this.vendorService.getVendorStoreId(parseInt(user.userId)).subscribe({
           next: (response: any) => {
+            console.log('Store ID response:', response); // DEBUG LOG
             this.storeId = response.store_id;
             if (this.storeId) {
               this.fetchStoreData(this.storeId);
               this.loadRecentReviews(this.storeId);
             } else {
+              console.error('No store_id in response:', response); // DEBUG LOG
+              this.isLoadingDashboard = false;
               alert('You need to register as a vendor first');
               this.router.navigate(['/vendor-application']);
             }
           },
           error: (err) => {
-            console.error('Failed to get store ID:', err);
-            alert('You need to register as a vendor first');
-            this.router.navigate(['/vendor-application']);
+            console.error('Failed to get store ID - Full error:', err); // DEBUG LOG
+            this.isLoadingDashboard = false;
+            // Better error message based on status code
+            if (err.status === 404) {
+              alert('You need to register as a vendor first');
+              this.router.navigate(['/vendor-application']);
+            } else if (err.status === 401) {
+              this.tokenStorage.clear(); // Clear expired token
+              alert('Your session has expired. Please log in again');
+              this.router.navigate(['/login']);
+            } else {
+              alert(`Error loading store: ${err.error?.detail || err.message}`);
+            }
           }
         });
       },
       error: (err) => {
-        console.error('Failed to load user:', err);
+        console.error('Failed to load user:', err); // DEBUG LOG
+        this.isLoadingDashboard = false;
+
+        // Token expired or invalid
+        if (err.status === 401) {
+          this.tokenStorage.clear(); // Clear expired token
+          alert('Your session has expired. Please log in again');
+        } else {
+          alert('Authentication error. Please log in again.');
+        }
+        this.router.navigate(['/login']);
       }
     });
-    this.isLoadingDashboard = false;
   }
 
   fetchStoreData(storeId: number): void {
@@ -158,13 +190,10 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  formatTime(hour: number): string {
-    return `${hour.toString().padStart(2, '0')}:00`;
-  }
-
-  parseTime(timeString: string): number {
-    const [hour] = timeString.split(':');
-    return parseInt(hour);
+  formatTime(minutes: number): string {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   }
 
   updateDateTime(): void {
@@ -323,9 +352,6 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
   goBackToHome(): void {
     this.router.navigate(['/home']);
   }
-  onProfileClick(): void {
-    this.router.navigate(['/profile']);
-  }
 
   getRatingPercentage(stars: number): number {
     if (!this.totalReviews) return 0;
@@ -356,13 +382,7 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
   }
 
   get formattedHours(): string {
-    // Handle both string and number formats
-    if (typeof this.openTime === 'string' && typeof this.closeTime === 'string') {
-      // Already in HH:MM format
-      return `${this.openTime} - ${this.closeTime}`;
-    }
-    // Convert from minutes to HH:MM format
-    return formatTimeRange(this.openTime, this.closeTime);
+    return `${this.openTime} - ${this.closeTime}`;
   }
 
   // Convert minutes since midnight to HH:MM format

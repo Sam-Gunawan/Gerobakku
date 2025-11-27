@@ -180,7 +180,9 @@ export class VendorStoreDetailsPageComponent implements OnInit {
                 address: this.storeForm.value.address,
                 is_halal: this.storeForm.value.isHalal || false,
                 open_time: this.parseTime(this.storeForm.value.openTime),
-                close_time: this.parseTime(this.storeForm.value.closeTime)
+                close_time: this.parseTime(this.storeForm.value.closeTime),
+                latitude: this.storeForm.value.latitude,
+                longitude: this.storeForm.value.longitude
             };
 
             // Submit to backend

@@ -1,3 +1,7 @@
+<app-loading-overlay [isVisible]="isLoadingDashboard" title="Loading Dashboard" message="Fetching your vendor data..."
+  spinnerColor="#FBBE21">
+</app-loading-overlay>
+
 <div class="vendor-dashboard">
   <!-- Sticky Back Button -->
   <button class="back-button" (click)="goBackToHome()">
@@ -13,13 +17,13 @@
 
       <!-- Store Info & Controls -->
       <div class="store-section">
-        <div class="store-profile" (click)="onProfileClick()">
+        <div class="store-profile">
           <div class="store-avatar">
             <span>{{ storeName.charAt(0) }}</span>
           </div>
           <div class="store-info">
             <h3>{{ storeName }}</h3>
-            <span class="view-profile">View Profile</span>
+            <span class="view-profile">Your Store</span>
           </div>
         </div>
         <!-- Open/Close Toggle -->
@@ -113,10 +117,6 @@
       </div>
     </div>
   </div>
-
-  <app-loading-overlay [isVisible]="isLoadingDashboard" title="Loading Dashboard" message="Fetching your vendor data..."
-    spinnerColor="#FBBE21">
-  </app-loading-overlay>
 
   <!-- Confirmation Modal -->
   <app-confirmation-modal *ngIf="showConfirmation" [title]="confirmationConfig.title"

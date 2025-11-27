@@ -48,6 +48,8 @@ class VendorStoreRegistrationForm(BaseModel):
     is_halal: bool = Form(...)
     open_time: int = Form(...)
     close_time: int = Form(...)
+    latitude: Optional[float] = Form(None)
+    longitude: Optional[float] = Form(None)
 
     @field_validator('*')
     @classmethod
@@ -71,6 +73,8 @@ class VendorStoreRegistrationForm(BaseModel):
         is_halal: bool = Form(...),
         open_time: int = Form(...),
         close_time: int = Form(...),
+        latitude: Optional[float] = Form(None),
+        longitude: Optional[float] = Form(None)
     ) -> "VendorStoreRegistrationForm":
         """Helper to use this Pydantic model with FastAPI form-data.
 
@@ -85,6 +89,8 @@ class VendorStoreRegistrationForm(BaseModel):
             is_halal=is_halal,
             open_time=open_time,
             close_time=close_time,
+            latitude=latitude,
+            longitude=longitude 
         )
 
 
@@ -96,4 +102,3 @@ class VendorStoreRegistrationResponse(BaseModel):
 
     class Config:
         from_attributes = True
-

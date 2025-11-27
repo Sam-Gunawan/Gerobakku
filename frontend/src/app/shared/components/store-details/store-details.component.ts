@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '../../../models/store.model';
 import { AddReviewModalComponent } from '../add-review-modal/add-review-modal.component';
@@ -38,7 +38,8 @@ export class StoreDetailsComponent implements OnChanges {
 
     constructor(
         private reviewService: ReviewService,
-        private authService: AuthService
+        private authService: AuthService,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnChanges(): void {
@@ -56,6 +57,9 @@ export class StoreDetailsComponent implements OnChanges {
             next: (reviews) => {
                 this.reviews = reviews;
                 this.isLoadingReviews = false;
+
+                // Trigger change detection to update UI
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Failed to load reviews:', err);
@@ -66,6 +70,13 @@ export class StoreDetailsComponent implements OnChanges {
         this.reviewService.getReviewStats(this.store.storeId).subscribe({
             next: (stats) => {
                 this.reviewStats = stats;
+
+                // Update the store rating too
+                if (this.store) {
+                    this.store.rating = stats.averageRating;
+                }
+
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Failed to load stats:', err);
@@ -123,13 +134,12 @@ export class StoreDetailsComponent implements OnChanges {
 
                 // Reload stats
                 this.loadReviews();
+                this.cdr.detectChanges();
 
                 // Update store rating
                 if (this.store && this.reviewStats) {
                     this.store.rating = this.reviewStats.averageRating;
                 }
-
-                alert('Review submitted successfully!');
             },
             error: (err) => {
                 console.error('Failed to submit review:', err);

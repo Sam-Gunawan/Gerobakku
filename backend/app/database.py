@@ -31,7 +31,12 @@ def init_db_pool():
 	conninfo = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}"
 
 	try:
-		database_pool = ConnectionPool(conninfo, min_size=1, max_size=19)
+		database_pool = ConnectionPool(
+			conninfo, 
+			min_size=1, 
+			max_size=19,
+			kwargs={"prepare_threshold": None}  # Disable automatic prepared statements
+		)
 		
 		# quick smoke test
 		with database_pool.connection() as conn:
