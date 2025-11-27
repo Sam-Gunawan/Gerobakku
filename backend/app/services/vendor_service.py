@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Optional
 from fastapi import UploadFile
 from uuid import uuid4
+import shutil
 from app.repositories.vendor_repo import post_new_vendor, insert_store_location
 from app.repositories.store_repo import create_store
 from app.schemas.vendor_schema import VendorRegistrationData, VendorStoreRegistrationForm, VendorStoreRegistrationResponse
@@ -188,12 +189,23 @@ async def register_vendor_and_store_service(
             await out_file.write(content)
         ktp_local_url = _make_local_url_for_vendor(ktp_filename)
     else:
-        ktp_filename = "ktp_placeholder"
-        ktp_path = upload_base / ktp_filename
+        # refer to the default ktp image
+        ktp_placeholder_name = "ktp_placeholder.JPG"
+        ktp_path = upload_base / ktp_placeholder_name
         if not ktp_path.exists():
-            async with aiofiles.open(str(ktp_path), "wb") as out_file:
-                await out_file.write(b"")
-        ktp_local_url = _make_local_url_for_vendor(ktp_filename)
+            # Try copying canonical placeholder from repo assets
+            repo_candidate = Path(__file__).parent.parent / "uploads" / "vendors" / "stores" / ktp_placeholder_name
+            try:
+                if repo_candidate.exists():
+                    shutil.copyfile(repo_candidate, ktp_path)
+                else:
+                    # fallback: create empty placeholder file
+                    async with aiofiles.open(str(ktp_path), "wb") as out_file:
+                        await out_file.write(b"")
+            except Exception:
+                async with aiofiles.open(str(ktp_path), "wb") as out_file:
+                    await out_file.write(b"")
+        ktp_local_url = _make_local_url_for_vendor(ktp_placeholder_name)
 
     # ===== Selfie =====
     if selfie is not None:
@@ -204,12 +216,21 @@ async def register_vendor_and_store_service(
             await out_file.write(content)
         selfie_local_url = _make_local_url_for_vendor(selfie_filename)
     else:
-        selfie_filename = "selfie_placeholder"
-        selfie_path = upload_base / selfie_filename
+        # refer to the default selfie image
+        selfie_placeholder_name = "selfie_placeholder.jpg"
+        selfie_path = upload_base / selfie_placeholder_name
         if not selfie_path.exists():
-            async with aiofiles.open(str(selfie_path), "wb") as out_file:
-                await out_file.write(b"")
-        selfie_local_url = _make_local_url_for_vendor(selfie_filename)
+            repo_candidate = Path(__file__).parent.parent / "uploads" / "vendors" / "stores" / selfie_placeholder_name
+            try:
+                if repo_candidate.exists():
+                    shutil.copyfile(repo_candidate, selfie_path)
+                else:
+                    async with aiofiles.open(str(selfie_path), "wb") as out_file:
+                        await out_file.write(b"")
+            except Exception:
+                async with aiofiles.open(str(selfie_path), "wb") as out_file:
+                    await out_file.write(b"")
+        selfie_local_url = _make_local_url_for_vendor(selfie_placeholder_name)
 
     # ===== Store image =====
     if store_img is not None:
@@ -220,11 +241,20 @@ async def register_vendor_and_store_service(
             await out_file.write(content)
         store_img_local_url = _make_local_url_for_store(store_img_filename)
     else:
-        default_store_filename = "default_store_image"
+        # refer to the default store image
+        default_store_filename = "default_store_image.jpg"
         default_store_path = stores_dir / default_store_filename
         if not default_store_path.exists():
-            async with aiofiles.open(str(default_store_path), "wb") as out_file:
-                await out_file.write(b"")
+            repo_candidate = Path(__file__).parent.parent / "uploads" / "vendors" / "stores" / default_store_filename
+            try:
+                if repo_candidate.exists():
+                    shutil.copyfile(repo_candidate, default_store_path)
+                else:
+                    async with aiofiles.open(str(default_store_path), "wb") as out_file:
+                        await out_file.write(b"")
+            except Exception:
+                async with aiofiles.open(str(default_store_path), "wb") as out_file:
+                    await out_file.write(b"")
         store_img_local_url = _make_local_url_for_store(default_store_filename)
 
     # Create vendor using schema
