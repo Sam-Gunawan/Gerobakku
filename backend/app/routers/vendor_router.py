@@ -3,6 +3,8 @@ from typing import List, Optional
 import asyncio
 from app.services.vendor_service import simulate_movement
 from app.repositories import vendor_repo
+from app.security import get_current_user
+from app.schemas.user_schema import User
 from app.schemas.vendor_schema import StoreLocationUpdate, VendorStoreRegistrationForm, VendorStoreRegistrationResponse
 
 router = APIRouter(prefix="/vendor", tags=["vendor"])
@@ -62,10 +64,6 @@ async def simulate_three_vendors_endpoint():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to start simulation: {str(e)}"
         )
-        
-
-
-
 
 @router.post("/registerVendorAndStore", status_code=status.HTTP_200_OK, response_model=VendorStoreRegistrationResponse)
 async def register_vendor_and_store(
@@ -85,3 +83,24 @@ async def register_vendor_and_store(
         form_data, ktp, selfie, store_img
     )
     return result
+
+@router.get("/my-store", status_code=status.HTTP_200_OK)
+async def get_my_store(current_user: User = Depends(get_current_user)):
+    """Get the current vendor's store ID."""
+    from app.repositories.vendor_repo import get_vendor_by_user_id
+    
+    try:
+        vendor = get_vendor_by_user_id(int(current_user.user_id))
+        if not vendor:
+            raise HTTPException(status_code=404, detail="Vendor not found")
+        
+        # Get store for this vendor
+        from app.repositories.store_repo import get_store_by_vendor_id
+        store = get_store_by_vendor_id(vendor['vendor_id'])
+        
+        if not store:
+            raise HTTPException(status_code=404, detail="Store not found")
+        
+        return {"store_id": store['store_id']}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -2,7 +2,7 @@
   <app-map [vendorLocations]="vendorLocations" [userLocation]="userLocation" (storeSelected)="onPinClick($event)">
   </app-map>
 
-  <app-header></app-header>
+  <app-header (searchSubmit)="onSearchSubmit($event)"></app-header>
 
   <!-- Sidebar for Desktop/Tablet -->
   <div class="sidebar-container">

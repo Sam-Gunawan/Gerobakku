@@ -48,6 +48,7 @@ export class MapDashboardComponent implements OnInit, OnDestroy {
 
   // Pin interaction (for map)
   @ViewChild(MapComponent) mapComponent?: MapComponent;
+  @ViewChild(MainSheetContentComponent) mainSheetContent?: MainSheetContentComponent;
 
   // Subscriptions
   private vendorLocationsSubscription?: Subscription;
@@ -87,6 +88,12 @@ export class MapDashboardComponent implements OnInit, OnDestroy {
         console.log(`Updated vendor locations: ${stores.length} stores`);
       }
     );
+  }
+
+  onSearchSubmit(query: string): void {
+    if (this.mainSheetContent) {
+      this.mainSheetContent.performSearch(query);
+    }
   }
 
   @HostListener('window:resize')

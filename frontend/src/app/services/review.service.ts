@@ -41,7 +41,7 @@ export class ReviewService {
     private transformReview(apiReview: any): Review {
         return {
             ratingId: apiReview.rating_id,
-            userId: apiReview.user_id,  // Changed from customer_id
+            userId: apiReview.user_id,
             storeId: apiReview.store_id,
             score: apiReview.score,
             comment: apiReview.comment,

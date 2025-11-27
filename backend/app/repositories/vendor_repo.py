@@ -112,3 +112,22 @@ def get_store_locations(store_id):
     except Exception as e:
         print(f"Error fetching store location: {e}")
         raise
+
+def get_vendor_by_user_id(user_id: int) -> dict:
+    """Get vendor by user_id"""
+    with get_cursor() as cur:
+        cur.execute("""
+            SELECT vendor_id, user_id, is_verified
+            FROM gerobakku.vendors
+            WHERE user_id = %s
+        """, (user_id,))
+        
+        row = cur.fetchone()
+        if not row:
+            return None
+        
+        return {
+            'vendor_id': row[0],
+            'user_id': row[1],
+            'is_verified': row[2]
+        }

@@ -258,6 +258,14 @@ async def register_vendor_and_store_service(
     store_id = None
     if isinstance(store_result, dict):
         store_id = store_result.get("store_id")
+        
+        # Insert initial location for the store
+        # Use default location (Sampoerna University coordinates)
+        initial_location = {'lat': -6.2443, 'lon': 106.8385}
+        try:
+            insert_store_location(store_id, initial_location)
+        except Exception as e:
+            print(f"Warning: Failed to insert initial location: {e}")
 
     return VendorStoreRegistrationResponse(
         message="Vendor and store registered successfully",

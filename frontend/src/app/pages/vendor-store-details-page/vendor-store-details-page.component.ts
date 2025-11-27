@@ -2,10 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MapLocationPickerComponent } from '../../shared/components/map-location-picker/map-location-picker.component';
+import { VendorService } from '../../services/vendor.service';
+import { AuthService } from '../../services/auth.service';
+
+
 @Component({
     selector: 'app-vendor-store-details-page',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, MapLocationPickerComponent],
     templateUrl: './vendor-store-details-page.component.html',
     styleUrls: ['./vendor-store-details-page.component.scss']
 })
@@ -26,7 +31,9 @@ export class VendorStoreDetailsPageComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        public router: Router
+        public router: Router,
+        private vendorService: VendorService,  // ADD
+        private authService: AuthService
     ) { }
 
     ngOnInit(): void {
@@ -100,28 +107,130 @@ export class VendorStoreDetailsPageComponent implements OnInit {
         this.storeForm.patchValue({ storeImage: null });
     }
 
-    onSubmit(): void {
+    // onSubmit(): void {
+    //     if (this.storeForm.invalid) {
+    //         Object.keys(this.storeForm.controls).forEach(key => {
+    //             this.storeForm.controls[key].markAsTouched();
+    //         });
+    //         return;
+    //     }
+    //     this.isSubmitting = true;
+
+    //     // TODO: Implement actual API call
+    //     const formData = new FormData();
+    //     Object.keys(this.storeForm.value).forEach(key => {
+    //         if (this.storeForm.value[key] !== null) {
+    //             formData.append(key, this.storeForm.value[key]);
+    //         }
+    //     });
+
+    //     // Simulate API call
+    //     setTimeout(() => {
+    //         this.isSubmitting = false;
+    //         alert('Store registered successfully! Welcome to Gerobakku.');
+    //         this.router.navigate(['/vendor-dashboard']);
+    //     }, 2000);
+    // }
+
+    onLocationSelected(coords: { lat: number; lon: number }): void {
+        this.storeForm.patchValue({
+            latitude: coords.lat,
+            longitude: coords.lon
+        });
+    }
+
+    async onSubmit(): Promise<void> {
         if (this.storeForm.invalid) {
             Object.keys(this.storeForm.controls).forEach(key => {
                 this.storeForm.controls[key].markAsTouched();
             });
             return;
         }
+
         this.isSubmitting = true;
-
-        // TODO: Implement actual API call
-        const formData = new FormData();
-        Object.keys(this.storeForm.value).forEach(key => {
-            if (this.storeForm.value[key] !== null) {
-                formData.append(key, this.storeForm.value[key]);
+        try {
+            // Get current user
+            const user = await this.authService.getCurrentUser().toPromise();
+            if (!user) {
+                alert('Please login first');
+                this.router.navigate(['/login']);
+                return;
             }
-        });
 
-        // Simulate API call
-        setTimeout(() => {
+            // Retrieve stored files from sessionStorage (from vendor-application page)
+            const ktpBase64 = sessionStorage.getItem('vendor_ktp');
+            const selfieBase64 = sessionStorage.getItem('vendor_selfie');
+            if (!ktpBase64 || !selfieBase64 || !this.storeImageFile) {
+                alert('Missing required files. Please start from the beginning.');
+                this.router.navigate(['/vendor-application']);
+                return;
+            }
+
+            // Convert base64 back to File
+            const ktpFile = await this.base64ToFile(ktpBase64, 'ktp.jpg');
+            const selfieFile = await this.base64ToFile(selfieBase64, 'selfie.jpg');
+
+            // Prepare registration data
+            const registrationData = {
+                user_id: parseInt(user.userId),
+                store_name: this.storeForm.value.storeName,
+                store_description: this.storeForm.value.description || 'No description',
+                category_id: this.getCategoryId(this.storeForm.value.category),
+                address: this.storeForm.value.address,
+                is_halal: this.storeForm.value.isHalal || false,
+                open_time: this.parseTime(this.storeForm.value.openTime),
+                close_time: this.parseTime(this.storeForm.value.closeTime)
+            };
+
+            // Submit to backend
+            this.vendorService.registerVendorAndStore(
+                registrationData,
+                ktpFile,
+                selfieFile,
+                this.storeImageFile
+            ).subscribe({
+                next: (response) => {
+                    // Clear session storage
+                    sessionStorage.removeItem('vendor_ktp');
+                    sessionStorage.removeItem('vendor_selfie');
+                    this.isSubmitting = false;
+                    alert(`Success! ${response.message}`);
+                    this.router.navigate(['/vendor-dashboard']);
+                },
+                error: (err) => {
+                    this.isSubmitting = false;
+                    console.error('Registration error:', err);
+                    alert(err.error?.detail || 'Registration failed. Please try again.');
+                }
+            });
+        } catch (error) {
             this.isSubmitting = false;
-            alert('Store registered successfully! Welcome to Gerobakku.');
-            this.router.navigate(['/vendor-dashboard']);
-        }, 2000);
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        }
+    }
+
+    async base64ToFile(base64: string, filename: string): Promise<File> {
+        const res = await fetch(base64);
+        const blob = await res.blob();
+        return new File([blob], filename, { type: blob.type });
+    }
+
+    getCategoryId(categoryName: string): number {
+        const categoryMap: { [key: string]: number } = {
+            'Indonesian Food': 1,
+            'Beverages': 2,
+            'Snacks': 3,
+            'Desserts': 4,
+            'Fast Food': 5,
+            'Other': 6
+        };
+        return categoryMap[categoryName] || 6;
+    }
+
+    parseTime(timeString: string): number {
+        // Convert "HH:MM" to hour (0-23)
+        const [hour] = timeString.split(':');
+        return parseInt(hour);
     }
 }

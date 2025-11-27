@@ -20,7 +20,7 @@
       <!-- Avatar Section -->
       <div class="avatar-section">
         <div class="avatar">
-          <span class="initials">{{ getInitials() }}</span>
+          <span class="initials">{{ userInitials }}</span>
         </div>
         <h2 class="user-name">{{ user.fullName }}</h2>
         <p class="user-email">{{ user.email }}</p>
@@ -28,11 +28,15 @@
 
       <!-- Vendor Application Button -->
       <div class="vendor-section">
-        <button class="vendor-btn" (click)="router.navigate(['/vendor-application']); closeModal()">
+        <button class="vendor-btn" (click)="onVendorButtonClick()" [disabled]="isCheckingVendor">
           <span class="icon">🏪</span>
           <div class="vendor-text">
-            <span class="vendor-title">Apply as Vendor</span>
-            <span class="vendor-subtitle">Start selling with Gerobakku</span>
+            <span class="vendor-title">
+              {{ hasVendorAccount ? 'Switch to Vendor Account' : 'Apply as Vendor' }}
+            </span>
+            <span class="vendor-subtitle">
+              {{ hasVendorAccount ? 'Manage your store' : 'Start selling with Gerobakku' }}
+            </span>
           </div>
           <span class="arrow">→</span>
         </button>

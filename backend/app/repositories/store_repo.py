@@ -371,3 +371,23 @@ def delete_menu_item(item_id: int) -> bool:
     except Exception as e:
         print(f"Error deleting menu item {item_id}: {e}")
         raise
+
+
+def get_store_by_vendor_id(vendor_id: int) -> dict:
+    """Get store by vendor_id"""
+    with get_cursor() as cur:
+        cur.execute("""
+            SELECT store_id, name
+            FROM gerobakku.stores
+            WHERE vendor_id = %s
+            LIMIT 1
+        """, (vendor_id,))
+        
+        row = cur.fetchone()
+        if not row:
+            return None
+        
+        return {
+            'store_id': row[0],
+            'name': row[1]
+        }

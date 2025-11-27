@@ -1,5 +1,6 @@
 <div class="store-details-container">
     <div class="store-details-content">
+
         <!-- Header -->
         <div class="details-header">
             <div class="back-button" (click)="router.navigate(['/vendor-application'])">
@@ -7,11 +8,13 @@
             </div>
             <h1>Store Details</h1>
         </div>
+
         <!-- Info Card -->
         <div class="info-card">
             <h3>Tell us about your store</h3>
             <p>Provide details so customers can find and recognize your gerobak.</p>
         </div>
+
         <!-- Store Form -->
         <form [formGroup]="storeForm" (ngSubmit)="onSubmit()" class="store-form">
 
@@ -24,6 +27,7 @@
                     Store name is required
                 </div>
             </div>
+
             <!-- Category -->
             <div class="form-group">
                 <label>Category *</label>
@@ -36,12 +40,14 @@
                     Category is required
                 </div>
             </div>
+
             <!-- Description -->
             <div class="form-group">
                 <label>Description</label>
                 <textarea formControlName="description" placeholder="Tell customers about your specialty..." rows="4"
                     class="form-input"></textarea>
             </div>
+
             <!-- Address -->
             <div class="form-group">
                 <label>Address *</label>
@@ -52,23 +58,17 @@
                     Address is required
                 </div>
             </div>
+
             <!-- Location -->
             <div class="form-group">
-                <label>Location (Coordinates) *</label>
-                <div class="location-fields">
-                    <input type="number" step="any" formControlName="latitude" placeholder="Latitude"
-                        class="form-input" />
-                    <input type="number" step="any" formControlName="longitude" placeholder="Longitude"
-                        class="form-input" />
-                </div>
-                <button type="button" class="location-btn" (click)="onUseCurrentLocation()">
-                    📍 Use Current Location
-                </button>
-                <div *ngIf="storeForm.get('latitude')?.touched && storeForm.get('latitude')?.hasError('required')"
-                    class="error-message">
-                    Location coordinates are required
-                </div>
+                <label>Store Location *</label>
+                <app-map-location-picker [initialLat]="storeForm.get('latitude')?.value || -6.2088"
+                    [initialLon]="storeForm.get('longitude')?.value || 106.8456"
+                    (locationSelected)="onLocationSelected($event)">
+                </app-map-location-picker>
+                <p class="help-text">Click on the map or use current location button</p>
             </div>
+
             <!-- Operating Hours -->
             <div class="form-row">
                 <div class="form-group">
@@ -88,6 +88,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- Halal Certification -->
             <div class="form-group checkbox-group">
                 <label class="checkbox-label">
@@ -95,6 +96,7 @@
                     <span>Halal Certified</span>
                 </label>
             </div>
+
             <!-- Store Image -->
             <div class="form-group">
                 <label>Store Image *</label>
@@ -118,6 +120,7 @@
                     Store image is required
                 </div>
             </div>
+
             <!-- Submit Button -->
             <button type="submit" class="submit-btn" [disabled]="isSubmitting || storeForm.invalid">
                 <span *ngIf="!isSubmitting">Submit Vendor Application</span>

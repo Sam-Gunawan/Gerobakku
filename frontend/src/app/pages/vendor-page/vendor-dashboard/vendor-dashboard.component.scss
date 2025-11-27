@@ -485,3 +485,51 @@
     gap: 8px;
   }
 }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.edit-btn {
+  background: transparent;
+  border: 1px solid #AEC3B0;
+  color: #124559;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #EFF6E0;
+    border-color: #598392;
+  }
+}
+
+.hours-display,
+.halal-display {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #124559;
+  margin: 0.25rem 0 0 0;
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+
+  p {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #124559;
+  }
+
+  span {
+    font-size: 0.9rem;
+    color: #999;
+  }
+}
