@@ -8,6 +8,7 @@ import {
 } from "../models/auth.model";
 import { map, Observable, tap } from "rxjs";
 import { TokenStorageService } from "../services/token-storage.service";
+import { User } from "../models/user.model";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -16,7 +17,7 @@ export class AuthService {
     constructor(
         private http: HttpClient,
         private tokenStorage: TokenStorageService
-    ) {}
+    ) { }
 
     login(request: LoginRequest): Observable<LoginResponse> {
         return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, request).pipe(
@@ -42,7 +43,17 @@ export class AuthService {
         this.tokenStorage.clear();
     }
 
-    getCurrentUser() {
-        return this.tokenStorage.getUser();
+    getCurrentUser(): Observable<User> {
+        return this.http.get<any>(`${this.apiUrl}/auth/me`).pipe(
+            map(response => {
+                return {
+                    userId: response.user_id,
+                    email: response.email,
+                    fullName: response.full_name,
+                    createdAt: response.created_at,
+                    isVerified: response.is_verified
+                } as User;
+            })
+        );
     }
 }

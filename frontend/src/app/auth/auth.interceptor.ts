@@ -8,6 +8,7 @@ import {
 import { Observable } from "rxjs";
 import { TokenStorageService } from "../services/token-storage.service";
 
+
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
     constructor(private tokenStorage: TokenStorageService) { }
@@ -15,22 +16,26 @@ export class AuthInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const token = this.tokenStorage.getToken();
 
-        // Skip auth header for external APIs (e.g., OSRM)
-        const isExternalUrl = request.url.startsWith('http://') || request.url.startsWith('https://');
-        const isOwnApi = request.url.includes('localhost') || request.url.includes('your-api-domain.com');
+        // Skip auth header for external APIs (e.g., OSRM routing)
+        const isOsrm = request.url.includes('osrm');
+        const isExternalApi = request.url.includes('cartocdn');
 
-        // If no token OR external URL, proceed without adding the Authorization header
-        if (!token || (isExternalUrl && !isOwnApi)) {
+        // Skip external APIs
+        if (isOsrm || isExternalApi) {
             return next.handle(request);
         }
 
-        // Only add the Authorization header for internal API calls
-        const authReq = request.clone({
-            setHeaders: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-
-        return next.handle(authReq);
+        // Add auth token to all other requests (including localhost API)
+        if (token) {
+            const authReq = request.clone({
+                setHeaders: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            console.log('🔐 Adding auth token to:', request.url);  // DEBUG
+            return next.handle(authReq);
+        }
+        console.warn('⚠️ No token found for:', request.url);  // DEBUG
+        return next.handle(request);
     }
 }

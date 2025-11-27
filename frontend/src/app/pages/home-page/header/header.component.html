@@ -10,7 +10,8 @@
 
   <div class="search-container">
     <span class="search-icon">🔍</span>
-    <input type="text" placeholder="Search for stalls, food..." class="search-input">
+    <input type="text" placeholder="Search for stalls" class="search-input" [(ngModel)]="searchQuery"
+      (keyup.enter)="onSearchSubmit()">
   </div>
 </header>
 

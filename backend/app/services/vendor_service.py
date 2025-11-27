@@ -1,6 +1,13 @@
 import time
-from app.repositories.vendor_repo import insert_store_location
-
+import aiofiles
+from pathlib import Path
+from typing import Optional
+from fastapi import UploadFile
+from uuid import uuid4
+import shutil
+from app.repositories.vendor_repo import post_new_vendor, insert_store_location
+from app.repositories.store_repo import create_store
+from app.schemas.vendor_schema import VendorRegistrationData, VendorStoreRegistrationForm, VendorStoreRegistrationResponse
 
 # Define realistic walking paths around Sampoerna University for 3 vendors
 # Sampoerna University coordinates: -6.2443, 106.8385
@@ -143,3 +150,158 @@ def simulate_three_vendors():
     print("=" * 60)
     print("✅ ALL SIMULATIONS COMPLETE")
     print("=" * 60)
+
+
+
+
+async def register_vendor_and_store_service(
+    form_data: VendorStoreRegistrationForm,
+    ktp: Optional[UploadFile],
+    selfie: Optional[UploadFile],
+    store_img: Optional[UploadFile],
+) -> dict:
+    """Handle vendor and store registration with file uploads."""
+    
+    upload_base = Path("app/uploads/vendors")
+    stores_dir = upload_base / "stores"
+    
+    upload_base.mkdir(parents=True, exist_ok=True)
+    stores_dir.mkdir(parents=True, exist_ok=True)
+
+    def _make_local_url_for_vendor(filename: str) -> str:
+        return f"/app/uploads/vendors/{filename}"
+
+    def _make_local_url_for_store(filename: str) -> str:
+        return f"/app/uploads/vendors/stores/{filename}"
+
+    # ===== KTP =====
+    def _unique_filename(user_id: int, purpose: str, upload: Optional[UploadFile]) -> str:
+        if upload and getattr(upload, 'filename', None):
+            suffix = Path(upload.filename).suffix or ""
+            return f"{user_id}_{purpose}_{uuid4().hex}{suffix}"
+        return f"{user_id}_{purpose}"
+
+    if ktp is not None:
+        ktp_filename = _unique_filename(form_data.user_id, "ktp", ktp)
+        ktp_path = upload_base / ktp_filename
+        async with aiofiles.open(str(ktp_path), "wb") as out_file:
+            content = await ktp.read()
+            await out_file.write(content)
+        ktp_local_url = _make_local_url_for_vendor(ktp_filename)
+    else:
+        # refer to the default ktp image
+        ktp_placeholder_name = "ktp_placeholder.JPG"
+        ktp_path = upload_base / ktp_placeholder_name
+        if not ktp_path.exists():
+            # Try copying canonical placeholder from repo assets
+            repo_candidate = Path(__file__).parent.parent / "uploads" / "vendors" / "stores" / ktp_placeholder_name
+            try:
+                if repo_candidate.exists():
+                    shutil.copyfile(repo_candidate, ktp_path)
+                else:
+                    # fallback: create empty placeholder file
+                    async with aiofiles.open(str(ktp_path), "wb") as out_file:
+                        await out_file.write(b"")
+            except Exception:
+                async with aiofiles.open(str(ktp_path), "wb") as out_file:
+                    await out_file.write(b"")
+        ktp_local_url = _make_local_url_for_vendor(ktp_placeholder_name)
+
+    # ===== Selfie =====
+    if selfie is not None:
+        selfie_filename = _unique_filename(form_data.user_id, "selfie", selfie)
+        selfie_path = upload_base / selfie_filename
+        async with aiofiles.open(str(selfie_path), "wb") as out_file:
+            content = await selfie.read()
+            await out_file.write(content)
+        selfie_local_url = _make_local_url_for_vendor(selfie_filename)
+    else:
+        # refer to the default selfie image
+        selfie_placeholder_name = "selfie_placeholder.jpg"
+        selfie_path = upload_base / selfie_placeholder_name
+        if not selfie_path.exists():
+            repo_candidate = Path(__file__).parent.parent / "uploads" / "vendors" / "stores" / selfie_placeholder_name
+            try:
+                if repo_candidate.exists():
+                    shutil.copyfile(repo_candidate, selfie_path)
+                else:
+                    async with aiofiles.open(str(selfie_path), "wb") as out_file:
+                        await out_file.write(b"")
+            except Exception:
+                async with aiofiles.open(str(selfie_path), "wb") as out_file:
+                    await out_file.write(b"")
+        selfie_local_url = _make_local_url_for_vendor(selfie_placeholder_name)
+
+    # ===== Store image =====
+    if store_img is not None:
+        store_img_filename = _unique_filename(form_data.user_id, "store", store_img)
+        store_img_path = stores_dir / store_img_filename
+        async with aiofiles.open(str(store_img_path), "wb") as out_file:
+            content = await store_img.read()
+            await out_file.write(content)
+        store_img_local_url = _make_local_url_for_store(store_img_filename)
+    else:
+        # refer to the default store image
+        default_store_filename = "default_store_image.jpg"
+        default_store_path = stores_dir / default_store_filename
+        if not default_store_path.exists():
+            repo_candidate = Path(__file__).parent.parent / "uploads" / "vendors" / "stores" / default_store_filename
+            try:
+                if repo_candidate.exists():
+                    shutil.copyfile(repo_candidate, default_store_path)
+                else:
+                    async with aiofiles.open(str(default_store_path), "wb") as out_file:
+                        await out_file.write(b"")
+            except Exception:
+                async with aiofiles.open(str(default_store_path), "wb") as out_file:
+                    await out_file.write(b"")
+        store_img_local_url = _make_local_url_for_store(default_store_filename)
+
+    # Create vendor using schema
+    vendor_data = VendorRegistrationData(
+        user_id=form_data.user_id,
+        ktp_image_url=ktp_local_url,
+        selfie_image_url=selfie_local_url
+    )
+
+    result = post_new_vendor(
+        vendor_data.user_id,
+        vendor_data.ktp_image_url,
+        vendor_data.selfie_image_url
+    )
+
+    vendor_id = result.get("vendor_id") if isinstance(result, dict) else None
+
+    # Create store using store_repo.create_store and capture returned store_id
+    store_result = create_store(
+        vendor_id=vendor_id,
+        name=form_data.store_name,
+        description=form_data.store_description,
+        category_id=form_data.category_id,
+        address=form_data.address,
+        is_halal=form_data.is_halal,
+        open_time=form_data.open_time,
+        close_time=form_data.close_time,
+        store_image_url=store_img_local_url
+    )
+
+    store_id = None
+    if isinstance(store_result, dict):
+        store_id = store_result.get("store_id")
+        
+        # Insert initial location for the store
+        if form_data.latitude and form_data.longitude:
+            initial_location = {'lat': form_data.latitude, 'lon': form_data.longitude}
+        else:
+            # Use default location (Sampoerna University coordinates)
+            initial_location = {'lat': -6.2443, 'lon': 106.8385}
+        try:
+            insert_store_location(store_id, initial_location)
+        except Exception as e:
+            print(f"Warning: Failed to insert initial location: {e}")
+
+    return VendorStoreRegistrationResponse(
+        message="Vendor and store registered successfully",
+        vendor_id=vendor_id or 0,
+        store_id=store_id
+    )

@@ -1,0 +1,74 @@
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+
+    h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #01161E;
+    }
+}
+
+.modal-body {
+    padding: 20px;
+
+    p {
+        margin: 0;
+        color: #4a5568;
+        line-height: 1.5;
+    }
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px;
+    border-top: 1px solid #e2e8f0;
+
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel {
+        background: transparent;
+        color: #718096;
+
+        &:hover {
+            background: #f7fafc;
+        }
+    }
+
+    .btn-confirm {
+        background: #8B4513;
+        color: white;
+
+        &:hover {
+            background: #704010;
+        }
+    }
+}

@@ -1,3 +1,7 @@
+<app-loading-overlay [isVisible]="isLoadingDashboard" title="Loading Dashboard" message="Fetching your vendor data..."
+  spinnerColor="#FBBE21">
+</app-loading-overlay>
+
 <div class="vendor-dashboard">
   <!-- Sticky Back Button -->
   <button class="back-button" (click)="goBackToHome()">
@@ -13,27 +17,41 @@
 
       <!-- Store Info & Controls -->
       <div class="store-section">
-        <div class="store-profile" (click)="onProfileClick()">
+        <div class="store-profile">
           <div class="store-avatar">
             <span>{{ storeName.charAt(0) }}</span>
           </div>
           <div class="store-info">
             <h3>{{ storeName }}</h3>
-            <span class="view-profile">View Profile</span>
+            <span class="view-profile">Your Store</span>
           </div>
         </div>
-
         <!-- Open/Close Toggle -->
         <div class="control-card">
           <span class="control-label">Store Status</span>
-          <button class="ios-toggle" [class.active]="isOpen" (click)="toggleStoreStatus()">
+          <button class="ios-toggle" [class.active]="isOpen" (click)="onToggleStore()">
             <span class="toggle-slider"></span>
           </button>
           <span class="status-text" [class.open]="isOpen">
             {{ isOpen ? 'Store is Open' : 'Store is Closed' }}
           </span>
         </div>
-
+        <!-- Operating Hours with Edit Button -->
+        <div class="control-card">
+          <div class="card-header">
+            <span class="control-label">Operating Hours</span>
+            <button class="edit-btn" (click)="openEditHours()">✏️ Edit</button>
+          </div>
+          <p class="hours-display">{{ formattedHours }}</p>
+        </div>
+        <!-- Halal Status with Edit Button -->
+        <div class="control-card">
+          <div class="card-header">
+            <span class="control-label">Halal Status</span>
+            <button class="edit-btn" (click)="openEditHalal()">✏️ Edit</button>
+          </div>
+          <p class="halal-display">{{ isHalal ? '✅ Halal Certified' : '❌ Not Halal Certified' }}</p>
+        </div>
         <!-- Current Time -->
         <div class="control-card">
           <span class="control-label">Current Time</span>
@@ -45,20 +63,18 @@
       <!-- Rating Analytics -->
       <div class="analytics-section">
         <h3>Reviews & Ratings</h3>
-
         <div class="rating-overview">
-          <span class="rating-number">4.5</span>
-          <div class="stars">⭐⭐⭐⭐⭐</div>
-          <span class="total-reviews">156 Reviews</span>
+          <span class="rating-number">{{ rating.toFixed(1) }}</span>
+          <div class="stars">{{ getStars(Math.round(rating)) }}</div>
+          <span class="total-reviews">{{ totalReviews }} Reviews</span>
         </div>
-
         <div class="rating-breakdown">
-          <div class="rating-row" *ngFor="let rating of [5, 4, 3, 2, 1]">
-            <span class="star-label">{{ rating }} ⭐</span>
+          <div class="rating-row" *ngFor="let ratingNum of [5, 4, 3, 2, 1]">
+            <span class="star-label">{{ ratingNum }} ⭐</span>
             <div class="bar-container">
-              <div class="bar" [style.width]="getRatingPercentage(rating) + '%'"></div>
+              <div class="bar" [style.width]="getRatingPercentage(ratingNum) + '%'"></div>
             </div>
-            <span class="count">{{ getRatingCount(rating) }}</span>
+            <span class="count">{{ getRatingCount(ratingNum) }}</span>
           </div>
         </div>
       </div>
@@ -81,18 +97,63 @@
       <div class="reviews-section">
         <h3>Recent Reviews</h3>
         <div class="reviews-container">
-          <div class="review-card" *ngFor="let review of recentReviews">
+          <div *ngIf="recentReviewsList.length === 0" class="no-reviews">
+            <p>No reviews yet</p>
+            <span>Be patient! Your customers will leave reviews soon.</span>
+          </div>
+
+          <div class="review-card" *ngFor="let review of recentReviewsList">
             <div class="review-header">
-              <div class="reviewer-avatar">{{ review.name.charAt(0) }}</div>
+              <div class="reviewer-avatar">{{ review.reviewerName.charAt(0) }}</div>
               <div class="reviewer-info">
-                <span class="reviewer-name">{{ review.name }}</span>
-                <div class="review-stars">{{ getStars(review.rating) }}</div>
+                <span class="reviewer-name">{{ review.reviewerName }}</span>
+                <div class="review-stars">{{ getStars(review.score) }}</div>
               </div>
-              <span class="review-time">{{ review.time }}</span>
+              <span class="review-time">{{ formatTimeAgo(review.createdAt) }}</span>
             </div>
             <p class="review-text">{{ review.comment }}</p>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <app-confirmation-modal *ngIf="showConfirmation" [title]="confirmationConfig.title"
+    [message]="confirmationConfig.message"
+    [confirmText]="confirmationConfig.action === 'open' ? 'Open Store' : 'Close Store'" (confirm)="confirmToggleStore()"
+    (cancel)="showConfirmation = false"></app-confirmation-modal>
+
+  <!-- Edit Hours Modal -->
+  <div *ngIf="showEditHours" class="modal-backdrop" (click)="showEditHours = false">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Edit Operating Hours</h3>
+      <div class="time-picker-container">
+        <label>Open Time</label>
+        <app-time-picker [(ngModel)]="editOpenTime"></app-time-picker>
+      </div>
+      <div class="time-picker-container">
+        <label>Close Time</label>
+        <app-time-picker [(ngModel)]="editCloseTime"></app-time-picker>
+      </div>
+      <div class="modal-actions">
+        <button (click)="showEditHours = false">Cancel</button>
+        <button (click)="saveHours()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Halal Status Modal -->
+  <div *ngIf="showEditHalal" class="modal-backdrop" (click)="showEditHalal = false">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Edit Halal Status</h3>
+      <label>
+        <input type="checkbox" [(ngModel)]="editIsHalal">
+        Halal Certified
+      </label>
+      <div class="modal-actions">
+        <button (click)="showEditHalal = false">Cancel</button>
+        <button (click)="saveHalal()">Save</button>
       </div>
     </div>
   </div>

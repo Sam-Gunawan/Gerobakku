@@ -1,61 +1,90 @@
-<!-- Advertisement Carousel -->
-<div class="advertisement-carousel">
-    <div class="carousel-track" [style.transform]="'translateX(-' + (currentCarouselIndex * 100) + '%)'">
-        <div class="carousel-slide" *ngFor="let image of carouselImages">
-            <img [src]="image" alt="Advertisement">
+<app-loading-overlay [isVisible]="isSearching" title="Loading Stores" message="Fetching nearby food stalls for you..."
+    spinnerColor="#FBBE21">
+</app-loading-overlay>
+
+<!-- Search Results View -->
+<div *ngIf="showSearchResults" class="search-results-view">
+    <div class="results-header">
+        <button class="back-button" (click)="clearSearch()">
+            <span class="back-icon">←</span>
+        </button>
+        <div class="results-title">
+            <h2 *ngIf="searchQuery">Search Results for "{{ searchQuery }}"</h2>
+            <h2 *ngIf="selectedCategory">{{ selectedCategoryName }}</h2>
+            <h2 *ngIf="showingNearYou">Stores Near You</h2>
+            <p class="results-count">{{ displayedResults.length }} {{ displayedResults.length === 1 ? 'store' : 'stores'
+                }} found</p>
         </div>
     </div>
-    <div class="carousel-indicators">
-        <button *ngFor="let image of carouselImages; let i = index" class="indicator"
-            [class.active]="i === currentCarouselIndex" (click)="goToSlide(i)"></button>
-    </div>
-</div>
 
-<!-- Category Icons -->
-<div class="categories-section">
-    <div class="categories-scroll">
-        <button *ngFor="let category of categories" class="category-icon" (click)="onCategoryClick(category.id)">
-            <div class="icon-circle">
-                <span class="icon">{{ category.icon }}</span>
-            </div>
-            <span class="category-name">{{ category.name }}</span>
+    <div *ngIf="displayedResults.length === 0" class="no-results">
+        <div class="no-results-icon">🔍</div>
+        <h3>No {{ selectedCategory ? 'stores in this category' : 'results' }} found</h3>
+        <p *ngIf="searchQuery">Try searching with different keywords</p>
+        <p *ngIf="selectedCategory">No stores available in this category right now</p>
+        <button class="clear-btn" (click)="clearSearch()">← Back to Home</button>
+    </div>
+
+    <div *ngIf="displayedResults.length > 0" class="results-grid">
+        <app-vendor-card *ngFor="let store of displayedResults" [store]="store"
+            (cardClick)="onVendorCardClick($event)"></app-vendor-card>
+    </div>
+
+    <div *ngIf="hasMoreResults" class="load-more-container">
+        <button class="load-more-btn" (click)="loadMore()">
+            Load More
         </button>
     </div>
 </div>
 
-<!-- Near You Section -->
-<div class="vendor-section">
-    <div class="section-header">
-        <h2 class="section-title">Near You</h2>
-        <button class="see-all-btn" (click)="onSeeAllNearYou()">See All</button>
+<!-- Main Content (hidden when showing search results) -->
+<div *ngIf="!showSearchResults">
+    <!-- Advertisement Carousel -->
+    <div class="advertisement-carousel">
+        <div class="carousel-track" [style.transform]="'translateX(-' + (currentCarouselIndex * 100) + '%)'">
+            <div class="carousel-slide" *ngFor="let image of carouselImages">
+                <img [src]="image" alt="Advertisement">
+            </div>
+        </div>
+        <div class="carousel-indicators">
+            <button *ngFor="let image of carouselImages; let i = index" class="indicator"
+                [class.active]="i === currentCarouselIndex" (click)="goToSlide(i)"></button>
+        </div>
     </div>
-    <div class="vendor-cards">
-        <app-vendor-card *ngFor="let store of nearYouStores" [store]="store"
-            (cardClick)="onVendorCardClick($event)"></app-vendor-card>
+
+    <!-- Category Icons -->
+    <div class="categories-section">
+        <div class="categories-scroll">
+            <button *ngFor="let category of categories" class="category-icon"
+                (click)="onCategoryClick(category.id, category.name)">
+                <div class="icon-circle">
+                    <span class="icon">{{ category.icon }}</span>
+                </div>
+                <span class="category-name">{{ category.name }}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Near You Section -->
+    <div class="vendor-section">
+        <div class="section-header">
+            <h2 class="section-title">Near You</h2>
+            <button class="see-all-btn" (click)="onSeeAllNearYou()">See All</button>
+        </div>
+        <div class="vendor-cards">
+            <app-vendor-card *ngFor="let store of nearYouStores" [store]="store"
+                (cardClick)="onVendorCardClick($event)"></app-vendor-card>
+        </div>
+    </div>
+
+    <!-- Stalls You May Like Section -->
+    <div class="vendor-section">
+        <div class="section-header">
+            <h2 class="section-title">Stalls You May Like</h2>
+        </div>
+        <div class="vendor-cards">
+            <app-vendor-card *ngFor="let store of recommendedStores" [store]="store"
+                (cardClick)="onVendorCardClick($event)"></app-vendor-card>
+        </div>
     </div>
 </div>
-
-<!-- Stalls You May Like Section -->
-<div class="vendor-section">
-    <div class="section-header">
-        <h2 class="section-title">Stalls You May Like</h2>
-        <button class="see-all-btn" (click)="onSeeAllRecommended()">See All</button>
-    </div>
-    <div class="vendor-cards">
-        <app-vendor-card *ngFor="let store of recommendedStores" [store]="store"
-            (cardClick)="onVendorCardClick($event)"></app-vendor-card>
-    </div>
-</div>
-
-<!-- Simulation Control Button -->
-<!-- Used inline CSS for quick implementation -->
-<!-- <div class="simulation-control" style="padding: 1rem; margin: 1rem 0;">
-    <button class="sim-button" (click)="onStartSimulation()" [disabled]="isSimulationRunning"
-        style="width: 100%; padding: 1rem; background: #8B4513; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;">
-        <span style="margin-right: 0.5rem;">🎬</span>
-        <span>{{ isSimulationRunning ? 'Simulation Running...' : 'Start Vendor Simulation' }}</span>
-    </button>
-    <p *ngIf="!isSimulationRunning" style="margin-top: 0.5rem; font-size: 0.9rem; color: #666; text-align: center;">
-        Watch 3 vendors move in real-time!
-    </p>
-</div> -->

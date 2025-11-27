@@ -1,63 +1,152 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '../../../models/store.model';
-
-interface Review {
-    id: string;
-    userName: string;
-    rating: number;
-    comment: string;
-    date: Date;
-}
+import { AddReviewModalComponent } from '../add-review-modal/add-review-modal.component';
+import { ReviewService } from '../../../services/review.service';
+import { Review, ReviewStats } from '../../../models/review.model';
+import { AuthService } from '../../../services/auth.service'
+import { formatTimeRange } from '../../utils/time-formatter';
 
 @Component({
     selector: 'app-store-details',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, AddReviewModalComponent],
     templateUrl: './store-details.component.html',
     styleUrl: './store-details.component.scss'
 })
-export class StoreDetailsComponent {
+export class StoreDetailsComponent implements OnChanges {
     @Input() store?: Store;
     @Input() hasActiveRoute: boolean = false;
     @Output() close = new EventEmitter<void>();
     @Output() guideMe = new EventEmitter<Store>();
 
-    // Mock reviews data - TODO: Replace with actual API call
-    get reviews(): Review[] {
-        return [
-            {
-                id: '1',
-                userName: 'John Doe',
-                rating: 5,
-                comment: 'Amazing food! Highly recommended. The portions are generous and the taste is authentic.',
-                date: new Date('2025-11-20')
+    reviews: Review[] = [];
+    reviewStats: ReviewStats | null = null;
+    isLoadingReviews = false;
+    showAddReviewModal = false;
+    isSubmittingReview = false;
+
+    categoryMap: { [key: number]: string } = {
+        1: 'Western',
+        2: 'Japanese',
+        3: 'Indonesian',
+        4: 'Korean',
+        5: 'Middle-eastern',
+        6: 'Beverages',
+        7: 'Others'
+    };
+
+    constructor(
+        private reviewService: ReviewService,
+        private authService: AuthService,
+        private cdr: ChangeDetectorRef
+    ) { }
+
+    ngOnChanges(): void {
+        if (this.store) {
+            this.loadReviews();
+        }
+    }
+
+    loadReviews(): void {
+        if (!this.store) return;
+        this.isLoadingReviews = true;
+
+        // Load reviews and stats
+        this.reviewService.getStoreReviews(this.store.storeId).subscribe({
+            next: (reviews) => {
+                this.reviews = reviews;
+                this.isLoadingReviews = false;
+
+                // Trigger change detection to update UI
+                this.cdr.detectChanges();
             },
-            {
-                id: '2',
-                userName: 'Jane Smith',
-                rating: 4,
-                comment: 'Good quality, fast service. Would come back again.',
-                date: new Date('2025-11-18')
-            },
-            {
-                id: '3',
-                userName: 'Ahmad Rahman',
-                rating: 5,
-                comment: 'Best street food in the area! Fresh ingredients and friendly vendor.',
-                date: new Date('2025-11-15')
+            error: (err) => {
+                console.error('Failed to load reviews:', err);
+                this.isLoadingReviews = false;
             }
-        ];
+        });
+
+        this.reviewService.getReviewStats(this.store.storeId).subscribe({
+            next: (stats) => {
+                this.reviewStats = stats;
+
+                // Update the store rating too
+                if (this.store) {
+                    this.store.rating = stats.averageRating;
+                }
+
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error('Failed to load stats:', err);
+            }
+        });
     }
 
     get averageRating(): number {
-        if (this.reviews.length === 0) return 0;
-        const sum = this.reviews.reduce((acc, review) => acc + review.rating, 0);
-        return sum / this.reviews.length;
+        return this.reviewStats?.averageRating || this.store?.rating || 0;
     }
 
     get totalReviews(): number {
-        return this.reviews.length;
+        return this.reviewStats?.totalReviews || this.reviews.length;
+    }
+
+    get canAddReview(): boolean {
+        return !!this.authService.getCurrentUser();
+    }
+
+    get formattedHours(): string {
+        if (!this.store) return '';
+        return formatTimeRange(this.store.openTime, this.store.closeTime);
+    }
+
+    get categoryName(): string {
+        return this.categoryMap[Number(this.store?.category) || 7];
+    }
+
+    openAddReviewModal(): void {
+        if (!this.canAddReview) {
+            alert('Please login to add a review');
+            return;
+        }
+        this.showAddReviewModal = true;
+    }
+
+    closeAddReviewModal(): void {
+        this.showAddReviewModal = false;
+    }
+
+    onReviewSubmit(data: { rating: number; comment: string }): void {
+        if (!this.store) return;
+        this.isSubmittingReview = true;
+
+        this.reviewService.submitReview({
+            storeId: parseInt(this.store.storeId),
+            score: data.rating,
+            comment: data.comment
+        }).subscribe({
+            next: (review) => {
+                // Add new review to the list
+                this.reviews.unshift(review);
+                this.closeAddReviewModal();
+                this.isSubmittingReview = false;
+
+                // Reload stats
+                this.loadReviews();
+                this.cdr.detectChanges();
+
+                // Update store rating
+                if (this.store && this.reviewStats) {
+                    this.store.rating = this.reviewStats.averageRating;
+                }
+            },
+            error: (err) => {
+                console.error('Failed to submit review:', err);
+                this.isSubmittingReview = false;
+                alert(err.error?.detail || 'Failed to submit review. Please try again.');
+            }
+        });
     }
 
     get statusText(): string {
@@ -84,11 +173,14 @@ export class StoreDetailsComponent {
 
     formatDate(date: Date): string {
         const now = new Date();
-        const diffTime = Math.abs(now.getTime() - date.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const diffTime = Math.abs(now.getTime() - date.getTime()); // Units: milliseconds
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-        if (diffDays === 0) return 'Today';
-        if (diffDays === 1) return 'Yesterday';
+        if (diffTime < 60 * 1000) return 'Just now';
+        if (diffTime < 5 * 60 * 1000) return '5 mins ago';
+        if (diffTime < 30 * 60 * 1000) return '30 mins ago';
+        if (diffDays < 1) return 'Today';
+        if (diffDays < 2) return 'Yesterday';
         if (diffDays < 7) return `${diffDays} days ago`;
         if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
         return `${Math.floor(diffDays / 30)} months ago`;

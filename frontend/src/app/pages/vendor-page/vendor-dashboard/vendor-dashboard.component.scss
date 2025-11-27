@@ -485,3 +485,149 @@
     gap: 8px;
   }
 }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.edit-btn {
+  background: transparent;
+  border: 1px solid #AEC3B0;
+  color: #124559;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #EFF6E0;
+    border-color: #598392;
+  }
+}
+
+.hours-display,
+.halal-display {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #124559;
+  margin: 0.25rem 0 0 0;
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+
+  p {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #124559;
+  }
+
+  span {
+    font-size: 0.9rem;
+    color: #999;
+  }
+}
+
+// Modal Styles
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  min-width: 400px;
+  max-width: 500px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+
+  h3 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    color: #124559;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    color: #2d3748;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+  }
+}
+
+.time-picker-container {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2d3748;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+
+  button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+
+    &:first-child {
+      background: #e2e8f0;
+      color: #2d3748;
+
+      &:hover {
+        background: #cbd5e0;
+      }
+    }
+
+    &:last-child {
+      background: #598392;
+      color: white;
+
+      &:hover {
+        background: #124559;
+      }
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .modal-content {
+    min-width: 90%;
+    max-width: 90%;
+    padding: 1.5rem;
+  }
+}

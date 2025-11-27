@@ -1,0 +1,12 @@
+<div class="map-picker-container">
+    <div id="location-picker-map" class="map"></div>
+    <div class="map-controls">
+        <button class="current-location-btn" (click)="useCurrentLocation()">
+            📍 Use Current Location
+        </button>
+        <div class="coordinates">
+            <span>Lat: {{ latitude.toFixed(6) }}</span>
+            <span>Lon: {{ longitude.toFixed(6) }}</span>
+        </div>
+    </div>
+</div>

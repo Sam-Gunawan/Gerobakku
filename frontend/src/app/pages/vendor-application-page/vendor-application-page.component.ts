@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { LoadingOverlayComponent } from '../../shared/ui/loading-overlay/loading-overlay.component';
+
 
 @Component({
   selector: 'app-vendor-application-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LoadingOverlayComponent],
   templateUrl: './vendor-application-page.component.html',
   styleUrls: ['./vendor-application-page.component.scss']
 })
@@ -116,17 +118,31 @@ export class VendorApplicationPageComponent implements OnInit {
 
     this.isSubmitting = true;
 
-    // TODO: Implement actual API call to submit vendor application
-    const formData = new FormData();
-    if (this.idCardFile) formData.append('idCard', this.idCardFile);
-    if (this.selfieFile) formData.append('selfie', this.selfieFile);
+    // Convert files to base64 and store in sessionStorage
+    if (this.idCardFile && this.selfieFile) {
+      const readerKtp = new FileReader();
+      const readerSelfie = new FileReader();
 
-    // Simulate API call
-    setTimeout(() => {
+      readerKtp.onload = (e) => {
+        const ktpBase64 = e.target?.result as string;
+        sessionStorage.setItem('vendor_ktp', ktpBase64);
+
+        readerSelfie.onload = (e2) => {
+          const selfieBase64 = e2.target?.result as string;
+          sessionStorage.setItem('vendor_selfie', selfieBase64);
+          this.isSubmitting = false;
+          // Navigate to store details page
+          this.router.navigate(['/vendor-store-details']);
+        };
+
+        readerSelfie.readAsDataURL(this.selfieFile!);
+      };
+
+      readerKtp.readAsDataURL(this.idCardFile);
+    } else {
       this.isSubmitting = false;
-      alert('Vendor application submitted successfully!');
-      this.router.navigate(['/vendor-store-details']);
-    }, 2000);
+      alert('Please upload both ID card and selfie photos');
+    }
   }
 
   getErrorMessage(controlName: string): string {

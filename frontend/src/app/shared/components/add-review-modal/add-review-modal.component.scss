@@ -1,0 +1,216 @@
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease;
+
+    // Create a new stacking context for z-index to work outside of header
+    isolation: isolate;
+}
+
+// Force modal to escape stacking context
+::ng-deep app-add-review-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 10001 !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid #e2e8f0;
+
+    h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: #01161E;
+    }
+
+    .close-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: transparent;
+        font-size: 24px;
+        color: #718096;
+        cursor: pointer;
+        border-radius: 50%;
+        transition: all 0.2s;
+
+        &:hover {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+    }
+}
+
+.modal-body {
+    padding: 24px;
+
+    .store-name {
+        margin: 0 0 24px 0;
+        font-size: 16px;
+        font-weight: 500;
+        color: #8B4513;
+    }
+}
+
+.rating-section {
+    margin-bottom: 24px;
+
+    label {
+        display: block;
+        margin-bottom: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .stars {
+        display: flex;
+        gap: 8px;
+
+        .star {
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+
+            &.empty {
+                color: #e2e8f0;
+            }
+
+            &.filled {
+                color: #FFB300;
+            }
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+    }
+}
+
+.comment-section {
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        color: #2d3748;
+        resize: vertical;
+        transition: border-color 0.2s;
+
+        &:focus {
+            outline: none;
+            border-color: #8B4513;
+        }
+
+        &::placeholder {
+            color: #cbd5e0;
+        }
+
+        &:disabled {
+            background: #f7fafc;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 24px;
+    border-top: 1px solid #e2e8f0;
+
+    button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+
+    .cancel-btn {
+        background: transparent;
+        color: #718096;
+
+        &:hover:not(:disabled) {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+    }
+
+    .submit-btn {
+        background: #8B4513;
+        color: white;
+
+        &:hover:not(:disabled) {
+            background: #704010;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+        }
+
+        &:active:not(:disabled) {
+            transform: translateY(0);
+        }
+    }
+}

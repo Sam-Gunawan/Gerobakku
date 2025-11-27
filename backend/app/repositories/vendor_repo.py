@@ -2,6 +2,24 @@ from typing import List, Optional, Dict, Any
 from app.database import get_cursor
 
 
+def post_new_vendor(user_id, ktp_image_url: str = '', selfie_image_url: str = '', is_verified: bool = False):
+    """Insert a new vendor and return the inserted row."""
+    sql = """
+        INSERT INTO gerobakku.vendors
+        (user_id, ktp_image_url, selfie_image_url)
+        VALUES (%s, %s, %s)
+        RETURNING vendor_id;
+    """
+    try:
+        with get_cursor(commit=True) as cur:
+            # avoid prepared statement conflicts like elsewhere in this module
+            cur.execute(sql, (user_id, ktp_image_url, selfie_image_url))
+            return {"success": True, "message": "Vendor created", "vendor_id": cur.fetchone()[0]}
+    except Exception as e:
+        print(f"Error inserting vendor: {e}")
+        raise
+
+
 def get_all_stores_with_locations() -> List[Dict[str, Any]]:
     """
     Lightweight function to get only store IDs and current locations.
@@ -24,12 +42,10 @@ def get_all_stores_with_locations() -> List[Dict[str, Any]]:
         WHERE tsl.location IS NOT NULL
         ORDER BY s.store_id;
     """
-    
     try:
         with get_cursor() as cur:
             cur.execute(sql)
             rows = cur.fetchall()
-            
             locations = []
             for row in rows:
                 locations.append({
@@ -40,7 +56,6 @@ def get_all_stores_with_locations() -> List[Dict[str, Any]]:
                     },
                     'location_updated_at': row[3]
                 })
-            
             return locations
     except Exception as e:
         print(f"Error fetching store locations: {e}")
@@ -56,15 +71,12 @@ def insert_store_location(store_id, location):
         RETURNING location_id, store_id, created_at, ST_AsText(location) AS location_point;
     """
     lon, lat = location['lon'], location['lat']
-    
     try:
         with get_cursor(commit=True) as cur:
-            # Use prepare=False to avoid prepared statement conflicts in concurrent execution
             cur.execute(sql, (store_id, lon, lat), prepare=False)
             row = cur.fetchone()
             if not row:
                 return None
-            
             return {
                 "location_id": row[0],
                 "store_id": row[1],
@@ -85,14 +97,12 @@ def get_store_locations(store_id):
     ORDER BY location_id DESC
     LIMIT 1;
     """
-    
     try:
         with get_cursor() as cur:
             cur.execute(sql, (store_id,))
             row = cur.fetchone()
             if not row:
                 return None
-            
             return {
                 "location_id": row[0],
                 "store_id": row[1],
@@ -102,3 +112,22 @@ def get_store_locations(store_id):
     except Exception as e:
         print(f"Error fetching store location: {e}")
         raise
+
+def get_vendor_by_user_id(user_id: int) -> dict:
+    """Get vendor by user_id"""
+    with get_cursor() as cur:
+        cur.execute("""
+            SELECT vendor_id, user_id, is_verified
+            FROM gerobakku.vendors
+            WHERE user_id = %s
+        """, (user_id,))
+        
+        row = cur.fetchone()
+        if not row:
+            return None
+        
+        return {
+            'vendor_id': row[0],
+            'user_id': row[1],
+            'is_verified': row[2]
+        }

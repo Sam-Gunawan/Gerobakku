@@ -17,6 +17,7 @@ import { LocationPoint, Store } from '../../models/store.model';
 // @ts-ignore - ol-ext may not have TypeScript definitions
 import AnimatedCluster from 'ol-ext/layer/AnimatedCluster';
 import { MapBrowserEvent } from 'ol';
+import { formatTimeRange } from '../utils/time-formatter';
 
 @Component({
   selector: 'app-map',
@@ -196,7 +197,7 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
             content.innerHTML = `
             <h4>${store.name}</h4>
             <div class="rating">⭐ ${store.rating.toFixed(1)}</div>
-            <div class="hours">${store.openTime} - ${store.closeTime}</div>
+            <div class="hours">${formatTimeRange(store.openTime, store.closeTime)}</div>
             `;
           }
 

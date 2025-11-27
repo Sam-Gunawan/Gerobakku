@@ -1,36 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProfileModalComponent } from '../../../shared/components/profile-modal/profile-modal.component';
-import { AuthService } from '../../../services/auth.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [CommonModule, ProfileModalComponent],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+    selector: 'app-header',
+    standalone: true,
+    imports: [CommonModule, ProfileModalComponent, FormsModule],
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
-  showProfileModal = false;
+    @Output() searchSubmit = new EventEmitter<string>();
 
-  constructor(private authService: AuthService) {}
+    showProfileModal = false;
+    searchQuery = '';
 
-  openProfileModal(): void {
-    this.showProfileModal = true;
-  }
-
-  closeProfileModal(): void {
-    this.showProfileModal = false;
-  }
-
-  getInitials(): string {
-    const user = this.authService.getCurrentUser();
-    if (!user?.fullName) return 'U';
-    
-    const names = user.fullName.split(' ');
-    if (names.length >= 2) {
-      return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+    onSearchSubmit(): void {
+        if (this.searchQuery.trim()) {
+            this.searchSubmit.emit(this.searchQuery.trim());
+        }
     }
-    return user.fullName[0].toUpperCase();
-  }
+
+    openProfileModal(): void {
+        this.showProfileModal = true;
+    }
+    closeProfileModal(): void {
+        this.showProfileModal = false;
+    }
 }

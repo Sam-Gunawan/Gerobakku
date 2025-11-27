@@ -14,8 +14,11 @@ export class LocationService {
     private readonly POLLING_INTERVAL = 3000;
     private pollingSubscription?: Subscription;
     private vendorLocationsSubject = new BehaviorSubject<Store[]>([]);
+
     public vendorLocations$ = this.vendorLocationsSubject.asObservable();
+
     constructor(private http: HttpClient) { }
+
     private transformStore(apiStore: any): Store {
         return {
             storeId: apiStore.store_id?.toString() || apiStore.storeId,
@@ -29,7 +32,7 @@ export class LocationService {
             isHalal: apiStore.is_halal !== undefined ? apiStore.is_halal : apiStore.isHalal,
             openTime: apiStore.open_time?.toString() || apiStore.openTime,
             closeTime: apiStore.close_time?.toString() || apiStore.closeTime,
-            storeImageUrl: apiStore.store_image_url || apiStore.storeImageUrl,
+            storeImageUrl: 'assets/default_store_image.jpg',
             menu: apiStore.menu || [],
             currentLocation: apiStore.current_location ? {
                 lat: apiStore.current_location.lat,
@@ -38,6 +41,7 @@ export class LocationService {
             locationUpdatedAt: apiStore.location_updated_at ? new Date(apiStore.location_updated_at) : null
         };
     }
+
     getUserLocation(): Promise<LocationPoint> {
         return new Promise((resolve, reject) => {
             if (!navigator.geolocation) {
@@ -51,17 +55,20 @@ export class LocationService {
             );
         });
     }
+
     getVendorLocations(): Observable<Store[]> {
         return this.http.get<any[]>(`${this.API_URL}/stores`).pipe(
             map(stores => stores.map(s => this.transformStore(s))),
             catchError(() => of([]))
         );
     }
+
     getLocationUpdates(): Observable<LocationUpdate[]> {
         return this.http.get<LocationUpdate[]>(`${this.API_URL}/vendor/locations`).pipe(
             catchError(() => of([]))
         );
     }
+
     // Initialize - fetch stores once, NO polling
     initializeStores(): void {
         this.getVendorLocations().subscribe(stores => {
@@ -69,6 +76,7 @@ export class LocationService {
             this.vendorLocationsSubject.next(stores);
         });
     }
+
     // Start polling (call when simulation starts)
     startPolling(): void {
         if (this.pollingSubscription) return;
@@ -85,12 +93,14 @@ export class LocationService {
             this.vendorLocationsSubject.next(stores);
         });
     }
+
     // Stop polling
     stopPolling(): void {
         this.pollingSubscription?.unsubscribe();
         this.pollingSubscription = undefined;
         console.log('⏸️ Polling stopped');
     }
+
     // Start simulation + polling
     startSimulation(): Observable<any> {
         return this.http.post(`${this.API_URL}/vendor/simulate3Vendors`, {}).pipe(

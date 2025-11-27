@@ -2,7 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from .database import close_database, init_db_pool
-from .routers import auth_router, vendor_router, store_router
+from .routers import auth_router, vendor_router, store_router, review_router
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: initialize the database pool
@@ -36,3 +38,4 @@ async def read_root():
 app.include_router(auth_router.router)
 app.include_router(vendor_router.router)
 app.include_router(store_router.router)
+app.include_router(review_router.router)

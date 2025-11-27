@@ -5,6 +5,7 @@ from passlib.context import CryptContext
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from .repositories.user_repo import get_user_by_id
+from .schemas.user_schema import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -28,26 +29,26 @@ def _make_token(data: dict, minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES) -> str:
     to_encode["exp"] = datetime.now() + timedelta(minutes=minutes)
     return jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
-def create_access_token(user_id: str, email: str) -> str:
+def create_access_token(user_id: int | str, email: str) -> str:
     """
     Token used after login
     """
     return _make_token(
         {
-            "sub": user_id,
+            "sub": str(user_id),
             "email": email,
             "type": "access",
         },
         ACCESS_TOKEN_EXPIRE_MINUTES
     )
 
-def create_email_token(user_id: str, email: str) -> str:
+def create_email_token(user_id: int | str, email: str) -> str:
     """
     Token sent in email verification link
     """
     return _make_token(
         {
-            "sub": user_id,
+            "sub": str(user_id),
             "email": email,
             "type": "verify"
         },
@@ -56,15 +57,17 @@ def create_email_token(user_id: str, email: str) -> str:
 
 def decode_token(token: str) -> dict:
     try:
+        print("token recieved:", token)
         return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-    except JWTError:
+    except JWTError as e:
+        print("JWT Error:", e)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token, please login again."
         )
 
 # FastAPI dependency for authenticated routes
-def get_current_user(token: str = Depends(oauth2_scheme)) -> dict: 
+def get_current_user(token: str = Depends(oauth2_scheme)) -> User: 
     payload = decode_token(token)
     
     if payload.get("type") != "access":
@@ -87,10 +90,10 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
             detail="User not found."
         )
 
-    return {
-        "user_id": row[0],
-        "email": row[1],
-        "full_name": row[3],
-        "created_at": row[4],
-        "is_verified": row[5]
-    }
+    return User(
+        user_id=row[0],
+        email=row[1],
+        full_name=row[3],
+        created_at=row[4],
+        is_verified=row[5]
+    )

@@ -1,0 +1,40 @@
+<div class="modal-backdrop" (click)="onClose()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+
+        <div class="modal-header">
+            <h2>Write a Review</h2>
+            <button class="close-btn" (click)="onClose()">✕</button>
+        </div>
+
+        <div class="modal-body">
+            <p class="store-name">{{ storeName }}</p>
+
+            <!-- Star Rating -->
+            <div class="rating-section">
+                <label>Your Rating *</label>
+                <div class="stars">
+                    <span *ngFor="let star of stars" class="star" [class]="getStarClass(star)" (click)="setRating(star)"
+                        (mouseenter)="onMouseEnter(star)" (mouseleave)="onMouseLeave()">
+                        ★
+                    </span>
+                </div>
+            </div>
+
+            <div class="comment-section">
+                <label>Your Review *</label>
+                <textarea [(ngModel)]="comment" placeholder="Tell us about your experience..." rows="5"
+                    [disabled]="isSubmitting"></textarea>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="cancel-btn" (click)="onClose()" [disabled]="isSubmitting">
+                Cancel
+            </button>
+            <button class="submit-btn" (click)="onSubmit()" [disabled]="isSubmitting">
+                <span *ngIf="!isSubmitting">Submit Review</span>
+                <span *ngIf="isSubmitting">Submitting...</span>
+            </button>
+        </div>
+    </div>
+</div>

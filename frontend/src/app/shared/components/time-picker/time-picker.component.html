@@ -1,0 +1,9 @@
+<div class="time-picker">
+    <select [(ngModel)]="hours" (ngModelChange)="onTimeChange()" [disabled]="disabled">
+        <option *ngFor="let h of hourOptions" [value]="h">{{ formatNumber(h) }}</option>
+    </select>
+    <span class="separator">:</span>
+    <select [(ngModel)]="minutes" (ngModelChange)="onTimeChange()" [disabled]="disabled">
+        <option *ngFor="let m of minuteOptions" [value]="m">{{ formatNumber(m) }}</option>
+    </select>
+</div>

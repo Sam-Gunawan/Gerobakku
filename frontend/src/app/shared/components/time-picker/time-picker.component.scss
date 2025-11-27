@@ -1,0 +1,29 @@
+.time-picker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    select {
+        padding: 8px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 14px;
+        background: white;
+        cursor: pointer;
+
+        &:focus {
+            outline: none;
+            border-color: #8B4513;
+        }
+
+        &:disabled {
+            background: #f7fafc;
+            cursor: not-allowed;
+        }
+    }
+
+    .separator {
+        font-weight: 600;
+        color: #4a5568;
+    }
+}
