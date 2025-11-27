@@ -21,12 +21,13 @@ export class VendorStoreDetailsPageComponent implements OnInit {
     storeImageFile: File | null = null;
 
     categories = [
-        'Indonesian Food',
-        'Beverages',
-        'Snacks',
-        'Desserts',
-        'Fast Food',
-        'Other'
+        { id: 1, name: 'Western' },
+        { id: 2, name: 'Japanese' },
+        { id: 3, name: 'Indonesian' },
+        { id: 4, name: 'Korean' },
+        { id: 5, name: 'Middle-eastern' },
+        { id: 6, name: 'Beverages' },
+        { id: 7, name: 'Others' }
     ];
 
     constructor(
@@ -175,7 +176,7 @@ export class VendorStoreDetailsPageComponent implements OnInit {
                 user_id: parseInt(user.userId),
                 store_name: this.storeForm.value.storeName,
                 store_description: this.storeForm.value.description || 'No description',
-                category_id: this.getCategoryId(this.storeForm.value.category),
+                category_id: parseInt(this.storeForm.value.category),
                 address: this.storeForm.value.address,
                 is_halal: this.storeForm.value.isHalal || false,
                 open_time: this.parseTime(this.storeForm.value.openTime),
@@ -214,19 +215,6 @@ export class VendorStoreDetailsPageComponent implements OnInit {
         const res = await fetch(base64);
         const blob = await res.blob();
         return new File([blob], filename, { type: blob.type });
-    }
-
-    getCategoryId(categoryName: string): number {
-        const categoryMap: { [key: string]: number } = {
-            'Western': 1,
-            'Japanese': 2,
-            'Indonesian': 3,
-            'Korean': 4,
-            'Middle-eastern': 5,
-            'Beverages': 6,
-            'Others': 7
-        };
-        return categoryMap[categoryName] || 7;
     }
 
     parseTime(timeString: string): number {

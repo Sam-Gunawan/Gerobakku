@@ -4,12 +4,13 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { User } from '../../../models/user.model';
 import { VendorService } from '../../../services/vendor.service';
+import { InfoModalComponent } from '../info-modal/info-modal.component';
 
 
 @Component({
   selector: 'app-profile-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, InfoModalComponent],
   templateUrl: './profile-modal.component.html',
   styleUrls: ['./profile-modal.component.scss']
 })
@@ -112,5 +113,59 @@ export class ProfileModalComponent implements OnInit {
 
   closeModal(): void {
     this.close.emit();
+  }
+
+  showComingSoon = false;
+  showPrivacyPolicy = false;
+  comingSoonTitle = 'Coming Soon';
+  comingSoonContent = 'This feature is currently under development and will be available in a future update. Thank you for your patience!';
+  privacyPolicyTitle = 'Privacy Policy';
+  privacyPolicyContent = `
+  <h3>1. Information We Collect</h3>
+  <p>Gerobakku collects information you provide when registering as a user or vendor, including your name, email, phone number, and location data to provide our services.</p>
+  
+  <h3>2. How We Use Your Information</h3>
+  <p>We use your information to:</p>
+  <ul>
+    <li>Provide and improve our food vendor location services</li>
+    <li>Connect customers with nearby food vendors</li>
+    <li>Process vendor registrations and manage vendor accounts</li>
+    <li>Send notifications about nearby vendors and updates</li>
+    <li>Analyze usage patterns to enhance user experience</li>
+  </ul>
+  
+  <h3>3. Location Data</h3>
+  <p>With your permission, we collect and process location data to show you nearby food vendors. You can disable location services at any time through your device settings.</p>
+  
+  <h3>4. Data Sharing</h3>
+  <p>We do not sell your personal information. We may share data with:</p>
+  <ul>
+    <li>Vendors you interact with (to facilitate orders and reviews)</li>
+    <li>Service providers who help us operate our platform</li>
+    <li>Law enforcement when required by law</li>
+  </ul>
+  
+  <h3>5. Data Security</h3>
+  <p>We implement industry-standard security measures to protect your data. However, no method of transmission over the internet is 100% secure.</p>
+  
+  <h3>6. Your Rights</h3>
+  <p>You have the right to access, update, or delete your personal information. Contact us at privacy@gerobakku.com for any privacy-related requests.</p>
+  
+  <h3>7. Cookies</h3>
+  <p>We use cookies and similar technologies to improve your experience and analyze usage patterns.</p>
+  
+  <h3>8. Changes to Privacy Policy</h3>
+  <p>We may update this policy periodically. Continued use of Gerobakku after changes constitutes acceptance of the updated policy.</p>
+  
+  <p><strong>Last Updated:</strong> November 2024</p>
+  <p><strong>Contact:</strong> privacy@gerobakku.com</p>
+`;
+
+  openComingSoon(): void {
+    this.showComingSoon = true;
+  }
+
+  openPrivacyPolicy(): void {
+    this.showPrivacyPolicy = true;
   }
 }

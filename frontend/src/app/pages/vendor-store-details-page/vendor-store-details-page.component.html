@@ -33,7 +33,7 @@
                 <label>Category *</label>
                 <select formControlName="category" class="form-input">
                     <option value="">Select a category</option>
-                    <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+                    <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
                 </select>
                 <div *ngIf="storeForm.get('category')?.touched && storeForm.get('category')?.hasError('required')"
                     class="error-message">

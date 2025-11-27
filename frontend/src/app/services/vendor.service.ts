@@ -68,8 +68,7 @@ export class VendorService {
 
         if (ktpFile) formData.append('ktp', ktpFile);
         if (selfieFile) formData.append('selfie', selfieFile);
-        // if (storeImageFile) formData.append('store_img', storeImageFile);
-        formData.append('store_img', 'assets/default_store_image.jpg'); // Revert to default image path for demonstration purposes
+        if (storeImageFile) formData.append('store_img', storeImageFile);
 
         return this.http.post<VendorRegistrationResponse>(
             `${this.API_URL}/vendor/registerVendorAndStore`,

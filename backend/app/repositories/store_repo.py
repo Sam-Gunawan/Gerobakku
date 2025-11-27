@@ -144,8 +144,9 @@ def create_store(vendor_id: int, name: str, description: str, category_id: int,
     """
     try:
         with get_cursor(commit=True) as cur:
+            # Revert to default image path for demonstration purposes
             cur.execute(sql, (vendor_id, name, description, category_id, address,
-                            is_halal, open_time, close_time, store_image_url))
+                            is_halal, open_time, close_time, "assets/default_store_image.jpg"))
             row = cur.fetchone()
             if not row:
                 return None

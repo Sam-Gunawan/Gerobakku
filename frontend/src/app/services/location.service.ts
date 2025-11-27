@@ -32,7 +32,7 @@ export class LocationService {
             isHalal: apiStore.is_halal !== undefined ? apiStore.is_halal : apiStore.isHalal,
             openTime: apiStore.open_time?.toString() || apiStore.openTime,
             closeTime: apiStore.close_time?.toString() || apiStore.closeTime,
-            storeImageUrl: apiStore.store_image_url || apiStore.storeImageUrl,
+            storeImageUrl: 'assets/default_store_image.jpg',
             menu: apiStore.menu || [],
             currentLocation: apiStore.current_location ? {
                 lat: apiStore.current_location.lat,

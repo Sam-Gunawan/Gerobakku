@@ -1,0 +1,19 @@
+<div class="modal-backdrop" (click)="onClose()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="close-btn" (click)="onClose()">✕</button>
+
+        <div class="modal-header">
+            <span class="modal-icon">{{ icon }}</span>
+            <h2>{{ title }}</h2>
+        </div>
+
+        <div class="modal-body">
+            <div *ngIf="!isHtml" class="text-content">{{ content }}</div>
+            <div *ngIf="isHtml" class="html-content" [innerHTML]="content"></div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="ok-btn" (click)="onClose()">OK</button>
+        </div>
+    </div>
+</div>

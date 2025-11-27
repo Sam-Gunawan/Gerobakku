@@ -249,8 +249,9 @@
     &.logout-item {
       color: #f56565;
 
-      .icon {
+      .icon #logout {
         color: #f56565;
+        font-size: 12px;
       }
 
       &:hover {

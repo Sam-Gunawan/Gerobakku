@@ -18,6 +18,7 @@ import { Style, Circle, Fill, Stroke } from 'ol/style';
 import { XYZ } from 'ol/source';
 import { ReviewService } from '../../../services/review.service';
 import { LoadingOverlayComponent } from '../../../shared/ui/loading-overlay/loading-overlay.component';
+import { formatTimeRange } from '../../../shared/utils/time-formatter';
 
 
 @Component({
@@ -32,8 +33,8 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
   storeId: number | null = null;
   storeName = 'Loading...';
   isOpen = false;
-  openTime = '08:00';
-  closeTime = '20:00';
+  openTime: string | number = '08:00';
+  closeTime: string | number = '20:00';
   isHalal = false;
   rating = 0;
 
@@ -202,23 +203,28 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // Edit hours
   openEditHours(): void {
-    this.editOpenTime = this.openTime;
-    this.editCloseTime = this.closeTime;
+    // Handle both string and number formats
+    if (typeof this.openTime === 'number') {
+      this.editOpenTime = this.formatTimeFromMinutes(this.openTime);
+      this.editCloseTime = this.formatTimeFromMinutes(this.closeTime);
+    } else {
+      this.editOpenTime = this.openTime;
+      this.editCloseTime = this.closeTime as string;
+    }
     this.showEditHours = true;
   }
 
   saveHours(): void {
     if (!this.storeId) return;
-
-    const openHour = this.parseTime(this.editOpenTime);
-    const closeHour = this.parseTime(this.editCloseTime);
-
-    this.vendorService.updateStoreHours(this.storeId, openHour, closeHour).subscribe({
+    // Convert HH:MM format to minutes since midnight
+    const openMinutes = this.parseTimeToMinutes(this.editOpenTime);
+    const closeMinutes = this.parseTimeToMinutes(this.editCloseTime);
+    this.vendorService.updateStoreHours(this.storeId, openMinutes, closeMinutes).subscribe({
       next: () => {
-        this.openTime = this.editOpenTime;
-        this.closeTime = this.editCloseTime;
+        // Update with the new values in minutes
+        this.openTime = openMinutes;
+        this.closeTime = closeMinutes;
         this.showEditHours = false;
       },
       error: (err) => {
@@ -347,5 +353,29 @@ export class VendorDashboardComponent implements OnInit, AfterViewInit {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     return `${diffDays}d ago`;
+  }
+
+  get formattedHours(): string {
+    // Handle both string and number formats
+    if (typeof this.openTime === 'string' && typeof this.closeTime === 'string') {
+      // Already in HH:MM format
+      return `${this.openTime} - ${this.closeTime}`;
+    }
+    // Convert from minutes to HH:MM format
+    return formatTimeRange(this.openTime, this.closeTime);
+  }
+
+  // Convert minutes since midnight to HH:MM format
+  formatTimeFromMinutes(minutes: number | string): string {
+    const mins = typeof minutes === 'string' ? parseInt(minutes) : minutes;
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  }
+
+  // Convert HH:MM format to minutes since midnight
+  parseTimeToMinutes(timeString: string): number {
+    const [hour, minute] = timeString.split(':').map(Number);
+    return (hour * 60) + minute;
   }
 }
