@@ -25,6 +25,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:4200",
+        "http://localhost",
+        "http://frontend",
     ],
     allow_credentials=True, # Allow cookies, authorization headers, etc.
     allow_methods=["*"],
@@ -34,6 +36,11 @@ app.add_middleware(
 @app.get("/")
 async def read_root():
     return {"Hello": "World"}
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Docker and monitoring"""
+    return {"status": "healthy", "service": "gerobakku-backend"}
 
 app.include_router(auth_router.router)
 app.include_router(vendor_router.router)
