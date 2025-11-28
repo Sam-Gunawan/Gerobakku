@@ -32,7 +32,7 @@ export class VendorCardComponent {
     }
 
     get category(): string {
-        return this.categories[this.store.category].name;
+        return this.categories[Number(this.store.category) - 1].name;
     }
 
     get formattedHours(): string {
