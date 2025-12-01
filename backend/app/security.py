@@ -26,7 +26,7 @@ def verify_password(plaintxt: str, hashed: str) -> bool:
 # JWT helpers
 def _make_token(data: dict, minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES) -> str:
     to_encode = data.copy()
-    to_encode["exp"] = datetime.now() + timedelta(minutes=minutes)
+    to_encode["exp"] = datetime.utcnow() + timedelta(minutes=minutes)
     return jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 def create_access_token(user_id: int | str, email: str) -> str:

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProfileModalComponent } from './profile-modal.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ProfileModalComponent', () => {
   let component: ProfileModalComponent;
@@ -8,9 +9,12 @@ describe('ProfileModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProfileModalComponent]
+      imports: [
+        ProfileModalComponent,
+        HttpClientTestingModule
+      ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ProfileModalComponent);
     component = fixture.componentInstance;

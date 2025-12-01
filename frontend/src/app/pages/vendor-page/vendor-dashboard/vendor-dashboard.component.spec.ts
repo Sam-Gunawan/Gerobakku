@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VendorDashboardComponent } from './vendor-dashboard.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('VendorDashboardComponent', () => {
   let component: VendorDashboardComponent;
@@ -8,9 +9,12 @@ describe('VendorDashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VendorDashboardComponent]
+      imports: [
+        VendorDashboardComponent,
+        HttpClientTestingModule
+      ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(VendorDashboardComponent);
     component = fixture.componentInstance;

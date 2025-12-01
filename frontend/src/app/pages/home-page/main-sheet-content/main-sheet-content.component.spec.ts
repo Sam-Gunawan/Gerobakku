@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MainSheetContentComponent } from './main-sheet-content.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('MainSheetContentComponent', () => {
   let component: MainSheetContentComponent;
@@ -8,9 +9,12 @@ describe('MainSheetContentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MainSheetContentComponent]
+      imports: [
+        MainSheetContentComponent,
+        HttpClientTestingModule
+      ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(MainSheetContentComponent);
     component = fixture.componentInstance;

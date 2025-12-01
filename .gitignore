@@ -35,3 +35,6 @@ yarn-error.log*
 venv/
 backend/app/.env
 backend/start_server.bat
+
+# Others
+create-submission-zip.ps1

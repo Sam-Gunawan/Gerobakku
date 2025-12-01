@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MapDashboardComponent } from './map-dashboard.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('MapDashboardComponent', () => {
   let component: MapDashboardComponent;
@@ -8,9 +9,12 @@ describe('MapDashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MapDashboardComponent]
+      imports: [
+        MapDashboardComponent,
+        HttpClientTestingModule
+      ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(MapDashboardComponent);
     component = fixture.componentInstance;
