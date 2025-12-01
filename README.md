@@ -203,6 +203,17 @@ Access the development server at [http://localhost:4200](http://localhost:4200).
 
 ---
 
+## Running Tests
+Gerobakku includes comprehensive unit tests for both backend and frontend. 
+
+For detailed testing instructions, see **[TESTING.md](./TESTING.md)**.
+
+**Quick Start:**
+- **Backend:** `cd backend && pytest -v` (Expected: 36 passed, 1 skipped)
+- **Frontend:** `cd frontend && npm test` (Expected: ~58 tests passing)
+
+---
+
 ### Core API Endpoints
 
 | Endpoint | Method | Description | Auth Required |
